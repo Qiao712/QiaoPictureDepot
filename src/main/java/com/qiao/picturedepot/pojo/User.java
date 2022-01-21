@@ -1,0 +1,123 @@
+package com.qiao.picturedepot.pojo;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+public class User implements UserDetails {
+    private BigInteger id;
+    private String username;
+    private String password;
+    private Role role;
+    private Date createTime;
+    private Date updateTime;
+
+
+    public User() {
+    }
+    public User(BigInteger id, String username, String password, Role role, Date createTime, Date updateTime) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
+
+    public void setId(BigInteger id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public BigInteger getId() {
+        return id;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
+
+    //-------------------------------------------------------------------------------
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        //返回角色信息
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority(role.getRolename()));
+        return grantedAuthorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+}

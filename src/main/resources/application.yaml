@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+#  配置数据源
+  datasource:
+    username: root
+    password: lty0712
+    url: jdbc:mysql://localhost:3306/picture_depot?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    cache: false
+
+mybatis:
+  configLocation: classpath:mybatis-config.xml

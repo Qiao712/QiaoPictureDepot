@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!--开启下划线到驼峰的列名自动转换-->
+        <setting name="mapUnderscoreToCamelCase" value="True"/>
+<!--        <setting name="logImpl" value="STDOUT_LOGGING"/>-->
+    </settings>
+
+    <!--设置别名-->
+    <typeAliases>
+        <package name="com.qiao.picturedepot.pojo"/>
+        <package name="com.qiao.picturedepot.dao"/>
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+    </mappers>
+</configuration>
