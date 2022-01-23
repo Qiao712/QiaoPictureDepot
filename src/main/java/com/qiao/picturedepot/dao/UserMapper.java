@@ -5,8 +5,11 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigInteger;
+
 @Mapper
 public interface UserMapper {
     User getUserByUsername(String username);
+    User getUserById(BigInteger id);
     int addUser(@Param("username") String username, @Param("password") String password,@Param("rolename") String rolename);
 }

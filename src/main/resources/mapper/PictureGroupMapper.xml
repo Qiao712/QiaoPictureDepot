@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF8" ?>      <!--将encoding="UTF-8"中间的‘-’去掉->"UTF8"就中文注释就不会导致异常了-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qiao.picturedepot.dao.PictureGroupMapper">
+    <resultMap id="pictureGroupMap" type="PictureGroup">
+        <result property="id" column="id"/>
+        <association property="pictures" javaType="list" column="id" select="com.qiao.picturedepot.dao.PictureMapper.getPicturesByGroup"/>
+    </resultMap>
+
+    <select id="getPictureGroupCountByAlbumId" resultType="BigInteger">
+        select count(id) from picture_group where album = #{albumId}
+    </select>
+
+    <select id="getPictureGroupsByAlbumId" resultMap="pictureGroupMap">
+        select id, title, create_time, update_time
+        from picture_group
+        where album = #{albumId}
+        limit #{start}, #{pageSize}
+    </select>
+
+    <select id="getPictureGroupById" resultMap="pictureGroupMap">
+        select id, title, create_time, update_time
+        from picture_group
+        where id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF8" ?>      <!--将encoding="UTF-8"中间的‘-’去掉->"UTF8"就中文注释就不会导致异常了-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qiao.picturedepot.dao.AlbumMapper">
+    <resultMap id="albumUser" type="Album">
+        <association property="owner" column="owner" javaType="User" select="com.qiao.picturedepot.dao.UserMapper.getUserById"/>
+    </resultMap>
+
+    <select id="getAlbumCountByUserId" resultType="BigInteger">
+        select count(id) from album where owner = #{userId}
+    </select>
+    <select id="getAlbumCountByUsername" resultType="BigInteger">
+        select count(album.id) from album join user on album.owner = user.id
+        where user.username = #{username}
+    </select>
+
+    <select id="getAlbumsByUserId" resultMap="albumUser">
+        select id, album_name, owner, is_public, secret_key, create_time, update_time from album
+        where owner = #{userId}
+        limit #{start}, #{count}
+    </select>
+
+    <select id="getAlbumsByUsername" resultMap="albumUser">
+        select id, album_name, owner, is_public, secret_key, create_time, update_time from album
+        where owner = (select id from user where username = #{username})
+        limit #{start}, #{count}
+    </select>
+</mapper>

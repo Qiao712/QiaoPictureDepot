@@ -17,6 +17,11 @@
         from user where username = #{username}
     </select>
 
+    <select id="getUserById" resultMap="userRole">
+        select id, username, password, role, create_time, update_time
+        from user where id = #{id}
+    </select>
+
     <insert id="addUser">
         insert into user(username, password, role)
         values(#{username}, #{password},

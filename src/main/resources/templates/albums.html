@@ -8,30 +8,29 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div th:insert="~{common/header :: copy}"></div>
+    <div th:insert="~{common/header :: copy}"></div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-xs-3 col-md-2" th:each="pictureGroup : ${pictureGroups}">
-            <a th:href="@{/pictures/} + ${pictureGroup.id}">
-                <div style="text-align: center">
-                    <img th:if="${pictureGroup.pictures.size() == 0}" th:src="@{/public/img/picture_not_exists.png}" style="width: 100%" class="img-rounded">
-                    <img th:if="${pictureGroup.pictures.size() > 0}" th:src="@{/picture} + '/' + ${pictureGroup.pictures.get(0).id}" style="width: 100%" class="img-rounded">
-                    <p th:text="${pictureGroup.title}">title</p>
-                </div>
-            </a>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3 col-md-2" th:each="album : ${albums}">
+                <a th:href="@{/album/} + ${album.id} + '/1'">
+                    <div style="text-align: center">
+                        <img th:src="@{/public/img/test2.png}" class="img-rounded img-responsive" alt="Cinque Terre">
+                        <p th:text="${album.albumName}">album name</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-xs-12" style="text-align: center;">
+                <ul class="pagination">
+
+                </ul>
+            </div>
         </div>
     </div>
-
-
-    <div class="row">
-        <div class="col-xs-12" style="text-align: center;">
-            <ul class="pagination">
-
-            </ul>
-        </div>
-    </div>
-</div>
 
 
 <script th:inline="javascript">
@@ -56,7 +55,7 @@
     }else{
         //[当前页面] [剩余页面]
         addLi(currPage, "disabled", "");
-        for (i = 1; i < pageCount - currPage; i++) {
+        for (i = 1; i <= pageCount - currPage; i++) {
             addLi(i + currPage, "", genUrl(i + currPage, pageSize));
         }
     }

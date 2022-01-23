@@ -17,5 +17,8 @@
 
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/AlbumMapper.xml"/>
+        <mapper resource="mapper/PictureMapper.xml"/>
+        <mapper resource="mapper/PictureGroupMapper.xml"/>
     </mappers>
 </configuration>

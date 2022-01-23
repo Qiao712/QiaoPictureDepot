@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF8" ?>      <!--将encoding="UTF-8"中间的‘-’去掉->"UTF8"就中文注释就不会导致异常了-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qiao.picturedepot.dao.PictureMapper">
+    <select id="getPicturesByGroup" resultType="Picture">
+        select id, picture_group as pictureGroupId, filepath, sequence, create_time, update_time
+        from picture where picture_group = #{groupId}
+    </select>
+
+    <select id="getPictureById" resultType="Picture">
+        select id, picture_group as pictureGroupId, filepath, sequence, create_time, update_time
+        from picture where id = #{id}
+    </select>
+</mapper>

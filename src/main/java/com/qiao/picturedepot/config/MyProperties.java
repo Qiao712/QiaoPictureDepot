@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MyProperties {
-    private String pictureDepotPath = "D:\\workplace\\Picture Depot Test";
+    private String pictureDepotPath = "D:\\workplace\\Picture Depot Test\\";
 
     public MyProperties() {
     }
