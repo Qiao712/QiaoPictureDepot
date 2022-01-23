@@ -19,7 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //拦截忽略
-        web.ignoring().antMatchers("/bootstrap/**");
+        web.ignoring().antMatchers("/public/**");
     }
 
     @Override
@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .usernameParameter("username")
                 .passwordParameter("password")
+                .defaultSuccessUrl("/albums/1")
                 .permitAll();
         http.rememberMe().rememberMeParameter("rememberMe");
         http.logout();
