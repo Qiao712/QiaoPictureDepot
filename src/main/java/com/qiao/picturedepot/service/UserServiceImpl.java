@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
     @Autowired
@@ -19,9 +21,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         System.out.println("try to authentication:" + username);
         User user = userMapper.getUserByUsername(username);
         if(user != null){
-
             user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-
             return user;
         }else{
             throw new UsernameNotFoundException("username doesn't exist");

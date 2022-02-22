@@ -10,6 +10,7 @@ import java.util.List;
 public interface PictureGroupMapper {
     BigInteger getPictureGroupCountByAlbumId(BigInteger userId);
     List<PictureGroup> getPictureGroupsByAlbumId(BigInteger albumId, BigInteger start, int pageSize);
-
     PictureGroup getPictureGroupById(BigInteger id);
+    Integer addPictureGroup(PictureGroup pictureGroup);
+    Integer getMaxPictureSequenceInGroup(BigInteger pictureGroupId);
 }

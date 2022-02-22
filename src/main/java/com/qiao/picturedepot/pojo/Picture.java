@@ -1,11 +1,16 @@
 package com.qiao.picturedepot.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigInteger;
 import java.util.Date;
 
 public class Picture {
     private BigInteger id;
+    @JsonIgnore
     private String filepath;
+    @JsonIgnore
+    private String pictureFormat;
     private BigInteger pictureGroupId;
     private int sequence;
     private Date createTime;
@@ -14,9 +19,10 @@ public class Picture {
     public Picture() {
     }
 
-    public Picture(BigInteger id, String filepath, BigInteger pictureGroupId, int sequence, Date createTime, Date updateTime) {
+    public Picture(BigInteger id, String filepath, String pictureFormat, BigInteger pictureGroupId, int sequence, Date createTime, Date updateTime) {
         this.id = id;
         this.filepath = filepath;
+        this.pictureFormat = pictureFormat;
         this.pictureGroupId = pictureGroupId;
         this.sequence = sequence;
         this.createTime = createTime;
@@ -37,6 +43,22 @@ public class Picture {
 
     public void setFilepath(String filepath) {
         this.filepath = filepath;
+    }
+
+    public String getPictureFormat() {
+        return pictureFormat;
+    }
+
+    public void setPictureFormat(String pictureFormat) {
+        this.pictureFormat = pictureFormat;
+    }
+
+    public BigInteger getPictureGroupId() {
+        return pictureGroupId;
+    }
+
+    public void setPictureGroupId(BigInteger pictureGroupId) {
+        this.pictureGroupId = pictureGroupId;
     }
 
     public int getSequence() {
@@ -63,19 +85,12 @@ public class Picture {
         this.updateTime = updateTime;
     }
 
-    public BigInteger getPictureGroupId() {
-        return pictureGroupId;
-    }
-
-    public void setPictureGroupId(BigInteger pictureGroupId) {
-        this.pictureGroupId = pictureGroupId;
-    }
-
     @Override
     public String toString() {
         return "Picture{" +
                 "id=" + id +
                 ", filepath='" + filepath + '\'' +
+                ", pictureFormat='" + pictureFormat + '\'' +
                 ", pictureGroupId=" + pictureGroupId +
                 ", sequence=" + sequence +
                 ", createTime=" + createTime +

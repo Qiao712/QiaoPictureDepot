@@ -1,17 +1,35 @@
 package com.qiao.picturedepot.util;
 
+import org.springframework.util.FileCopyUtils;
+
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FileUtil {
     public static void copy(InputStream inputStream, OutputStream outputStream) throws IOException {
-        final int BUFFER_SIZE = 10240;
-        byte[] buffer = new byte[BUFFER_SIZE];
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+        FileCopyUtils.copy(inputStream, outputStream);
+    }
 
-        int len = 0;
-        while((len = bufferedInputStream.read(buffer, 0, BUFFER_SIZE)) > 0){
-            bufferedOutputStream.write(buffer, 0, len);
-        }
+    public static void save(byte[] data, OutputStream outputStream) throws IOException {
+        FileCopyUtils.copy(data, outputStream);
+    }
+
+    public static String getNameSuffix(String filename){
+        int p = filename.lastIndexOf('.');
+        return filename.substring(p+1);
+    }
+
+    public static Set<String> pictureFormats = new HashSet<>();
+    static{
+        String[] formats = {"png", "jpg", "bmp", "webp", "ico", "gif", "tif", "tga"};
+        pictureFormats.addAll(Arrays.asList(formats));
+    }
+
+    public static boolean isPicture(String suffix){
+        return pictureFormats.contains(suffix.toLowerCase());
     }
 }

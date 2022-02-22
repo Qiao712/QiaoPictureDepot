@@ -5,12 +5,46 @@
 
 <mapper namespace="com.qiao.picturedepot.dao.PictureMapper">
     <select id="getPicturesByGroup" resultType="Picture">
-        select id, picture_group as pictureGroupId, filepath, sequence, create_time, update_time
+        select id, picture_group as pictureGroupId, picture_format, filepath, sequence, create_time, update_time
         from picture where picture_group = #{groupId}
+        order by sequence asc
     </select>
 
     <select id="getPictureById" resultType="Picture">
-        select id, picture_group as pictureGroupId, filepath, sequence, create_time, update_time
+        select id, picture_group as pictureGroupId, picture_format, filepath, sequence, create_time, update_time
         from picture where id = #{id}
     </select>
+
+    <select id="getPicturePath" resultType="String">
+        select filepath from picture where id = #{pictureId} and picture_group = #{pictureGroupId}
+    </select>
+
+    <insert id="addPicture" parameterType="Picture" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into picture(picture_group, picture_format, filepath, sequence)
+        values(#{pictureGroupId}, #{pictureFormat}, #{filepath}, #{sequence})
+    </insert>
+
+    <update id="updateSequence">
+        update picture
+        set sequence = #{sequence}
+        where id = #{pictureId} and picture_group = #{pictureGroupId}
+    </update>
+
+    <update id="updatePictureGroup" parameterType="PictureGroup">
+        update picture_group
+        <set>
+            <if test="album != null">
+                album = #{album},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePicture">
+        delete from picture
+        where picture_group = #{pictureGroupId} and id = #{pictureId}
+    </delete>
 </mapper>

@@ -1,13 +1,18 @@
 package com.qiao.picturedepot.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigInteger;
 import java.util.Date;
 
 public class Album {
     private BigInteger id;
     private String albumName;
-    private User owner;
+    private BigInteger owner;
+    private BigInteger draftGroup;
+    @JsonIgnore
     private boolean isPublic;
+    @JsonIgnore
     private String secretKey;
     private Date createTime;
     private Date updateTime;
@@ -15,10 +20,11 @@ public class Album {
     public Album() {
     }
 
-    public Album(BigInteger id, String albumName, User owner, boolean isPublic, String secretKey, Date createTime, Date updateTime) {
+    public Album(BigInteger id, String albumName, BigInteger owner, BigInteger draftGroup, boolean isPublic, String secretKey, Date createTime, Date updateTime) {
         this.id = id;
         this.albumName = albumName;
         this.owner = owner;
+        this.draftGroup = draftGroup;
         this.isPublic = isPublic;
         this.secretKey = secretKey;
         this.createTime = createTime;
@@ -41,19 +47,19 @@ public class Album {
         this.albumName = albumName;
     }
 
-    public User getOwner() {
+    public BigInteger getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(BigInteger owner) {
         this.owner = owner;
     }
 
-    public boolean isPublic() {
+    public boolean getIsPublic() {
         return isPublic;
     }
 
-    public void setPublic(boolean aPublic) {
+    public void setIsPublic(boolean aPublic) {
         isPublic = aPublic;
     }
 
@@ -81,12 +87,21 @@ public class Album {
         this.updateTime = updateTime;
     }
 
+    public BigInteger getDraftGroup() {
+        return draftGroup;
+    }
+
+    public void setDraftGroup(BigInteger draftGroup) {
+        this.draftGroup = draftGroup;
+    }
+
     @Override
     public String toString() {
         return "Album{" +
                 "id=" + id +
                 ", albumName='" + albumName + '\'' +
                 ", owner=" + owner +
+                ", draftGroup=" + draftGroup +
                 ", isPublic=" + isPublic +
                 ", secretKey='" + secretKey + '\'' +
                 ", createTime=" + createTime +

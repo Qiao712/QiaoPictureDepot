@@ -1,9 +1,12 @@
 package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.dao.AlbumMapper;
+import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.pojo.Album;
+import com.qiao.picturedepot.pojo.PictureGroup;
 import com.qiao.picturedepot.util.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -13,6 +16,8 @@ import java.util.List;
 public class AlbumServiceImpl implements AlbumService{
     @Autowired
     AlbumMapper albumMapper;
+    @Autowired
+    PictureGroupMapper pictureGroupMapper;
 
     @Override
     public List<Album> getAlbumsOfUser(String username, BigInteger pageNo, int pageSize) {
@@ -28,5 +33,32 @@ public class AlbumServiceImpl implements AlbumService{
     @Override
     public BigInteger getAlbumCountOfUser(String username) {
         return albumMapper.getAlbumCountByUsername(username);
+    }
+
+    @Override
+    public PictureGroup getPictureGroupDraft(BigInteger albumId) {
+        PictureGroup pictureGroup = null;
+
+        Album album = albumMapper.getAlbumById(albumId);
+        BigInteger id = album.getDraftGroup();
+
+        if(id == null){
+            //无草稿则创建
+            pictureGroup = new PictureGroup();
+            pictureGroup.setTitle("untitled");
+            pictureGroup.setAlbum(albumId);
+
+            //TODO: 事务管理
+            pictureGroupMapper.addPictureGroup(pictureGroup);
+            albumMapper.setDraftGroup(albumId, pictureGroup.getId());
+        }else{
+            pictureGroup = pictureGroupMapper.getPictureGroupById(id);
+        }
+        return pictureGroup;
+    }
+
+    @Override
+    public void completePictureGroupDraft(BigInteger albumId) {
+        albumMapper.setDraftGroup(albumId, null);
     }
 }
