@@ -14,10 +14,10 @@ public interface PictureService {
     List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId, BigInteger pageNo, int pageSize);
     BigInteger getPictureGroupCountOfAlbum(BigInteger albumId);
 
-    PictureGroup getPictureGroupById(BigInteger id);
+    PictureGroup getPictureGroupById(BigInteger pictureId);
 
     //返回图片流
-    boolean getPicture(BigInteger pictureId, OutputStream outputStream);
+    boolean getPicture(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream);
 
     List<Picture> getPicturesOfGroup(BigInteger pictureGroupId);
     List<Picture> addPicturesToGroup(BigInteger pictureGroupId, @RequestPart("pictures")MultipartFile[] files);

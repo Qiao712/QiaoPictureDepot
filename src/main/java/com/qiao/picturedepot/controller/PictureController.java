@@ -20,12 +20,12 @@ public class PictureController {
     @Autowired
     PictureService pictureService;
 
-    @GetMapping("/picture/{pictureId}")
-    public void getPicture(@PathVariable BigInteger pictureId, HttpServletResponse response){
+    @GetMapping("/picture/{pictureGroupId}/{pictureId}")
+    public void getPicture(@PathVariable BigInteger pictureGroupId, @PathVariable BigInteger pictureId, HttpServletResponse response){
         response.setHeader("Content-Type", "image/png");
 
         try(OutputStream outputStream = response.getOutputStream()){
-            pictureService.getPicture(pictureId, response.getOutputStream());
+            pictureService.getPicture(pictureGroupId, pictureId, response.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }

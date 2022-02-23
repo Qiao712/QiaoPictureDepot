@@ -56,12 +56,12 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
-    public boolean getPicture(BigInteger pictureId, OutputStream outputStream) {
-        Picture picture = pictureMapper.getPictureById(pictureId);
+    public boolean getPicture(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream) {
+        String path = pictureMapper.getPicturePath(pictureGroupId, pictureId);
 
         boolean flag = false;
-        if(picture != null){
-            String filepath = myProperties.getPictureDepotPath() + picture.getFilepath();
+        if(path != null){
+            String filepath = myProperties.getPictureDepotPath() + path;
             try(InputStream inputStream = new FileInputStream(filepath)){
                 FileUtil.copy(inputStream, outputStream);
                 flag = true;
