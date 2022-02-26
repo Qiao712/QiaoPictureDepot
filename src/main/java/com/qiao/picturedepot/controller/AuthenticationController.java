@@ -20,7 +20,6 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody Map<String, String> authInfo, HttpSession httpSession){
-        System.out.println("Welcome to login");
         System.out.println("try to login :" + authInfo);
         String username = authInfo.get("username");
         String password = authInfo.get("password");

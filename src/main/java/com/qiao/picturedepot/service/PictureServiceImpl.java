@@ -56,15 +56,13 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
-    public boolean getPicture(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream) {
+    public void getPicture(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream) {
         String path = pictureMapper.getPicturePath(pictureGroupId, pictureId);
 
-        boolean flag = false;
         if(path != null){
             String filepath = myProperties.getPictureDepotPath() + path;
             try(InputStream inputStream = new FileInputStream(filepath)){
                 FileUtil.copy(inputStream, outputStream);
-                flag = true;
             } catch (FileNotFoundException e) {
                 //返回“图片失效”
                 try(InputStream inputStream = this.getClass().getResourceAsStream("/static/public/img/picture_lost.png")){
@@ -85,8 +83,6 @@ public class PictureServiceImpl implements PictureService{
                 e.printStackTrace();
             }
         }
-
-        return flag;
     }
 
     @Override
@@ -95,7 +91,11 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
-    public List<Picture> addPicturesToGroup(BigInteger pictureGroupId, MultipartFile[] multipartFiles) {
+    public List<BigInteger> addPicturesToGroup(BigInteger pictureGroupId, MultipartFile[] multipartFiles) {
+        if(multipartFiles == null) {
+            return new ArrayList<>();
+        }
+
         PictureGroup pictureGroup = pictureGroupMapper.getPictureGroupById(pictureGroupId);
         BigInteger albumId = pictureGroup.getAlbum();
         Album album = albumMapper.getAlbumById(albumId);
@@ -111,7 +111,7 @@ public class PictureServiceImpl implements PictureService{
             sequence = 0;
         }
 
-        List<Picture> pictures = new ArrayList<>();
+        List<BigInteger> pictureIds = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             String format = FileUtil.getNameSuffix(multipartFile.getOriginalFilename());
             if(multipartFile.getSize() > maxPictureSize || !FileUtil.isPicture(format)){
@@ -145,32 +145,63 @@ public class PictureServiceImpl implements PictureService{
                 picture.setFilepath(file.getPath().substring(myProperties.getPictureDepotPath().length()));
                 picture.setSequence(sequence);
                 if(pictureMapper.addPicture(picture) == 1){
-                    pictures.add(picture);
+                    pictureIds.add(picture.getId());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        return pictures;
+        return pictureIds;
     }
 
     @Override
-    public void updatePictureSequences(BigInteger pictureGroupId, List<BigInteger> sequences) {
-        for(int i = 0; i < sequences.size(); i++){
-            pictureMapper.updateSequence(pictureGroupId, sequences.get(i), i);
+    public void deletePictureGroup(BigInteger pictureGroupId) {
+        List<Picture> pictures = getPicturesOfGroup(pictureGroupId);
+        for (Picture picture : pictures) {
+            String relativePath = pictureMapper.getPicturePath(pictureGroupId, picture.getId());
+            if(relativePath != null){
+                File pictureFile = new File(myProperties.getPictureDepotPath(), relativePath);
+                pictureFile.delete();
+            }
+
+            pictureMapper.deletePicture(pictureGroupId, picture.getId());
+        }
+
+        pictureGroupMapper.deletePictureGroupById(pictureGroupId);
+    }
+
+    @Override
+    public void updatePictureSequences(BigInteger pictureGroupId, List<BigInteger> idSequence) {
+        for(int i = 0; i < idSequence.size(); i++){
+            if(idSequence.get(i) != null){
+                pictureMapper.updateSequence(pictureGroupId, idSequence.get(i), i);
+            }
         }
     }
 
     @Override
     public void updatePictureGroup(PictureGroup pictureGroup) {
-        pictureMapper.updatePictureGroup(pictureGroup);
+        pictureGroupMapper.updatePictureGroup(pictureGroup);
     }
 
     @Override
     public void deletePictures(BigInteger pictureGroupId, List<BigInteger> pictureIds) {
-        for (BigInteger pictureId : pictureIds) {
-            pictureMapper.deletePicture(pictureGroupId, pictureId);
+        if(pictureIds != null) {
+            for (BigInteger pictureId : pictureIds) {
+                String relativePath = pictureMapper.getPicturePath(pictureGroupId, pictureGroupId);
+                File pictureFile = new File(myProperties.getPictureDepotPath(), relativePath);
+                pictureFile.delete();
+
+                pictureMapper.deletePicture(pictureGroupId, pictureId);
+            }
         }
+    }
+
+    @Override
+    public BigInteger addPictureGroup(PictureGroup pictureGroup) {
+        pictureGroup.setId(null);
+        pictureGroupMapper.addPictureGroup(pictureGroup);
+        return pictureGroup.getId();
     }
 }

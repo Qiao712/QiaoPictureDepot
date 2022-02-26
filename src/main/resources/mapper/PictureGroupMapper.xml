@@ -33,6 +33,19 @@
         where id = #{id}
     </select>
 
+    <update id="updatePictureGroup" parameterType="PictureGroup">
+        update picture_group
+        <set>
+            <if test="album != null">
+                album = #{album},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
     <insert id="addPictureGroup" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
         insert into picture_group(album, title)
         values(#{album}, #{title})
@@ -42,4 +55,9 @@
         select max(sequence) from picture
         where picture_group = #{pictureGroupId}
     </select>
+
+    <delete id="deletePictureGroupById">
+        delete from picture_group
+        where id = #{id}
+    </delete>
 </mapper>

@@ -2,6 +2,7 @@ package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
+import com.qiao.picturedepot.dao.PictureMapper;
 import com.qiao.picturedepot.pojo.Album;
 import com.qiao.picturedepot.pojo.PictureGroup;
 import com.qiao.picturedepot.util.PageHelper;
@@ -18,6 +19,8 @@ public class AlbumServiceImpl implements AlbumService{
     AlbumMapper albumMapper;
     @Autowired
     PictureGroupMapper pictureGroupMapper;
+    @Autowired
+    PictureMapper pictureMapper;
 
     @Override
     public List<Album> getAlbumsOfUser(String username, BigInteger pageNo, int pageSize) {
@@ -59,6 +62,11 @@ public class AlbumServiceImpl implements AlbumService{
 
     @Override
     public void completePictureGroupDraft(BigInteger albumId) {
-        albumMapper.setDraftGroup(albumId, null);
+        Album album = albumMapper.getAlbumById(albumId);
+        BigInteger id = album.getDraftGroup();
+        PictureGroup pictureGroup = pictureGroupMapper.getPictureGroupById(id);
+        if(pictureGroup.getPictureCount() > 0){
+            albumMapper.setDraftGroup(albumId, null);
+        }
     }
 }

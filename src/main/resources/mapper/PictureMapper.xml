@@ -6,9 +6,13 @@
 <mapper namespace="com.qiao.picturedepot.dao.PictureMapper">
     <select id="getPicturesByGroup" resultType="Picture">
         select id, picture_group as pictureGroupId, picture_format, filepath, sequence, create_time, update_time
-        from picture where picture_group = #{groupId}
+        from picture where picture_group = #{pictureGroupId}
         order by sequence asc
     </select>
+
+    <delete id="deletePicturesByGroup">
+        delete from picture where picture_group = #{pictureGroupId}
+    </delete>
 
     <select id="getPictureById" resultType="Picture">
         select id, picture_group as pictureGroupId, picture_format, filepath, sequence, create_time, update_time
@@ -28,19 +32,6 @@
         update picture
         set sequence = #{sequence}
         where id = #{pictureId} and picture_group = #{pictureGroupId}
-    </update>
-
-    <update id="updatePictureGroup" parameterType="PictureGroup">
-        update picture_group
-        <set>
-            <if test="album != null">
-                album = #{album},
-            </if>
-            <if test="title != null">
-                title = #{title},
-            </if>
-        </set>
-        where id = #{id}
     </update>
 
     <delete id="deletePicture">
