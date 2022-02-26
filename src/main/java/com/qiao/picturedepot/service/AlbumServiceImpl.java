@@ -37,36 +37,4 @@ public class AlbumServiceImpl implements AlbumService{
     public BigInteger getAlbumCountOfUser(String username) {
         return albumMapper.getAlbumCountByUsername(username);
     }
-
-    @Override
-    public PictureGroup getPictureGroupDraft(BigInteger albumId) {
-        PictureGroup pictureGroup = null;
-
-        Album album = albumMapper.getAlbumById(albumId);
-        BigInteger id = album.getDraftGroup();
-
-        if(id == null){
-            //无草稿则创建
-            pictureGroup = new PictureGroup();
-            pictureGroup.setTitle("untitled");
-            pictureGroup.setAlbum(albumId);
-
-            //TODO: 事务管理
-            pictureGroupMapper.addPictureGroup(pictureGroup);
-            albumMapper.setDraftGroup(albumId, pictureGroup.getId());
-        }else{
-            pictureGroup = pictureGroupMapper.getPictureGroupById(id);
-        }
-        return pictureGroup;
-    }
-
-    @Override
-    public void completePictureGroupDraft(BigInteger albumId) {
-        Album album = albumMapper.getAlbumById(albumId);
-        BigInteger id = album.getDraftGroup();
-        PictureGroup pictureGroup = pictureGroupMapper.getPictureGroupById(id);
-        if(pictureGroup.getPictureCount() > 0){
-            albumMapper.setDraftGroup(albumId, null);
-        }
-    }
 }

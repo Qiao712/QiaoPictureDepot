@@ -10,12 +10,12 @@ import java.math.BigInteger;
 import java.util.List;
 
 public interface PictureService {
-    List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId, BigInteger pageNo, int pageSize);
-    BigInteger getPictureGroupCountOfAlbum(BigInteger albumId);
     //返回图片流
     void getPicture(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream);
     List<Picture> getPicturesOfGroup(BigInteger pictureGroupId);
 
+    List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId, BigInteger pageNo, int pageSize);
+    BigInteger getPictureGroupCountOfAlbum(BigInteger albumId);
 
     PictureGroup getPictureGroupById(BigInteger pictureId);
     BigInteger addPictureGroup(PictureGroup pictureGroup);
