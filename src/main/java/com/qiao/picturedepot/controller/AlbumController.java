@@ -28,4 +28,24 @@ public class AlbumController{
         BigInteger albumCount = albumService.getAlbumCountOfUser(user.getUsername());
         return new PageResponse(pageNo, albumCount, pageSize, albums);
     }
+
+    @GetMapping("/albums/{albumId}")
+    public Album getAlbum(@PathVariable BigInteger albumId){
+        return albumService.getAlbumById(albumId);
+    }
+
+    @PostMapping("/albums")
+    public void addAlbum(@RequestBody Album album){
+        albumService.addAlbum(album);
+    }
+
+    @PutMapping("/albums")
+    public void updateAlbum(@RequestBody Album album){
+        albumService.updateAlbum(album);
+    }
+
+    @DeleteMapping("/albums/{albumId}")
+    public void deleteAlbum(@PathVariable BigInteger albumId){
+        albumService.deleteAlbum(albumId);
+    }
 }

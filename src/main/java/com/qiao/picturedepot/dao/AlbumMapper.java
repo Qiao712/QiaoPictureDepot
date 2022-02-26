@@ -15,5 +15,7 @@ public interface AlbumMapper {
     List<Album> getAlbumsByUserId(BigInteger userId, BigInteger start, int count);
     List<Album> getAlbumsByUsername(String username, BigInteger start, int count);
 
-    int setDraftGroup(BigInteger albumId, BigInteger pictureGroupId);
+    Integer addAlbum(Album album);
+    Integer updateAlbum(Album album);
+    Integer deleteAlbumById(BigInteger id);
 }

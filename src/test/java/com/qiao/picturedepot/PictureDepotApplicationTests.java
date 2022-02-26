@@ -8,6 +8,7 @@ import com.qiao.picturedepot.pojo.Album;
 import com.qiao.picturedepot.pojo.Picture;
 import com.qiao.picturedepot.pojo.PictureGroup;
 import com.qiao.picturedepot.pojo.User;
+import com.qiao.picturedepot.service.AlbumService;
 import com.qiao.picturedepot.service.PictureService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ class PictureDepotApplicationTests {
 	PictureMapper pictureMapper;
 	@Autowired
 	PictureGroupMapper pictureGroupMapper;
+	@Autowired
+	AlbumService albumService;
 
 	@Test
 	void testUserDao(){
@@ -43,7 +46,7 @@ class PictureDepotApplicationTests {
 	}
 
 	@Test
-	void tesetAlbumDao() {
+	void testAlbumDao() {
 //		BigInteger bigInteger = albumMapper.getAlbumCountByUsername("admin");
 //		System.out.println(bigInteger);
 
@@ -51,6 +54,8 @@ class PictureDepotApplicationTests {
 //		for (Album album : albums) {
 //			System.out.println(album);
 //		}
+
+		albumService.deleteAlbum(BigInteger.valueOf(9));
 	}
 
 	@Test
@@ -69,13 +74,6 @@ class PictureDepotApplicationTests {
 //		for (PictureGroup pictureGroup : pictureGroups) {
 //			System.out.println(pictureGroup);
 //		}
-
-//		//无草稿则创建
-//		PictureGroup pictureGroup;
-//		pictureGroup = new PictureGroup();
-//		pictureGroup.setTitle("untitled");
-//		pictureGroup.setAlbum(BigInteger.valueOf(1));
-//		pictureGroupMapper.addPictureGroup(pictureGroup);
 
 		int sequence = pictureGroupMapper.getMaxPictureSequenceInGroup(BigInteger.valueOf(1));
 		System.out.println(sequence);

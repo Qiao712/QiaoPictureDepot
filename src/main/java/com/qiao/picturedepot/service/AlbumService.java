@@ -7,6 +7,10 @@ import java.math.BigInteger;
 import java.util.List;
 
 public interface AlbumService {
+    Album getAlbumById(BigInteger id);
     List<Album> getAlbumsOfUser(String username, BigInteger pageNo, int pageSize);
     BigInteger getAlbumCountOfUser(String username);
+    BigInteger addAlbum(Album album);
+    void deleteAlbum(BigInteger albumId);
+    void updateAlbum(Album album);
 }

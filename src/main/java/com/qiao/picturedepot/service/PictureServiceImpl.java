@@ -162,7 +162,7 @@ public class PictureServiceImpl implements PictureService{
             String relativePath = pictureMapper.getPicturePath(pictureGroupId, picture.getId());
             if(relativePath != null){
                 File pictureFile = new File(myProperties.getPictureDepotPath(), relativePath);
-                pictureFile.delete();
+                System.out.println("删除"+pictureFile.getPath()+" "+pictureFile.delete());
             }
 
             pictureMapper.deletePicture(pictureGroupId, picture.getId());

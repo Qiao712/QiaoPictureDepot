@@ -9,7 +9,6 @@ public class Album {
     private BigInteger id;
     private String albumName;
     private BigInteger owner;
-    private BigInteger draftGroup;
     @JsonIgnore
     private boolean isPublic;
     @JsonIgnore
@@ -20,11 +19,10 @@ public class Album {
     public Album() {
     }
 
-    public Album(BigInteger id, String albumName, BigInteger owner, BigInteger draftGroup, boolean isPublic, String secretKey, Date createTime, Date updateTime) {
+    public Album(BigInteger id, String albumName, BigInteger owner, boolean isPublic, String secretKey, Date createTime, Date updateTime) {
         this.id = id;
         this.albumName = albumName;
         this.owner = owner;
-        this.draftGroup = draftGroup;
         this.isPublic = isPublic;
         this.secretKey = secretKey;
         this.createTime = createTime;
@@ -55,11 +53,11 @@ public class Album {
         this.owner = owner;
     }
 
-    public boolean getIsPublic() {
+    public boolean isPublic() {
         return isPublic;
     }
 
-    public void setIsPublic(boolean aPublic) {
+    public void setPublic(boolean aPublic) {
         isPublic = aPublic;
     }
 
@@ -87,21 +85,12 @@ public class Album {
         this.updateTime = updateTime;
     }
 
-    public BigInteger getDraftGroup() {
-        return draftGroup;
-    }
-
-    public void setDraftGroup(BigInteger draftGroup) {
-        this.draftGroup = draftGroup;
-    }
-
     @Override
     public String toString() {
         return "Album{" +
                 "id=" + id +
                 ", albumName='" + albumName + '\'' +
                 ", owner=" + owner +
-                ", draftGroup=" + draftGroup +
                 ", isPublic=" + isPublic +
                 ", secretKey='" + secretKey + '\'' +
                 ", createTime=" + createTime +
