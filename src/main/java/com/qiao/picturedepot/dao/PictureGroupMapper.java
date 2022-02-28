@@ -8,8 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface PictureGroupMapper {
-    BigInteger getPictureGroupCountByAlbumId(BigInteger userId);
-    List<PictureGroup> getPictureGroupsByAlbumId(BigInteger albumId, BigInteger start, int pageSize);
+    List<PictureGroup> getPictureGroupsByAlbumId(BigInteger albumId);
     PictureGroup getPictureGroupById(BigInteger id);
     Integer updatePictureGroup(PictureGroup pictureGroup);
     Integer addPictureGroup(PictureGroup pictureGroup);

@@ -4,29 +4,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.qiao.picturedepot.dao.AlbumMapper">
-    <select id="getAlbumById" resultType="Album">
+    <select id="getAlbums" resultType="Album">
         select id, album_name, owner, is_public, secret_key, create_time, update_time from album
-        where id = #{id}
-    </select>
-
-    <select id="getAlbumCountByUserId" resultType="BigInteger">
-        select count(id) from album where owner = #{userId}
-    </select>
-    <select id="getAlbumCountByUsername" resultType="BigInteger">
-        select count(album.id) from album join user on album.owner = user.id
-        where user.username = #{username}
+        <where>
+            owner = (select id from user where username = #{ownerName})
+            <if test="showPrivate == false">
+                and is_public = true
+            </if>
+        </where>
     </select>
 
     <select id="getAlbumsByUserId" resultType="Album">
         select id, album_name, owner, is_public, secret_key, create_time, update_time from album
         where owner = #{userId}
-        limit #{start}, #{count}
     </select>
 
     <select id="getAlbumsByUsername" resultType="Album">
         select id, album_name, owner, is_public, secret_key, create_time, update_time from album
         where owner = (select id from user where username = #{username})
-        limit #{start}, #{count}
     </select>
 
     <select id="getAlbumById" resultType="Album">

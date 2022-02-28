@@ -1,5 +1,6 @@
 package com.qiao.picturedepot.service;
 
+import com.github.pagehelper.PageHelper;
 import com.qiao.picturedepot.config.MyProperties;
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
@@ -8,7 +9,6 @@ import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.pojo.Album;
 import com.qiao.picturedepot.pojo.PictureGroup;
 import com.qiao.picturedepot.pojo.User;
-import com.qiao.picturedepot.util.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,19 +32,13 @@ public class AlbumServiceImpl implements AlbumService{
     private UserMapper userMapper;
 
     @Override
-    public List<Album> getAlbumsOfUser(String username, BigInteger pageNo, int pageSize) {
-        BigInteger start = PageHelper.getStart(pageNo, pageSize);
-        BigInteger count = getAlbumCountOfUser(username);
-        if(start.compareTo(count) > 0 || start.compareTo(BigInteger.valueOf(0)) < 0){
-            //超出范围
-            return null;
-        }
-        return albumMapper.getAlbumsByUsername(username, start, pageSize);
+    public Album getAlbumById(BigInteger id) {
+        return albumMapper.getAlbumById(id);
     }
 
     @Override
-    public BigInteger getAlbumCountOfUser(String username) {
-        return albumMapper.getAlbumCountByUsername(username);
+    public List<Album> getAlbumsOfUser(String ownerName, User visiter) {
+        return albumMapper.getAlbums(ownerName, ownerName == visiter.getUsername());
     }
 
     @Override
@@ -56,11 +50,17 @@ public class AlbumServiceImpl implements AlbumService{
     //TODO: 改为异步
     @Override
     public void deleteAlbum(BigInteger albumId) {
-        //删除全部图组
-        int step = 1024;
-        BigInteger i = BigInteger.valueOf(0);
+        Album album = albumMapper.getAlbumById(albumId);
+        if(album == null) {
+            return;
+        }
+
+        //删除全部图组(分组删除）
+        int pageSize = 1024;
+        int pageNo = 0;
         while(true){
-            List<PictureGroup> pictureGroups = pictureGroupMapper.getPictureGroupsByAlbumId(albumId, i, step);
+            PageHelper.startPage(pageNo, pageSize);
+            List<PictureGroup> pictureGroups = pictureGroupMapper.getPictureGroupsByAlbumId(albumId);
             if(pictureGroups.isEmpty()){
                 break;
             }
@@ -69,14 +69,10 @@ public class AlbumServiceImpl implements AlbumService{
                 pictureService.deletePictureGroup(pictureGroup.getId());
             }
 
-            i = i.add(BigInteger.valueOf(step));
+            pageNo++;
         }
 
         //删除album对应的目录
-        Album album = albumMapper.getAlbumById(albumId);
-        if(album == null) {
-            return;
-        }
         User user = userMapper.getUserById(album.getOwner());
         File dir = new File(myProperties.getPictureDepotPath(), user.getUsername() + File.separator + albumId);
         dir.deleteOnExit();

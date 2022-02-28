@@ -1,19 +1,19 @@
 package com.qiao.picturedepot.config;
 
+import com.qiao.picturedepot.security.AuthenticationFailureHandlerImpl;
+import com.qiao.picturedepot.security.AuthenticationSuccessHandlerImpl;
 import com.qiao.picturedepot.security.CustomizedAuthenticationEntryPoint;
-import com.qiao.picturedepot.security.CustomizedAuthenticationFilter;
+import com.qiao.picturedepot.security.LogoutSuccessHandlerImpl;
 import com.qiao.picturedepot.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -21,16 +21,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserServiceImpl userService;
     @Autowired
-    CustomizedAuthenticationFilter customizedAuthenticationFilter;
+    private CustomizedAuthenticationEntryPoint customizedAuthenticationEntryPoint;
     @Autowired
-    CustomizedAuthenticationEntryPoint customizedAuthenticationEntryPoint;
-
-    //暴露AuthenticationManager
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+    private AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
+    @Autowired
+    private AuthenticationFailureHandlerImpl authenticationFailureHandler;
+    @Autowired
+    private LogoutSuccessHandlerImpl logoutSuccessHandler;
 
     //配置PasswordEncoder
     @Bean
@@ -41,20 +38,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //拦截忽略
-//        web.ignoring().antMatchers("/public/**", "/test/**");
+//        web.ignoring().antMatchers("/api/login", "/test-login");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //放行登录接口
-        http.authorizeRequests()
-                .antMatchers("/api/login").permitAll()
-                .anyRequest().authenticated();
+        http.authorizeRequests().anyRequest().authenticated();
 
-        http.addFilterBefore(customizedAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+            .formLogin()
+            .loginProcessingUrl("/api/login")
+            .successHandler(authenticationSuccessHandler)
+            .failureHandler(authenticationFailureHandler)
+        .and()
+            .rememberMe()
+            .rememberMeParameter("remember-me")
+            .tokenValiditySeconds(60*60*24*7)       //有效期7天
+        .and()
+            .logout()
+            .logoutUrl("/api/logout")
+            .logoutSuccessHandler(logoutSuccessHandler)
+        .and()
+            .sessionManagement()
+            .maximumSessions(1);
 
-        //关闭csrf
-        http.csrf().disable();
+        http.csrf().disable();  //关闭csrf
 
         //认证/授权异常处理
         http.exceptionHandling().authenticationEntryPoint(customizedAuthenticationEntryPoint);

@@ -14,8 +14,7 @@ public interface PictureService {
     void getPicture(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream);
     List<Picture> getPicturesOfGroup(BigInteger pictureGroupId);
 
-    List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId, BigInteger pageNo, int pageSize);
-    BigInteger getPictureGroupCountOfAlbum(BigInteger albumId);
+    List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId);
 
     PictureGroup getPictureGroupById(BigInteger pictureId);
     BigInteger addPictureGroup(PictureGroup pictureGroup);

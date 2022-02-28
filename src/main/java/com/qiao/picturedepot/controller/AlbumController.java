@@ -1,13 +1,11 @@
 package com.qiao.picturedepot.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.Album;
-import com.qiao.picturedepot.pojo.PageResponse;
-import com.qiao.picturedepot.pojo.PictureGroup;
 import com.qiao.picturedepot.pojo.User;
 import com.qiao.picturedepot.service.AlbumService;
-import com.qiao.picturedepot.service.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +17,15 @@ import java.util.List;
 public class AlbumController{
     @Autowired
     AlbumService albumService;
-    @Autowired
-    PictureService pictureService;
 
     @GetMapping("/albums")
-    public PageResponse getAlbums(@RequestParam("pageNo") BigInteger pageNo, @RequestParam("pageSize") Integer pageSize, @AuthenticationPrincipal User user){
-        List<Album> albums = albumService.getAlbumsOfUser(user.getUsername(), pageNo, pageSize);
-        BigInteger albumCount = albumService.getAlbumCountOfUser(user.getUsername());
-        return new PageResponse(pageNo, albumCount, pageSize, albums);
+    public PageInfo getAlbums(@RequestParam("pageNo") Integer pageNo,
+                              @RequestParam("pageSize") Integer pageSize,
+                              @RequestParam(value = "user", required = false) String username,
+                              @AuthenticationPrincipal User user){
+        PageHelper.startPage(pageNo, pageSize);
+        List<Album> albums = albumService.getAlbumsOfUser(username == null ? user.getUsername() : username, user);
+        return new PageInfo<Album>(albums);
     }
 
     @GetMapping("/albums/{albumId}")
@@ -35,7 +34,9 @@ public class AlbumController{
     }
 
     @PostMapping("/albums")
-    public void addAlbum(@RequestBody Album album){
+    public void addAlbum(@RequestBody Album album, @AuthenticationPrincipal User user){
+        System.out.println(album);
+        album.setOwner(user.getId());
         albumService.addAlbum(album);
     }
 

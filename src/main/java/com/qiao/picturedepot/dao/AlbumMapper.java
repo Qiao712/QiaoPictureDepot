@@ -10,10 +10,9 @@ import java.util.List;
 @Mapper
 public interface AlbumMapper {
     Album getAlbumById(BigInteger id);
-    BigInteger getAlbumCountByUserId(BigInteger userId);
-    BigInteger getAlbumCountByUsername(String username);
-    List<Album> getAlbumsByUserId(BigInteger userId, BigInteger start, int count);
-    List<Album> getAlbumsByUsername(String username, BigInteger start, int count);
+    List<Album> getAlbumsByUserId(BigInteger userId);
+    List<Album> getAlbumsByUsername(String username);
+    List<Album> getAlbums(String ownerName, boolean showPrivate);
 
     Integer addAlbum(Album album);
     Integer updateAlbum(Album album);

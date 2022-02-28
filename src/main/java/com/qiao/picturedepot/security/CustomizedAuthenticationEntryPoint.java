@@ -18,5 +18,6 @@ public class CustomizedAuthenticationEntryPoint implements AuthenticationEntryPo
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("Please Authenticate.");
     }
 }

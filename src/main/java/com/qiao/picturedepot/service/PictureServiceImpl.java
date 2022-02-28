@@ -10,7 +10,6 @@ import com.qiao.picturedepot.pojo.Picture;
 import com.qiao.picturedepot.pojo.PictureGroup;
 import com.qiao.picturedepot.pojo.User;
 import com.qiao.picturedepot.util.FileUtil;
-import com.qiao.picturedepot.util.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,19 +34,8 @@ public class PictureServiceImpl implements PictureService{
     MyProperties myProperties;
 
     @Override
-    public List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId, BigInteger pageNo, int pageSize) {
-        BigInteger start = PageHelper.getStart(pageNo, pageSize);
-        BigInteger count = getPictureGroupCountOfAlbum(albumId);
-        if(start.compareTo(count) > 0 || start.compareTo(BigInteger.valueOf(0)) < 0){
-            //超出范围
-            return null;
-        }
-        return pictureGroupMapper.getPictureGroupsByAlbumId(albumId, start, pageSize);
-    }
-
-    @Override
-    public BigInteger getPictureGroupCountOfAlbum(BigInteger albumId) {
-        return pictureGroupMapper.getPictureGroupCountByAlbumId(albumId);
+    public List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId) {
+        return pictureGroupMapper.getPictureGroupsByAlbumId(albumId);
     }
 
     @Override

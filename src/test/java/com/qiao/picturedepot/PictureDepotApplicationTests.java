@@ -47,15 +47,10 @@ class PictureDepotApplicationTests {
 
 	@Test
 	void testAlbumDao() {
-//		BigInteger bigInteger = albumMapper.getAlbumCountByUsername("admin");
-//		System.out.println(bigInteger);
-
-//		List<Album> albums = albumMapper.getAlbumsByUsername("admin", BigInteger.valueOf(0), 10);
+//		List<Album> albums = albumMapper.getAlbums("admin", false, BigInteger.valueOf(0), 1000);
 //		for (Album album : albums) {
 //			System.out.println(album);
 //		}
-
-		albumService.deleteAlbum(BigInteger.valueOf(9));
 	}
 
 	@Test

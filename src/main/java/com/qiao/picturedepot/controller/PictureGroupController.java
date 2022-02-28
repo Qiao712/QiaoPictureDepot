@@ -2,8 +2,9 @@ package com.qiao.picturedepot.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
-import com.qiao.picturedepot.pojo.PageResponse;
 import com.qiao.picturedepot.pojo.PictureGroup;
 import com.qiao.picturedepot.pojo.request.PictureGroupRequest;
 import com.qiao.picturedepot.service.PictureService;
@@ -24,10 +25,10 @@ public class PictureGroupController {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/albums/{albumId}/picture-groups")
-    public PageResponse getPictureGroups(@PathVariable BigInteger albumId, @RequestParam("pageNo") BigInteger pageNo, @RequestParam("pageSize") Integer pageSize){
-        List<PictureGroup> pictureGroups = pictureService.getPictureGroupsOfAlbum(albumId, pageNo, pageSize);
-        BigInteger pictureGroupCount = pictureService.getPictureGroupCountOfAlbum(albumId);
-        return new PageResponse(pageNo, pictureGroupCount, pageSize, pictureGroups);
+    public PageInfo getPictureGroups(@PathVariable BigInteger albumId, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize){
+        PageHelper.startPage(pageNo, pageSize);
+        List<PictureGroup> pictureGroups = pictureService.getPictureGroupsOfAlbum(albumId);
+        return new PageInfo(pictureGroups);
     }
 
     @GetMapping("/picture-groups/{pictureGroupId}")

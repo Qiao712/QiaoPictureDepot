@@ -21,3 +21,10 @@ spring:
 
 mybatis:
   configLocation: classpath:mybatis-config.xml
+
+#pagehelper
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
