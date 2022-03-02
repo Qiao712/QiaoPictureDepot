@@ -1,25 +1,24 @@
 package com.qiao.picturedepot.config;
 
-import com.qiao.picturedepot.security.AuthenticationFailureHandlerImpl;
-import com.qiao.picturedepot.security.AuthenticationSuccessHandlerImpl;
-import com.qiao.picturedepot.security.CustomizedAuthenticationEntryPoint;
-import com.qiao.picturedepot.security.LogoutSuccessHandlerImpl;
-import com.qiao.picturedepot.service.UserServiceImpl;
+import com.qiao.picturedepot.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 
 @EnableWebSecurity
+@EnableMethodSecurity           //开启函数安全
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private UserServiceImpl userService;
+    private UserDetailsService userDetailsService;
     @Autowired
     private CustomizedAuthenticationEntryPoint customizedAuthenticationEntryPoint;
     @Autowired
@@ -28,6 +27,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationFailureHandlerImpl authenticationFailureHandler;
     @Autowired
     private LogoutSuccessHandlerImpl logoutSuccessHandler;
+    @Autowired
+    private PictureAccessAuthorizationManager pictureAccessAuthorizationManager;
+    @Autowired
+    private AlbumAccessAuthorizationManager albumAccessAuthorizationManager;
 
     //配置PasswordEncoder
     @Bean
@@ -36,14 +39,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        //拦截忽略
-//        web.ignoring().antMatchers("/api/login", "/test-login");
-    }
-
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().authenticated();
+        http.authorizeHttpRequests(authorize -> authorize
+                .mvcMatchers("/api/picture-groups/{pictureGroupId}/**").access(pictureAccessAuthorizationManager)
+                .mvcMatchers("/api/albums/{albumId}/**").access(albumAccessAuthorizationManager)
+                .mvcMatchers("/api/register").permitAll()
+                .anyRequest().authenticated()
+        );
 
         http
             .formLogin()
@@ -52,8 +54,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .failureHandler(authenticationFailureHandler)
         .and()
             .rememberMe()
+            .userDetailsService(userDetailsService)
+            .tokenRepository(new InMemoryTokenRepositoryImpl())     //token储存策略
             .rememberMeParameter("remember-me")
-            .tokenValiditySeconds(60*60*24*7)       //有效期7天
+            .tokenValiditySeconds(60*60*24*7)                       //token有效期7天
         .and()
             .logout()
             .logoutUrl("/api/logout")

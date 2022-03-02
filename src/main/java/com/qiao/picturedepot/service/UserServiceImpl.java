@@ -2,6 +2,7 @@ package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.pojo.User;
+import com.qiao.picturedepot.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,14 +31,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     //----------------------------------------------
     @Override
-    public boolean registerUser(String username, String password){
+    public void registerUser(String username, String password){
         final String DEFAULT_ROLE = "normal";
-        boolean change = false;
-        try{
-            change = userMapper.addUser(username, password, DEFAULT_ROLE) == 1;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return change;
+        userMapper.addUser(username, password, DEFAULT_ROLE);
     }
 }

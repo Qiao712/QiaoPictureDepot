@@ -11,5 +11,5 @@ import java.math.BigInteger;
 public interface UserMapper {
     User getUserByUsername(String username);
     User getUserById(BigInteger id);
-    int addUser(@Param("username") String username, @Param("password") String password,@Param("rolename") String rolename);
+    int addUser(String username, String password, String rolename);
 }

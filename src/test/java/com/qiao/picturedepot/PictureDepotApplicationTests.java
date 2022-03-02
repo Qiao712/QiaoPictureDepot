@@ -13,6 +13,7 @@ import com.qiao.picturedepot.service.PictureService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import redis.clients.jedis.Jedis;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -51,6 +52,7 @@ class PictureDepotApplicationTests {
 //		for (Album album : albums) {
 //			System.out.println(album);
 //		}
+
 	}
 
 	@Test

@@ -35,7 +35,6 @@ public class AlbumController{
 
     @PostMapping("/albums")
     public void addAlbum(@RequestBody Album album, @AuthenticationPrincipal User user){
-        System.out.println(album);
         album.setOwner(user.getId());
         albumService.addAlbum(album);
     }

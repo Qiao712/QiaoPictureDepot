@@ -59,6 +59,14 @@
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>1.4.1</version>
 		</dependency>
+
+		<!--Redis连接-->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -7,6 +7,7 @@ import com.qiao.picturedepot.pojo.PictureGroup;
 import com.qiao.picturedepot.pojo.request.PictureGroupRequest;
 import com.qiao.picturedepot.service.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
