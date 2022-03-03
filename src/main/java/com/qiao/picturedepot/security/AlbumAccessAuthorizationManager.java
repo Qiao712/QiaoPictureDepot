@@ -32,6 +32,15 @@ public class AlbumAccessAuthorizationManager implements AuthorizationManager<Req
         Album album = null;
         if(albumId != null){
             album = albumService.getAlbumById(albumId);
+
+            if(album == null) {
+                return new AuthorizationDecision(false);
+            }
+        }
+
+        //若为Album公开直接放行
+        if(album.isPublic()){
+            return new AuthorizationDecision(true);
         }
 
         BigInteger userId = null;
@@ -40,10 +49,7 @@ public class AlbumAccessAuthorizationManager implements AuthorizationManager<Req
             userId = ((User) user).getId();
         }
 
-        BigInteger ownerId = null;
-        if(album != null){
-            ownerId = album.getOwner();
-        }
+        BigInteger ownerId = album.getOwner();
 
         if(ownerId != null && userId != null && userId.equals(ownerId)){
             return new AuthorizationDecision(true);

@@ -42,7 +42,17 @@ public class PictureAccessAuthorizationManager implements AuthorizationManager<R
             BigInteger albumId = pictureGroup.getAlbum();
             if(albumId != null){
                 album = albumService.getAlbumById(albumId);
+
+                //Album不存在，禁止访问未知属主的图片
+                if(album == null) {
+                    return new AuthorizationDecision(false);
+                }
             }
+        }
+
+        //Album为public，允许访问
+        if(album.isPublic()){
+            return new AuthorizationDecision(true);
         }
 
         //判断所属

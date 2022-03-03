@@ -1,5 +1,7 @@
 package com.qiao.picturedepot;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.dao.PictureMapper;
@@ -83,5 +85,13 @@ class PictureDepotApplicationTests {
 	void testPictureService() throws IOException {
 		InputStream inputStream = this.getClass().getResourceAsStream("/static/public/img/picture_lost.png");
 		inputStream.read();
+	}
+
+	//坑 isPublic --> public
+	@Test
+	void testAlbumJson() throws JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		Album album = objectMapper.readValue("{\"id\":56,\"albumName\":\"4545643fssss\",\"public\":true}", Album.class);
+		System.out.println(album);
 	}
 }
