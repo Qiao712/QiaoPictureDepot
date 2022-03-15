@@ -1,3 +1,12 @@
+* TODO:
+  * sql语句 中对 update_time 的更新
+  * 好友系统
+  * service 事务
+  * controller 返回值修改
+  * 规范异常
+  * 更改认证方式
+
+
 * 安全认证使用 Spring Security
   * 密码加密方式 BCrypt
   * 使用form表单进行认证，自定义成功/失败时处理器，替代默认的重定向
@@ -18,3 +27,17 @@
     * 问题：无原子性，上传步骤复杂
   * 方案2（使用）：通过一个请求form表单，完成图片的上传，和删除信息，位置信息
     * 位置信息: 以图片id的数组表示顺序。未上传的图片的id留空(null)，新上传的图片以此所占的次序。
+
+* 图片查看以及授权
+  * picture以及pictureGroup表中没用储存图片属主，只有在album表中储存
+  * 检测一张图片的所有者，涉及三张表，查询速率较低
+  * **用户查看一个有多张picture的pictureGroup时，对同一pictureGroup进行多次访问 --> 使用redis缓存用户对图组的访问权限**
+  * 同一时间对一个用户只缓存1个pictureGroup的访问权 --> 成功时，认证时间压缩1/3
+  * 过程:
+  * 用户通过pictureGroupId和pictureId请求一张图片(/api/picture-groups/{pictureGroupId}/pictures/{pictureId})
+    1. 检查用户是否允许访问该pictureGroup
+       * 先查看redis缓存中是否存在 username - pictureGroupId 键值对，若存在则允许访问
+       * 若不存在，则查询通过pictureGroupId查询其所属的album，再得到所有者，进行判断是否允许访问。若允许访问设置一个60秒过期的username - pictureGroupId 键值对,加速下次查询
+    2. 若拥有pictureGroup的访问权，则继续进行picture的查询
+       * 使用pictureGroupId和pictureId查询picture表，保证该picture属于该pictureGroup
+       * 得到picture的储存路径，进行实际的访问

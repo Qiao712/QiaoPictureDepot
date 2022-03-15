@@ -1,9 +1,7 @@
 package com.qiao.picturedepot.dao;
 
-import com.qiao.picturedepot.pojo.User;
+import com.qiao.picturedepot.pojo.domain.User;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.math.BigInteger;
 

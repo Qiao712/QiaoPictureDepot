@@ -1,8 +1,7 @@
 package com.qiao.picturedepot.service;
 
-import com.qiao.picturedepot.pojo.Album;
-import com.qiao.picturedepot.pojo.PictureGroup;
-import com.qiao.picturedepot.pojo.User;
+import com.qiao.picturedepot.pojo.domain.Album;
+import com.qiao.picturedepot.pojo.domain.User;
 
 import java.math.BigInteger;
 import java.util.List;

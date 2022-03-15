@@ -4,55 +4,43 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.qiao.picturedepot.dao.PictureGroupMapper">
-    <select id="getFirstPictureOfGroup" parameterType="BigInteger" resultType="BigInteger">
-        select id from picture where picture_group = #{pictureGroupId} order by sequence limit 1
-    </select>
-    <select id="getPictureCountOfGroup" parameterType="BigInteger" resultType="Integer">
-        select count(id) from picture where picture_group = #{pictureGroupId}
-    </select>
-    <resultMap id="pictureGroupMap" type="PictureGroup">
-        <result property="id" column="id"/>
-        <association property="firstPicture" javaType="BigInteger" column="id" select="getFirstPictureOfGroup"/>
-        <association property="pictureCount" javaType="Integer" column="id" select="getPictureCountOfGroup"/>
-    </resultMap>
-
     <select id="getPictureGroupCountByAlbumId" resultType="BigInteger">
-        select count(id) from picture_group where album = #{albumId}
+        SELECT COUNT(id) FROM picture_group WHERE album_id = #{albumId}
     </select>
 
-    <select id="getPictureGroupsByAlbumId" resultMap="pictureGroupMap">
-        select id, album, title, create_time, update_time
-        from picture_group
-        where album = #{albumId}
+    <select id="getPictureGroupsByAlbumId" resultType="PictureGroup">
+        SELECT id, album_id, title, create_time, update_time
+        FROM picture_group
+        WHERE album_id = #{albumId}
     </select>
 
-    <select id="getPictureGroupById" resultMap="pictureGroupMap">
-        select id, album, title, create_time, update_time
-        from picture_group
-        where id = #{id}
+    <select id="getPictureGroupById" resultType="PictureGroup">
+        SELECT id, album_id, title, create_time, update_time
+        FROM picture_group
+        WHERE id = #{id}
     </select>
 
     <update id="updatePictureGroup" parameterType="PictureGroup">
-        update picture_group
+        UPDATE picture_group
         <set>
-            <if test="album != null">
-                album = #{album},
+            <if test="albumId != null">
+                album_id = #{albumId},
             </if>
             <if test="title != null">
                 title = #{title},
             </if>
         </set>
-        where id = #{id}
+        WHERE id = #{id}
     </update>
 
     <insert id="addPictureGroup" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-        insert into picture_group(album, title)
-        values(#{album}, #{title})
+        INSERT INTO picture_group(album_id, title)
+        VALUES(#{albumId}, #{title})
     </insert>
 
     <select id="getMaxPictureSequenceInGroup" resultType="Integer">
-        select max(sequence) from picture
-        where picture_group = #{pictureGroupId}
+        SELECT MAX(sequence) FROM picture
+        WHERE picture_group_id = #{pictureGroupId}
     </select>
 
     <delete id="deletePictureGroupById">

@@ -5,43 +5,47 @@
 
 <mapper namespace="com.qiao.picturedepot.dao.AlbumMapper">
     <select id="getAlbums" resultType="Album">
-        select id, album_name, owner, is_public, secret_key, create_time, update_time from album
+        SELECT id, name, owner_id, is_public, secret_key, create_time, update_time
+        FROM album
         <where>
-            owner = (select id from user where username = #{ownerName})
+            owner_id = (SELECT id FROM user WHERE username = #{ownerUsername})
             <if test="showPrivate == false">
-                and is_public = true
+                AND is_public = true
             </if>
         </where>
     </select>
 
     <select id="getAlbumsByUserId" resultType="Album">
-        select id, album_name, owner, is_public, secret_key, create_time, update_time from album
-        where owner = #{userId}
+        SELECT id, name, owner_id, is_public, secret_key, create_time, update_time
+        FROM album
+        WHERE owner_id = #{userId}
     </select>
 
     <select id="getAlbumsByUsername" resultType="Album">
-        select id, album_name, owner, is_public, secret_key, create_time, update_time from album
-        where owner = (select id from user where username = #{username})
+        SELECT id, name, owner_id, is_public, secret_key, create_time, update_time
+        FROM album
+        WHERE owner_id = (SELECT id FROM user WHERE username = #{username})
     </select>
 
     <select id="getAlbumById" resultType="Album">
-        select id, album_name, owner, is_public, secret_key, create_time, update_time from album
-        where id = #{id}
+        SELECT id, name, owner_id, is_public, secret_key, create_time, update_time
+        FROM album
+        WHERE id = #{id}
     </select>
 
     <insert id="addAlbum" parameterType="Album" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into album(album_name, owner, is_public, secret_key)
-        values(#{albumName}, #{owner}, #{isPublic}, #{secretKey})
+        INSERT INTO album(name, owner, is_public, secret_key)
+        VALUES(#{name}, #{ownerId}, #{isPublic}, #{secretKey})
     </insert>
 
     <update id="updateAlbum" parameterType="Album">
-        update album
+        UPDATE album
         <set>
-            <if test="albumName != null">
-                album_name = #{albumName},
+            <if test="name != null">
+                name = #{name},
             </if>
-            <if test="owner != null">
-                owner = #{owner},
+            <if test="ownerId != null">
+                owner_id = #{ownerId},
             </if>
             <if test="isPublic != null">
                 is_public = #{isPublic},
@@ -50,11 +54,11 @@
                 secret_key = #{secretKey},
             </if>
         </set>
-        where id = #{id}
+        WHERE id = #{id}
     </update>
 
     <delete id="deleteAlbumById">
-        delete from album
-        where id = #{albumId}
+        DELETE FROM album
+        WHERE id = #{id}
     </delete>
 </mapper>

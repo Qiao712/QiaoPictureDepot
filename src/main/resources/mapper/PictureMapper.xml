@@ -5,37 +5,49 @@
 
 <mapper namespace="com.qiao.picturedepot.dao.PictureMapper">
     <select id="getPicturesByGroup" resultType="Picture">
-        select id, picture_group as pictureGroupId, picture_format, filepath, sequence, create_time, update_time
-        from picture where picture_group = #{pictureGroupId}
-        order by sequence asc
+        SELECT id, picture_group_id, picture_format, filepath, sequence, create_time, update_time
+        FROM picture
+        WHERE picture_group_id = #{pictureGroupId}
+        ORDER BY sequence ASC
+    </select>
+
+    <select id="getFirstPictureOfGroup" parameterType="BigInteger" resultType="BigInteger">
+        SELECT id FROM picture WHERE picture_group_id = #{pictureGroupId} ORDER BY sequence LIMIT 1
+    </select>
+
+    <select id="getPictureCountOfGroup" parameterType="BigInteger" resultType="Integer">
+        SELECT COUNT(id) FROM picture WHERE picture_group_id = #{pictureGroupId}
     </select>
 
     <delete id="deletePicturesByGroup">
-        delete from picture where picture_group = #{pictureGroupId}
+        DELETE FROM picture WHERE picture_group_id = #{pictureGroupId}
     </delete>
 
     <select id="getPictureById" resultType="Picture">
-        select id, picture_group as pictureGroupId, picture_format, filepath, sequence, create_time, update_time
-        from picture where id = #{id}
+        SELECT id, picture_group_id, picture_format, filepath, sequence, create_time, update_time
+        FROM picture
+        WHERE id = #{id}
     </select>
 
     <select id="getPicturePath" resultType="String">
-        select filepath from picture where id = #{pictureId} and picture_group = #{pictureGroupId}
+        SELECT filepath
+        FROM picture
+        WHERE id = #{pictureId} AND picture_group_id = #{pictureGroupId}
     </select>
 
     <insert id="addPicture" parameterType="Picture" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        insert into picture(picture_group, picture_format, filepath, sequence)
-        values(#{pictureGroupId}, #{pictureFormat}, #{filepath}, #{sequence})
+        INSERT INTO picture(picture_group_id, picture_format, filepath, sequence)
+        VALUES(#{pictureGroupId}, #{pictureFormat}, #{filepath}, #{sequence})
     </insert>
 
     <update id="updateSequence">
-        update picture
-        set sequence = #{sequence}
-        where id = #{pictureId} and picture_group = #{pictureGroupId}
+        UPDATE picture
+        SET sequence = #{sequence}
+        WHERE id = #{pictureId} AND picture_group_id = #{pictureGroupId}
     </update>
 
     <delete id="deletePicture">
-        delete from picture
-        where picture_group = #{pictureGroupId} and id = #{pictureId}
+        DELETE FROM picture
+        WHERE picture_group_id = #{pictureGroupId} AND id = #{pictureId}
     </delete>
 </mapper>

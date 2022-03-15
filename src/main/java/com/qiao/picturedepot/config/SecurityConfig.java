@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.rememberme.InMemoryTokenR
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsService userServiceImpl;
     @Autowired
     private CustomizedAuthenticationEntryPoint customizedAuthenticationEntryPoint;
     @Autowired
@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .failureHandler(authenticationFailureHandler)
         .and()
             .rememberMe()
-            .userDetailsService(userDetailsService)
+            .userDetailsService(userServiceImpl)
             .tokenRepository(new InMemoryTokenRepositoryImpl())     //token储存策略
             .rememberMeParameter("remember-me")
             .tokenValiditySeconds(60*60*24*7)                       //token有效期7天

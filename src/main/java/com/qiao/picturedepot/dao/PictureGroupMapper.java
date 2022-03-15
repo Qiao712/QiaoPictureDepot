@@ -1,6 +1,6 @@
 package com.qiao.picturedepot.dao;
 
-import com.qiao.picturedepot.pojo.PictureGroup;
+import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.math.BigInteger;

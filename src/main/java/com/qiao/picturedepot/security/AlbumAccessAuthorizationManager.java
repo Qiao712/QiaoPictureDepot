@@ -1,7 +1,7 @@
 package com.qiao.picturedepot.security;
 
-import com.qiao.picturedepot.pojo.Album;
-import com.qiao.picturedepot.pojo.User;
+import com.qiao.picturedepot.pojo.domain.Album;
+import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -49,7 +49,7 @@ public class AlbumAccessAuthorizationManager implements AuthorizationManager<Req
             userId = ((User) user).getId();
         }
 
-        BigInteger ownerId = album.getOwner();
+        BigInteger ownerId = album.getOwnerId();
 
         if(ownerId != null && userId != null && userId.equals(ownerId)){
             return new AuthorizationDecision(true);

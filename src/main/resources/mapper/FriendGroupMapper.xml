@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF8" ?>      <!--将encoding="UTF-8"中间的‘-’去掉->"UTF8"就中文注释就不会导致异常了-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qiao.picturedepot.dao.FriendGroupMapper">
+    <select id="getFriendGroupById" resultType="FriendGroup">
+        SELECT id, name, owner_id, create_time, update_time
+        FROM friend_group
+        WHERE id = #{id}
+    </select>
+
+    <select id="getFriendGroupByName" resultType="FriendGroup">
+        SELECT id, name, owner_id, create_time, update_time
+        FROM friend_group
+        WHERE owner_id = #{userId} AND name = #{friendGroupName}
+    </select>
+
+
+    <select id="getFriendGroupsByUserId" resultType="FriendGroup">
+        SELECT id, name, owner_id, create_time, update_time
+        FROM friend_group
+        WHERE owner_id = #{userId}
+    </select>
+
+    <insert id="addFriendGroup" parameterType="FriendGroup" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO friend_group(name, owner_id)
+        VALUES(#{name}, #{ownerId})
+    </insert>
+
+    <delete id="deleteFriendGroupById">
+        DELETE FROM friend_group
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateFriendGroup">
+        UPDATE friend_group
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="ownerId != null">
+                owner_id = #{ownerId}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

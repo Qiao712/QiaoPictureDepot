@@ -5,10 +5,11 @@ import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.dao.PictureMapper;
 import com.qiao.picturedepot.dao.UserMapper;
-import com.qiao.picturedepot.pojo.Album;
-import com.qiao.picturedepot.pojo.Picture;
-import com.qiao.picturedepot.pojo.PictureGroup;
-import com.qiao.picturedepot.pojo.User;
+import com.qiao.picturedepot.pojo.domain.Album;
+import com.qiao.picturedepot.pojo.domain.Picture;
+import com.qiao.picturedepot.pojo.domain.PictureGroup;
+import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,8 +35,18 @@ public class PictureServiceImpl implements PictureService{
     MyProperties myProperties;
 
     @Override
-    public List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId) {
-        return pictureGroupMapper.getPictureGroupsByAlbumId(albumId);
+    public List<PictureGroupPreviewDto> getPictureGroupsOfAlbum(BigInteger albumId) {
+        List<PictureGroup> pictureGroups = pictureGroupMapper.getPictureGroupsByAlbumId(albumId);
+        List<PictureGroupPreviewDto> pictureGroupPreviewDtos = new ArrayList<>(pictureGroups.size());
+
+        for (PictureGroup pictureGroup : pictureGroups) {
+            PictureGroupPreviewDto dto = new PictureGroupPreviewDto(pictureGroup);
+            dto.setFirstPictureId( pictureMapper.getFirstPictureOfGroup(pictureGroup.getId()) );
+            dto.setPictureCount( pictureMapper.getPictureCountOfGroup(pictureGroup.getId()) );
+            pictureGroupPreviewDtos.add(dto);
+        }
+
+        return pictureGroupPreviewDtos;
     }
 
     @Override
@@ -85,9 +96,9 @@ public class PictureServiceImpl implements PictureService{
         }
 
         PictureGroup pictureGroup = pictureGroupMapper.getPictureGroupById(pictureGroupId);
-        BigInteger albumId = pictureGroup.getAlbum();
+        BigInteger albumId = pictureGroup.getAlbumId();
         Album album = albumMapper.getAlbumById(albumId);
-        User user = userMapper.getUserById(album.getOwner());
+        User user = userMapper.getUserById(album.getOwnerId());
         String username = user.getUsername();
         long maxPictureSize = myProperties.getMaxPictureSize();
 
@@ -175,6 +186,7 @@ public class PictureServiceImpl implements PictureService{
 
     @Override
     public void deletePictures(BigInteger pictureGroupId, List<BigInteger> pictureIds) {
+        //TODO: 对残余目录的删除
         if(pictureIds != null) {
             for (BigInteger pictureId : pictureIds) {
                 String relativePath = pictureMapper.getPicturePath(pictureGroupId, pictureGroupId);

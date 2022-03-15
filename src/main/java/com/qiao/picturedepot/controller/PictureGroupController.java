@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
-import com.qiao.picturedepot.pojo.PictureGroup;
-import com.qiao.picturedepot.pojo.request.PictureGroupRequest;
+import com.qiao.picturedepot.pojo.domain.PictureGroup;
+import com.qiao.picturedepot.pojo.bo.PictureGroupUpload;
+import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.service.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,8 @@ public class PictureGroupController {
     @GetMapping("/albums/{albumId}/picture-groups")
     public PageInfo getPictureGroups(@PathVariable BigInteger albumId, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize){
         PageHelper.startPage(pageNo, pageSize);
-        List<PictureGroup> pictureGroups = pictureService.getPictureGroupsOfAlbum(albumId);
-        return new PageInfo(pictureGroups);
+        List<PictureGroupPreviewDto> pictureGroupPreviewDtos = pictureService.getPictureGroupsOfAlbum(albumId);
+        return new PageInfo(pictureGroupPreviewDtos);
     }
 
     @GetMapping("/picture-groups/{pictureGroupId}")
@@ -43,10 +44,10 @@ public class PictureGroupController {
 
     @PostMapping("/picture-groups")
     public void addPictureGroup(@RequestPart("picture-group-change") String requestJson, @RequestPart("pictures") MultipartFile[] multipartFiles) throws JsonProcessingException {
-        PictureGroupRequest pictureGroupRequest = objectMapper.readValue(requestJson, PictureGroupRequest.class);
+        PictureGroupUpload pictureGroupRequest = objectMapper.readValue(requestJson, PictureGroupUpload.class);
         PictureGroup pictureGroup = new PictureGroup();
         pictureGroup.setTitle(pictureGroupRequest.getTitle());
-        pictureGroup.setAlbum(pictureGroupRequest.getAlbumId());
+        pictureGroup.setAlbumId(pictureGroupRequest.getAlbumId());
         BigInteger pictureGroupId = pictureService.addPictureGroup(pictureGroup);
 
         pictureService.addPicturesToGroup(pictureGroupId, multipartFiles);
@@ -54,13 +55,13 @@ public class PictureGroupController {
 
     @PutMapping("/picture-groups")
     public void updatePictureGroup(@RequestPart("picture-group-change") String requestJson, @RequestPart(name = "pictures", required = false) MultipartFile[] multipartFiles) throws JsonProcessingException {
-        PictureGroupRequest pictureGroupRequest = objectMapper.readValue(requestJson, PictureGroupRequest.class);
+        PictureGroupUpload pictureGroupRequest = objectMapper.readValue(requestJson, PictureGroupUpload.class);
         BigInteger pictureGroupId = pictureGroupRequest.getPictureGroupId();
 
         //更新picture group信息
         PictureGroup pictureGroup = new PictureGroup();
         pictureGroup.setId(pictureGroupId);
-        pictureGroup.setAlbum(pictureGroupRequest.getAlbumId());
+        pictureGroup.setAlbumId(pictureGroupRequest.getAlbumId());
         pictureGroup.setTitle(pictureGroupRequest.getTitle());
         pictureService.updatePictureGroup(pictureGroup);
 

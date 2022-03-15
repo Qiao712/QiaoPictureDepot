@@ -1,15 +1,10 @@
 package com.qiao.picturedepot.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qiao.picturedepot.pojo.Picture;
-import com.qiao.picturedepot.pojo.PictureGroup;
-import com.qiao.picturedepot.pojo.request.PictureGroupRequest;
+import com.qiao.picturedepot.pojo.domain.Picture;
 import com.qiao.picturedepot.service.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

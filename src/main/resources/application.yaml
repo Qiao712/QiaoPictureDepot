@@ -8,9 +8,10 @@ spring:
     password: lty0712
     url: jdbc:mysql://localhost:3306/picture_depot?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
-  thymeleaf:
-    cache: false
-
+#  配置redis
+  redis:
+    host: localhost
+#    password: lty0712
 # 文件上传大小限制
   servlet:
     multipart:

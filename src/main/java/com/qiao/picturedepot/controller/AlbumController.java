@@ -2,8 +2,8 @@ package com.qiao.picturedepot.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.qiao.picturedepot.pojo.Album;
-import com.qiao.picturedepot.pojo.User;
+import com.qiao.picturedepot.pojo.domain.Album;
+import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,7 +35,7 @@ public class AlbumController{
 
     @PostMapping("/albums")
     public void addAlbum(@RequestBody Album album, @AuthenticationPrincipal User user){
-        album.setOwner(user.getId());
+        album.setOwnerId(user.getId());
         albumService.addAlbum(album);
     }
 

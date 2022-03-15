@@ -1,6 +1,6 @@
 package com.qiao.picturedepot.dao;
 
-import com.qiao.picturedepot.pojo.Role;
+import com.qiao.picturedepot.pojo.domain.Role;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

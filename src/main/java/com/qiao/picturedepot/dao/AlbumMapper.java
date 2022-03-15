@@ -1,8 +1,7 @@
 package com.qiao.picturedepot.dao;
 
-import com.qiao.picturedepot.pojo.Album;
+import com.qiao.picturedepot.pojo.domain.Album;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -12,7 +11,7 @@ public interface AlbumMapper {
     Album getAlbumById(BigInteger id);
     List<Album> getAlbumsByUserId(BigInteger userId);
     List<Album> getAlbumsByUsername(String username);
-    List<Album> getAlbums(String ownerName, boolean showPrivate);
+    List<Album> getAlbums(String ownerUsername, boolean showPrivate);
 
     Integer addAlbum(Album album);
     Integer updateAlbum(Album album);

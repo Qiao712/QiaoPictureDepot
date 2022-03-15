@@ -20,5 +20,7 @@
         <mapper resource="mapper/AlbumMapper.xml"/>
         <mapper resource="mapper/PictureMapper.xml"/>
         <mapper resource="mapper/PictureGroupMapper.xml"/>
+        <mapper resource="mapper/FriendMapper.xml"/>
+        <mapper resource="mapper/FriendGroupMapper.xml"/>
     </mappers>
 </configuration>

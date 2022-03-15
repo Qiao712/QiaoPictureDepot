@@ -1,4 +1,4 @@
-package com.qiao.picturedepot.pojo;
+package com.qiao.picturedepot.pojo.domain;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,14 +10,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-public class User implements UserDetails {
-    private BigInteger id;
+public class User extends BaseEntity implements UserDetails {
     private String username;
     private String password;
     private Role role;
-    private Date createTime;
-    private Date updateTime;
-
 
     public User() {
     }
@@ -87,7 +83,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //返回角色信息
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(role.getRolename()));
+        grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
         return grantedAuthorities;
     }
 

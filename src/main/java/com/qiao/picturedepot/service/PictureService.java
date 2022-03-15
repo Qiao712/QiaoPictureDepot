@@ -1,7 +1,8 @@
 package com.qiao.picturedepot.service;
 
-import com.qiao.picturedepot.pojo.Picture;
-import com.qiao.picturedepot.pojo.PictureGroup;
+import com.qiao.picturedepot.pojo.domain.Picture;
+import com.qiao.picturedepot.pojo.domain.PictureGroup;
+import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +15,7 @@ public interface PictureService {
     void getPicture(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream);
     List<Picture> getPicturesOfGroup(BigInteger pictureGroupId);
 
-    List<PictureGroup> getPictureGroupsOfAlbum(BigInteger albumId);
+    List<PictureGroupPreviewDto> getPictureGroupsOfAlbum(BigInteger albumId);
 
     PictureGroup getPictureGroupById(BigInteger pictureId);
     BigInteger addPictureGroup(PictureGroup pictureGroup);

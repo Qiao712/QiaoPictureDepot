@@ -1,16 +1,13 @@
 package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.dao.UserMapper;
-import com.qiao.picturedepot.pojo.User;
-import com.qiao.picturedepot.util.RedisUtil;
+import com.qiao.picturedepot.pojo.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.math.BigInteger;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {

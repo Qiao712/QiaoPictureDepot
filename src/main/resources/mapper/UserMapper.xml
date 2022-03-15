@@ -5,27 +5,27 @@
 
 <mapper namespace="com.qiao.picturedepot.dao.UserMapper">
     <resultMap id="userRole" type="User">
-        <association property="role" javaType="Role" column="role" select="getRole"/>
+        <association property="role" javaType="Role" column="role_id" select="getRole"/>
     </resultMap>
     <select id="getRole" resultType="Role">
-        select id, rolename, privilege_level, create_time, update_time
-        from role where id = #{id}
+        SELECT id, name, create_time, update_time
+        FROM role WHERE id = #{id}
     </select>
 
     <select id="getUserByUsername" resultMap="userRole">
-        select id, username, password, role, create_time, update_time
-        from user where username = #{username}
+        SELECT id, username, password, role_id, create_time, update_time
+        FROM user WHERE username = #{username}
     </select>
 
     <select id="getUserById" resultMap="userRole">
-        select id, username, password, role, create_time, update_time
-        from user where id = #{id}
+        SELECT id, username, password, role_id, create_time, update_time
+        FROM user WHERE id = #{id}
     </select>
 
     <insert id="addUser">
-        insert into user(username, password, role)
-        values(#{username}, #{password},
-            (select id from role where role.rolename = #{rolename})
+        INSERT INTO user(username, password, role_id)
+        VALUES(#{username}, #{password},
+            (select id FROM role WHERE role.name = #{name})
         )
     </insert>
 </mapper>

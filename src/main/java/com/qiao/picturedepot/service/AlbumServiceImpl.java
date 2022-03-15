@@ -6,9 +6,9 @@ import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.dao.PictureMapper;
 import com.qiao.picturedepot.dao.UserMapper;
-import com.qiao.picturedepot.pojo.Album;
-import com.qiao.picturedepot.pojo.PictureGroup;
-import com.qiao.picturedepot.pojo.User;
+import com.qiao.picturedepot.pojo.domain.Album;
+import com.qiao.picturedepot.pojo.domain.PictureGroup;
+import com.qiao.picturedepot.pojo.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,8 +37,8 @@ public class AlbumServiceImpl implements AlbumService{
     }
 
     @Override
-    public List<Album> getAlbumsOfUser(String ownerName, User visiter) {
-        return albumMapper.getAlbums(ownerName, ownerName == visiter.getUsername());
+    public List<Album> getAlbumsOfUser(String ownerUsername, User visiter) {
+        return albumMapper.getAlbums(ownerUsername, ownerUsername == visiter.getUsername());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class AlbumServiceImpl implements AlbumService{
         }
 
         //删除album对应的目录
-        User user = userMapper.getUserById(album.getOwner());
+        User user = userMapper.getUserById(album.getOwnerId());
         File dir = new File(myProperties.getPictureDepotPath(), user.getUsername() + File.separator + albumId);
         dir.deleteOnExit();
 
