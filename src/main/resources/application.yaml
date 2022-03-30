@@ -10,8 +10,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 #  配置redis
   redis:
-    host: localhost
-#    password: lty0712
+    host: 8.141.151.176
+    password: lty0712
 # 文件上传大小限制
   servlet:
     multipart:

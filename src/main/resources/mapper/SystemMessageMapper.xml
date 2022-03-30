@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF8" ?>      <!--将encoding="UTF-8"中间的‘-’去掉->"UTF8"就中文注释就不会导致异常了-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qiao.picturedepot.dao.SystemMessageMapper">
+    <select id="getUnacknowledgedSystemMessageCountByReceiverId" resultType="Integer">
+        SELECT count(id)
+        FROM system_message
+        WHERE receiver_id = #{receiverUserId}
+    </select>
+
+    <select id="getSystemMessagesByReceiverId" resultType="SystemMessage">
+        SELECT id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
+        FROM system_message
+        WHERE receiver_id = #{receiverUserId}
+    </select>
+
+    <select id="getSystemMessageById" resultType="SystemMessage">
+        SELECT id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
+        FROM system_message
+        WHERE id = #{id}
+    </select>
+
+    <insert id="addMessage">
+        INSERT INTO system_message(id, receiver_id, message_type, message_body, is_acknowledged, expiration_time)
+        VALUES(#{id}, #{receiverId}, #{messageType}, #{messageBody}, #{acknowledged}, #{expirationTime})
+    </insert>
+
+    <delete id="deleteMessageById">
+        DELETE FROM system_message
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateIsReceivedById">
+        UPDATE system_message
+        SET is_acknowledged = #{acknowledged}
+        <where>
+            <foreach collection="systemMessageIds" item="item" index="index"
+                     open="id in (" separator="," close=")" nullable="true">
+                #{item}
+            </foreach>
+
+            AND receiver_id = #{receiverUserId}
+        </where>
+    </update>
+</mapper>

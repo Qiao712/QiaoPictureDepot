@@ -22,5 +22,6 @@
         <mapper resource="mapper/PictureGroupMapper.xml"/>
         <mapper resource="mapper/FriendMapper.xml"/>
         <mapper resource="mapper/FriendGroupMapper.xml"/>
+        <mapper resource="mapper/SystemMessageMapper.xml"/>
     </mappers>
 </configuration>

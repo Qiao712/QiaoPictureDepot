@@ -13,7 +13,7 @@ public interface AlbumMapper {
     List<Album> getAlbumsByUsername(String username);
     List<Album> getAlbums(String ownerUsername, boolean showPrivate);
 
-    Integer addAlbum(Album album);
-    Integer updateAlbum(Album album);
-    Integer deleteAlbumById(BigInteger id);
+    int addAlbum(Album album);
+    int updateAlbum(Album album);
+    int deleteAlbumById(BigInteger id);
 }

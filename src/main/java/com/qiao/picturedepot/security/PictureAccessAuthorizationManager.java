@@ -31,8 +31,6 @@ public class PictureAccessAuthorizationManager implements AuthorizationManager<R
     //图片所属的picture group的所有者是否是当前用户
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext requestAuthorizationContext) {
-        long begin = System.currentTimeMillis();
-
         Map<String, String> variables = requestAuthorizationContext.getVariables();
         String pictureGroupIdStr = variables.get("pictureGroupId");
 
@@ -93,7 +91,7 @@ public class PictureAccessAuthorizationManager implements AuthorizationManager<R
             cachedPictureGroupId = redisTemplate.opsForValue().get(username);
         }catch (Exception e){
             //TODO: 异常处理
-//            e.printStackTrace();
+            e.printStackTrace();
         }
 
         if(cachedPictureGroupId != null){
@@ -110,7 +108,7 @@ public class PictureAccessAuthorizationManager implements AuthorizationManager<R
             redisTemplate.opsForValue().set(username, pictureGroupId.toString(), 60, TimeUnit.SECONDS);
         }catch (Exception e){
             //TODO: 异常处理
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 }

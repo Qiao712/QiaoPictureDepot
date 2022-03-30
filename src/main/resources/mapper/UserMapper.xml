@@ -17,6 +17,14 @@
         FROM user WHERE username = #{username}
     </select>
 
+    <select id="getUserIdByUsername" resultType="BigInteger">
+        SELECT id FROM user WHERE username = #{username}
+    </select>
+
+    <select id="getUsernameById">
+        SELECT username FROM user WHERE id = #{id}
+    </select>
+
     <select id="getUserById" resultMap="userRole">
         SELECT id, username, password, role_id, create_time, update_time
         FROM user WHERE id = #{id}

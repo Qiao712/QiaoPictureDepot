@@ -1,4 +1,4 @@
-package com.qiao.picturedepot.pojo.bo;
+package com.qiao.picturedepot.pojo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -6,7 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
-import com.qiao.picturedepot.pojo.bo.PictureGroupUpload;
+import com.qiao.picturedepot.pojo.dto.PictureGroupUpload;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.service.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;

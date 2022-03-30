@@ -47,7 +47,7 @@ public class DaoTest {
 
     @Test
     void testAddFriend(){
-        friendService.addFriend(BigInteger.valueOf(7), "死党",BigInteger.valueOf(1), "水友");
+//        friendService.addFriend(BigInteger.valueOf(7), "死党",BigInteger.valueOf(1), "水友");
 //        friendService.deleteFriend(BigInteger.valueOf(7), BigInteger.valueOf(555));
     }
 }
