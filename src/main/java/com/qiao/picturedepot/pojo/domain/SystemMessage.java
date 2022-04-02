@@ -10,6 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class SystemMessage extends BaseEntity {
+    private BigInteger senderId;
     private BigInteger receiverId;
     private Boolean acknowledged;
     private String messageType;

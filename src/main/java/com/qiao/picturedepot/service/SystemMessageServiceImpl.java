@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class SystemMessageServiceImpl implements SystemMessageService {
@@ -22,35 +22,39 @@ public class SystemMessageServiceImpl implements SystemMessageService {
     private SystemMessageMapper systemMessageMapper;
 
     @Override
-    public Integer getUnacknowledgedMessageCountOfReceiver(BigInteger receiverUserId) {
+    public Integer getUnacknowledgedMessageCountByReceiver(BigInteger receiverUserId) {
         return systemMessageMapper.getUnacknowledgedSystemMessageCountByReceiverId(receiverUserId);
     }
 
     @Override
-    public List<SystemMessageDto> getSystemMessageOfReceiver(BigInteger receiverUserId) {
-        //TODO: 自动映射
+    public List<SystemMessageDto> getSystemMessageByReceiver(BigInteger receiverUserId) {
         List<SystemMessage> systemMessages = systemMessageMapper.getSystemMessagesByReceiverId(receiverUserId);
-        List<SystemMessageDto> systemMessageDtos = new ArrayList<>();
-        for (SystemMessage systemMessage : systemMessages) {
-            SystemMessageDto systemMessageDto = new SystemMessageDto();
-            systemMessageDto.setId(systemMessage.getId());
-            systemMessageDto.setMessageType(systemMessage.getMessageType());
-            systemMessageDto.setReceiverId(systemMessage.getReceiverId());
-            systemMessageDto.setAcknowledged(systemMessage.getAcknowledged());
-            systemMessageDto.setCreateTime(systemMessage.getCreateTime());
-            systemMessageDto.setExpirationTime(systemMessage.getExpirationTime());
-
-            systemMessageDto.setMessageBodyFromJson(systemMessage.getMessageBody());
-            systemMessageDtos.add(systemMessageDto);
-        }
-
-        return systemMessageDtos;
+        //映射为SystemMessageDto
+        return systemMessages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
     }
 
     @Override
-    public <T extends MessageBody> T getMessageBodyByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId, Class<T> cls) throws MessageServiceException {
-        //TODO:
-        SystemMessage systemMessage = systemMessageMapper.getSystemMessageById(systemMessageId);
+    public SystemMessageDto getSystemMessageByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId) {
+        SystemMessage systemMessage = systemMessageMapper.getSystemMessageByIdAndReceiverId(systemMessageId, receiverUserId);
+        return systemMessageMapper(systemMessage);
+    }
+
+    @Override
+    public List<SystemMessageDto> searchSystemMessage(BigInteger senderUserId, BigInteger receiverUserId, Class<? extends MessageBody> messageType, Boolean acknowledged) {
+        //取得消息类型字符串
+        String messageTypeStr = null;
+        if(messageType != null){
+            int p = messageType.getSimpleName().indexOf("MessageBody");
+            messageTypeStr = messageType.getSimpleName().substring(0, p);
+        }
+
+        List<SystemMessage> systemMessages = systemMessageMapper.searchSystemMessage(senderUserId, receiverUserId, messageTypeStr, acknowledged);
+        return systemMessages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
+    }
+
+    @Override
+    public <T extends MessageBody> T getSystemMessageBodyByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId, Class<T> cls) throws MessageServiceException {
+        SystemMessage systemMessage = systemMessageMapper.getSystemMessageByIdAndReceiverId(systemMessageId, receiverUserId);
         MessageBody messageBody = null;
         if(systemMessage != null){
             if(!systemMessage.getReceiverId().equals(receiverUserId)){
@@ -71,7 +75,7 @@ public class SystemMessageServiceImpl implements SystemMessageService {
     }
 
     @Override
-    public void sendSystemMessage(MessageBody messageBody, BigInteger receiverUserId) {
+    public void sendSystemMessage(MessageBody messageBody, BigInteger senderUserId, BigInteger receiverUserId) {
         //获取message type (xxxxMessageBody --> xxxx)
         String messageType = messageBody.getClass().getSimpleName();
         messageType = messageType.substring(0, messageType.length() - "MessageBody".length());
@@ -79,6 +83,7 @@ public class SystemMessageServiceImpl implements SystemMessageService {
         //组装SystemMessage
         SystemMessage systemMessage = new SystemMessage();
         systemMessage.setMessageType(messageType);
+        systemMessage.setSenderId(senderUserId);
         systemMessage.setReceiverId(receiverUserId);
         systemMessage.setAcknowledged(false);
         try {
@@ -88,16 +93,41 @@ public class SystemMessageServiceImpl implements SystemMessageService {
             e.printStackTrace();
         }
 
-        systemMessageMapper.addMessage(systemMessage);
+        systemMessageMapper.addSystemMessage(systemMessage);
     }
 
     @Override
-    public void acknowledgeMessage(BigInteger receiverUserId, List<BigInteger> systemMessageIds) {
-        systemMessageMapper.updateIsReceivedById(systemMessageIds, receiverUserId, true);
+    public void acknowledgeSystemMessage(BigInteger receiverUserId, List<BigInteger> systemMessageIds) {
+        systemMessageMapper.updateAcknowledged(systemMessageIds, receiverUserId, true);
     }
 
     @Override
-    public void deleteMessageById(BigInteger systemMessageId) {
-        systemMessageMapper.deleteMessageById(systemMessageId);
+    public void deleteSystemMessageById(BigInteger systemMessageId) {
+        systemMessageMapper.deleteSystemMessageById(systemMessageId);
+    }
+
+    @Override
+    public void deleteSystemMessagesById(List<BigInteger> systemMessageIds) {
+        systemMessageMapper.deleteSystemMessagesById(systemMessageIds);
+    }
+
+    //----------------------------------------------------------------
+
+    /**
+     * 将SystemMessage映射为SystemMessageDto
+     */
+    private SystemMessageDto systemMessageMapper(SystemMessage systemMessage){
+        SystemMessageDto systemMessageDto = new SystemMessageDto();
+
+        systemMessageDto.setId(systemMessage.getId());
+        systemMessageDto.setSenderId(systemMessage.getSenderId());
+        systemMessageDto.setReceiverId(systemMessage.getReceiverId());
+        systemMessageDto.setMessageType(systemMessage.getMessageType());
+        systemMessageDto.setAcknowledged(systemMessage.getAcknowledged());
+        systemMessageDto.setCreateTime(systemMessage.getCreateTime());
+        systemMessageDto.setExpirationTime(systemMessage.getExpirationTime());
+        systemMessageDto.setMessageBodyFromJson(systemMessage.getMessageBody());
+
+        return systemMessageDto;
     }
 }

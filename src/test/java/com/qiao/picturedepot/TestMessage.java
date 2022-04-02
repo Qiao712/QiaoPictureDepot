@@ -21,14 +21,14 @@ public class TestMessage {
         NewFriendMessageBody messageBody = new NewFriendMessageBody();
         messageBody.setApplicationMessage("hello");
         messageBody.setFriendGroupName("水友");
-        messageBody.setApplicantId(BigInteger.valueOf(3));
-        messageService.sendSystemMessage(messageBody, BigInteger.valueOf(1));
-
-        messageBody.setApplicantId(BigInteger.valueOf(4));
-        messageService.sendSystemMessage(messageBody, BigInteger.valueOf(1));
-
-        messageBody.setApplicantId(BigInteger.valueOf(5));
-        messageService.sendSystemMessage(messageBody, BigInteger.valueOf(1));
+//        messageBody.setApplicantId(BigInteger.valueOf(3));
+//        messageService.sendSystemMessage(messageBody, BigInteger.valueOf(1));
+//
+//        messageBody.setApplicantId(BigInteger.valueOf(4));
+//        messageService.sendSystemMessage(messageBody, BigInteger.valueOf(1));
+//
+//        messageBody.setApplicantId(BigInteger.valueOf(5));
+//        messageService.sendSystemMessage(messageBody, BigInteger.valueOf(1));
     }
 
     @Test

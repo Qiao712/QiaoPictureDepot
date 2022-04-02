@@ -14,20 +14,20 @@ import java.util.List;
 @RequestMapping("/api")
 public class SystemMessageController {
     @Autowired
-    private SystemMessageService messageService;
+    private SystemMessageService systemMessageService;
 
     @GetMapping("/system-messages")
     public List<SystemMessageDto> getSystemMessages(@AuthenticationPrincipal User user){
-        return messageService.getSystemMessageOfReceiver(user.getId());
+        return systemMessageService.getSystemMessageByReceiver(user.getId());
     }
 
     @GetMapping("/system-messages/unacknowledged-message-count")
     public Integer getUnacknowledgedSystemMessageCount(@AuthenticationPrincipal User user){
-        return messageService.getUnacknowledgedMessageCountOfReceiver(user.getId());
+        return systemMessageService.getUnacknowledgedMessageCountByReceiver(user.getId());
     }
 
     @PostMapping("/system-messages/acknowledge")
     public void acknowledgeSystemMessage(@RequestBody List<BigInteger> systemMessageIds, @AuthenticationPrincipal User user) {
-        messageService.acknowledgeMessage(user.getId(), systemMessageIds);
+        systemMessageService.acknowledgeSystemMessage(user.getId(), systemMessageIds);
     }
 }

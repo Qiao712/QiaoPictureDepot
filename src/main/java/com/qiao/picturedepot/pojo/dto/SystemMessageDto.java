@@ -13,6 +13,7 @@ import java.util.Map;
 @Getter
 public class SystemMessageDto {
     private BigInteger id;
+    private BigInteger senderId;
     private BigInteger receiverId;
     private Boolean acknowledged;
     private String messageType;

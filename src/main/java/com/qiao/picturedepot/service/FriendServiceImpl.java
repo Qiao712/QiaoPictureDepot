@@ -9,6 +9,7 @@ import com.qiao.picturedepot.pojo.dto.ApplyNewFriendRequest;
 import com.qiao.picturedepot.pojo.domain.Friend;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
+import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
 import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,13 +100,22 @@ public class FriendServiceImpl implements FriendService{
             throw new ServiceException("不可重复添加好友");
         }
 
+        //删除旧的申请
+        List<SystemMessageDto> systemMessages = messageService.searchSystemMessage(applicant.getId(), friendUserId, NewFriendMessageBody.class, null);
+        List<BigInteger> systemMessageIds = new ArrayList<>();
+        for (SystemMessageDto systemMessage : systemMessages) {
+            systemMessageIds.add(systemMessage.getId());
+        }
+        if(!systemMessageIds.isEmpty()){
+            messageService.deleteSystemMessagesById(systemMessageIds);
+        }
+
         NewFriendMessageBody messageBody = new NewFriendMessageBody();
-        messageBody.setApplicantId(applicant.getId());
         messageBody.setFriendGroupName(applyNewFriendRequest.getFriendGroupName());
         messageBody.setApplicationMessage(applyNewFriendRequest.getApplicationMessage());
         messageBody.setApplicantUsername(applicant.getUsername());
 
-        messageService.sendSystemMessage(messageBody, friendUserId);
+        messageService.sendSystemMessage(messageBody, applicant.getId(), friendUserId);
     }
 
     @Override
@@ -113,11 +123,17 @@ public class FriendServiceImpl implements FriendService{
     public void acceptNewFriend(BigInteger userId, AcceptNewFriendRequest acceptNewFriendRequest) {
         BigInteger systemMessageId = acceptNewFriendRequest.getNewFriendSystemMessageId();
         String friendGroupName = acceptNewFriendRequest.getFriendGroupName();
-        NewFriendMessageBody newFriendMessageBody = messageService.getMessageBodyByIdAndReceiver(systemMessageId, userId, NewFriendMessageBody.class);
+        SystemMessageDto systemMessageDto = messageService.getSystemMessageByIdAndReceiver(systemMessageId, userId);
 
-        if(newFriendMessageBody != null){
-            addFriend(userId, friendGroupName, newFriendMessageBody.getApplicantId(), newFriendMessageBody.getFriendGroupName());
-            messageService.deleteMessageById(systemMessageId);
+        if(systemMessageDto != null){
+            try{
+                BigInteger applicantId = systemMessageDto.getSenderId();
+                String applicantFriendGroupName = (String) systemMessageDto.getMessageBody().get("friendGroupName");
+                addFriend(userId, friendGroupName, applicantId, applicantFriendGroupName);
+                messageService.deleteSystemMessageById(systemMessageId);
+            }catch (ClassCastException e){
+                throw new ServiceException("消息格式错误");
+            }
         }else{
             throw new ServiceException("朋友申请消息不存在");
         }

@@ -8,7 +8,6 @@ import java.math.BigInteger;
 @Setter
 @Getter
 public class NewFriendMessageBody implements MessageBody{
-    private BigInteger applicantId;
     private String applicantUsername;
     private String applicationMessage;
     private String friendGroupName;

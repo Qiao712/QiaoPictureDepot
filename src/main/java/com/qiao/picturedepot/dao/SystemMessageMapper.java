@@ -8,15 +8,22 @@ import java.util.List;
 
 @Mapper
 public interface SystemMessageMapper {
-    Integer getUnacknowledgedSystemMessageCountByReceiverId(BigInteger receiverUserId);
+    Integer getUnacknowledgedSystemMessageCountByReceiverId(BigInteger receiverId);
 
-    List<SystemMessage> getSystemMessagesByReceiverId(BigInteger receiverUserId);
+    List<SystemMessage> getSystemMessagesByReceiverId(BigInteger receiverId);
 
-    SystemMessage getSystemMessageById(BigInteger id);
+    SystemMessage getSystemMessageByIdAndReceiverId(BigInteger systemMessageId, BigInteger receiverId);
 
-    Integer addMessage(SystemMessage message);
+    List<SystemMessage> searchSystemMessage(BigInteger senderId, BigInteger receiverId, String messageType, Boolean acknowledged);
 
-    Integer deleteMessageById(BigInteger id);
+    Integer addSystemMessage(SystemMessage message);
 
-    Integer updateIsReceivedById(List<BigInteger> systemMessageIds, BigInteger receiverUserId, Boolean acknowledged);
+    Integer deleteSystemMessageById(BigInteger id);
+
+    Integer deleteSystemMessagesById(List<BigInteger> ids);
+
+    /**
+     * 通过id与接收者id更新消息的确认状态。传入接收者id以确保消息只能由接收者确认。
+     */
+    Integer updateAcknowledged(List<BigInteger> systemMessageIds, BigInteger receiverId, Boolean acknowledged);
 }

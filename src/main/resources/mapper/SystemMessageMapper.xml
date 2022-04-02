@@ -7,32 +7,61 @@
     <select id="getUnacknowledgedSystemMessageCountByReceiverId" resultType="Integer">
         SELECT count(id)
         FROM system_message
-        WHERE receiver_id = #{receiverUserId}
+        WHERE receiver_id = #{receiverId} AND is_acknowledged = false
     </select>
 
     <select id="getSystemMessagesByReceiverId" resultType="SystemMessage">
-        SELECT id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
+        SELECT id, sender_id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
         FROM system_message
-        WHERE receiver_id = #{receiverUserId}
+        WHERE receiver_id = #{receiverId}
     </select>
 
-    <select id="getSystemMessageById" resultType="SystemMessage">
-        SELECT id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
+    <select id="getSystemMessageByIdAndReceiverId" resultType="SystemMessage">
+        SELECT id, sender_id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
         FROM system_message
-        WHERE id = #{id}
+        WHERE id = #{systemMessageId} AND receiver_id = #{receiverId}
     </select>
 
-    <insert id="addMessage">
-        INSERT INTO system_message(id, receiver_id, message_type, message_body, is_acknowledged, expiration_time)
-        VALUES(#{id}, #{receiverId}, #{messageType}, #{messageBody}, #{acknowledged}, #{expirationTime})
+    <select id="searchSystemMessage" resultType="SystemMessage">
+        SELECT id, sender_id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
+        FROM system_message
+        <where>
+            <if test="senderId != null">
+                sender_id = #{senderId}
+            </if>
+            <if test="receiverId != null">
+                AND receiver_id = #{receiverId}
+            </if>
+            <if test="messageType != null">
+                AND message_type = #{messageType}
+            </if>
+            <if test="acknowledged != null">
+                AND is_acknowledged = #{acknowledged}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addSystemMessage">
+        INSERT INTO system_message(id, sender_id, receiver_id, message_type, message_body, is_acknowledged, expiration_time)
+        VALUES(#{id}, #{senderId}, #{receiverId}, #{messageType}, #{messageBody}, #{acknowledged}, #{expirationTime})
     </insert>
 
-    <delete id="deleteMessageById">
+    <delete id="deleteSystemMessageById">
         DELETE FROM system_message
         WHERE id = #{id}
     </delete>
 
-    <update id="updateIsReceivedById">
+    <delete id="deleteSystemMessagesById">
+        DELETE FROM system_message
+        <where>
+            <foreach collection="ids" item="item" index="index"
+                     open="id in (" separator="," close=")" nullable="true">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <update id="updateAcknowledged">
         UPDATE system_message
         SET is_acknowledged = #{acknowledged}
         <where>
@@ -41,7 +70,7 @@
                 #{item}
             </foreach>
 
-            AND receiver_id = #{receiverUserId}
+            AND receiver_id = #{receiverId}
         </where>
     </update>
 </mapper>
