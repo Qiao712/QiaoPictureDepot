@@ -6,7 +6,6 @@ import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ public class AlbumController{
                               @RequestParam(value = "user", required = false) String username,
                               @AuthenticationPrincipal User user){
         PageHelper.startPage(pageNo, pageSize);
-        List<Album> albums = albumService.getAlbumsOfUser(username == null ? user.getUsername() : username, user);
+        List<Album> albums = albumService.getAlbumsByOwner(username == null ? user.getUsername() : username);
         return new PageInfo<Album>(albums);
     }
 
@@ -35,8 +34,7 @@ public class AlbumController{
     }
 
     @PostMapping("/albums")
-    public void addAlbum(@RequestBody Album album, @AuthenticationPrincipal User user){
-        album.setOwnerId(user.getId());
+    public void addAlbum(@RequestBody Album album){
         albumService.addAlbum(album);
     }
 
@@ -47,6 +45,6 @@ public class AlbumController{
 
     @DeleteMapping("/albums/{albumId}")
     public void deleteAlbum(@PathVariable BigInteger albumId){
-        albumService.deleteAlbum(albumId);
+        albumService.deleteAlbumById(albumId);
     }
 }

@@ -9,11 +9,12 @@ import java.util.List;
 @Mapper
 public interface AlbumMapper {
     Album getAlbumById(BigInteger id);
-    List<Album> getAlbumsByUserId(BigInteger userId);
-    List<Album> getAlbumsByUsername(String username);
-    List<Album> getAlbums(String ownerUsername, boolean showPrivate);
 
-    int addAlbum(Album album);
-    int updateAlbum(Album album);
-    int deleteAlbumById(BigInteger id);
+    List<Album> getAlbumsByOwner(String ownerUsername, boolean showPrivate);
+
+    Integer addAlbum(Album album);
+
+    Integer updateAlbumByIdAndOwnerId(Album album);
+
+    Integer deleteAlbumById(BigInteger id);
 }

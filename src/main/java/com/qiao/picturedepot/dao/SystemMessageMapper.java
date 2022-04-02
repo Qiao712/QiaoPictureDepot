@@ -9,9 +9,14 @@ import java.util.List;
 @Mapper
 public interface SystemMessageMapper {
     Integer getUnacknowledgedSystemMessageCountByReceiverId(BigInteger receiverUserId);
+
     List<SystemMessage> getSystemMessagesByReceiverId(BigInteger receiverUserId);
+
     SystemMessage getSystemMessageById(BigInteger id);
-    int addMessage(SystemMessage message);
-    int deleteMessageById(BigInteger id);
-    int updateIsReceivedById(List<BigInteger> systemMessageIds, BigInteger receiverUserId, Boolean acknowledged);
+
+    Integer addMessage(SystemMessage message);
+
+    Integer deleteMessageById(BigInteger id);
+
+    Integer updateIsReceivedById(List<BigInteger> systemMessageIds, BigInteger receiverUserId, Boolean acknowledged);
 }

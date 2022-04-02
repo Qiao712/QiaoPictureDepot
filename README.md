@@ -7,11 +7,18 @@
   * 更改认证方式
 
 ## 安全
-* 使用 Spring Security
+Spring Security
+### 认证
 * 密码加密方式 BCrypt
 * 使用form表单进行认证，自定义成功/失败时处理器，替代默认的重定向
 * 若请求未认证，返回401
 * 前端设置axios拦截到401，重定向到认证界面
+### 授权
+* PictureService中对图组以及图片的访问，使用函数安全注解进行验证。
+* AlbumService中部分使用函数安全注解，部分在SQL中查询时进行校验（Problem！ 有待修改）
+* FriendService
+  * 中查询接口直接传入UserId，由Controller保证只能传入当前用户的UserId
+  * 对FriendGroup的更新，在Service层中保证传递给Dao层的FriendGroup.ownerId为当前用户Id。Dao层通过FriendGroup.id和FriendGroup.ownerId进行修改
 
 ## 图片文件储存（暂时）
 * 简单地储存为文件

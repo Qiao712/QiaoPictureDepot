@@ -17,7 +17,7 @@ import java.util.List;
 public class PictureController {
     @Autowired
     private PictureService pictureService;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/picture-groups/{pictureGroupId}/pictures/{pictureId}")
     public void getPicture(@PathVariable BigInteger pictureGroupId, @PathVariable BigInteger pictureId, HttpServletResponse response){
@@ -32,6 +32,6 @@ public class PictureController {
 
     @GetMapping("/picture-groups/{pictureGroupId}/pictures")
     public List<Picture> getPicturesOfGroup(@PathVariable BigInteger pictureGroupId){
-        return pictureService.getPicturesOfGroup(pictureGroupId);
+        return pictureService.getPicturesByGroup(pictureGroupId);
     }
 }

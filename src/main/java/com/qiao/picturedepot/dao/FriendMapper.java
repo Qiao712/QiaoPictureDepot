@@ -10,9 +10,14 @@ import java.util.List;
 @Mapper
 public interface FriendMapper {
     List<Friend> getFriendsByUserId(BigInteger userId);
+
     List<Friend> getFriendsByGroupId(BigInteger friendGroupId);
-    boolean checkFriendRelationship(@Param("user1") BigInteger userId1, @Param("user2") BigInteger userId2);
-    int addFriend(Friend friend);
-    int deleteFriendByUserId(BigInteger userId, BigInteger friendUserId);
-    int updateFriendGroup(BigInteger userId, BigInteger friendUserId, String newFriendGroup);
+
+    Boolean checkFriendRelationship(@Param("user1") BigInteger userId1, @Param("user2") BigInteger userId2);
+
+    Integer addFriend(Friend friend);
+
+    Integer deleteFriendByUserId(BigInteger userId, BigInteger friendUserId);
+
+    Integer updateFriendGroup(BigInteger userId, BigInteger friendUserId, String newFriendGroup);
 }

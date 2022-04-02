@@ -12,6 +12,7 @@ import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,7 +36,8 @@ public class PictureServiceImpl implements PictureService{
     MyProperties myProperties;
 
     @Override
-    public List<PictureGroupPreviewDto> getPictureGroupsOfAlbum(BigInteger albumId) {
+    @PreAuthorize("@rs.canAccessAlbum(#albumId)")
+    public List<PictureGroupPreviewDto> getPictureGroupsByAlbum(BigInteger albumId) {
         List<PictureGroup> pictureGroups = pictureGroupMapper.getPictureGroupsByAlbumId(albumId);
         List<PictureGroupPreviewDto> pictureGroupPreviewDtos = new ArrayList<>(pictureGroups.size());
 
@@ -50,11 +52,13 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
-    public PictureGroup getPictureGroupById(BigInteger id) {
-        return pictureGroupMapper.getPictureGroupById(id);
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
+    public PictureGroup getPictureGroupById(BigInteger pictureGroupId) {
+        return pictureGroupMapper.getPictureGroupById(pictureGroupId);
     }
 
     @Override
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void getPicture(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream) {
         String path = pictureMapper.getPicturePath(pictureGroupId, pictureId);
 
@@ -85,11 +89,13 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
-    public List<Picture> getPicturesOfGroup(BigInteger pictureGroupId) {
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
+    public List<Picture> getPicturesByGroup(BigInteger pictureGroupId) {
         return pictureMapper.getPicturesByGroup(pictureGroupId);
     }
 
     @Override
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public List<BigInteger> addPicturesToGroup(BigInteger pictureGroupId, MultipartFile[] multipartFiles) {
         if(multipartFiles == null) {
             return new ArrayList<>();
@@ -155,8 +161,9 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void deletePictureGroup(BigInteger pictureGroupId) {
-        List<Picture> pictures = getPicturesOfGroup(pictureGroupId);
+        List<Picture> pictures = getPicturesByGroup(pictureGroupId);
         for (Picture picture : pictures) {
             String relativePath = pictureMapper.getPicturePath(pictureGroupId, picture.getId());
             if(relativePath != null){
@@ -171,6 +178,7 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void updatePictureSequences(BigInteger pictureGroupId, List<BigInteger> idSequence) {
         for(int i = 0; i < idSequence.size(); i++){
             if(idSequence.get(i) != null){
@@ -180,11 +188,13 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroup.id)")
     public void updatePictureGroup(PictureGroup pictureGroup) {
         pictureGroupMapper.updatePictureGroup(pictureGroup);
     }
 
     @Override
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroup.id)")
     public void deletePictures(BigInteger pictureGroupId, List<BigInteger> pictureIds) {
         //TODO: 对残余目录的删除
         if(pictureIds != null) {
@@ -199,9 +209,8 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
-    public BigInteger addPictureGroup(PictureGroup pictureGroup) {
-        pictureGroup.setId(null);
+    @PreAuthorize("@rs.canAccessAlbum(#pictureGroup.albumId)")
+    public void addPictureGroup(PictureGroup pictureGroup) {
         pictureGroupMapper.addPictureGroup(pictureGroup);
-        return pictureGroup.getId();
     }
 }

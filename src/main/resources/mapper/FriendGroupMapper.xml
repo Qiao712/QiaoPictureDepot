@@ -32,13 +32,13 @@
         WHERE id = #{id}
     </delete>
 
-    <update id="updateFriendGroup">
+    <update id="updateFriendGroupByIdAndOwnerId">
         UPDATE friend_group
         <set>
             <if test="name != null">
                 name = #{name},
             </if>
         </set>
-        WHERE id = #{id}
+        WHERE id = #{id} AND owner_id = #{ownerId}
     </update>
 </mapper>

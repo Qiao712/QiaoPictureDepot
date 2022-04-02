@@ -9,9 +9,14 @@ import java.util.List;
 @Mapper
 public interface FriendGroupMapper {
     FriendGroup getFriendGroupById(BigInteger id);
+
     FriendGroup getFriendGroupByName(BigInteger userId, String friendGroupName);
+
     List<FriendGroup> getFriendGroupsByUserId(BigInteger userId);
-    int addFriendGroup(FriendGroup friendGroup);
-    int deleteFriendGroupById(BigInteger id);
-    int updateFriendGroup(FriendGroup friendGroup);
+
+    Integer addFriendGroup(FriendGroup friendGroup);
+
+    Integer deleteFriendGroupById(BigInteger id);
+
+    Integer updateFriendGroupByIdAndOwnerId(FriendGroup friendGroup);
 }

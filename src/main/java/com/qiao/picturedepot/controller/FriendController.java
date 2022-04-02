@@ -6,13 +6,11 @@ import com.qiao.picturedepot.pojo.dto.ApplyNewFriendRequest;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
 import com.qiao.picturedepot.service.FriendService;
-import org.apache.ibatis.javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,11 +20,8 @@ public class FriendController {
     FriendService friendService;
 
     @GetMapping("/friends")
-    public List<FriendGroupDto> getFriendList(@AuthenticationPrincipal User user){
-        if(user == null){
-            return new ArrayList<>();
-        }
-        return friendService.getFriendGroups(user.getId());
+    public List<FriendGroupDto> getGroupedFriendList(@AuthenticationPrincipal User user){
+        return friendService.getGroupedFriendList(user.getId());
     }
 
     @GetMapping("/friend-groups")
@@ -55,13 +50,7 @@ public class FriendController {
     }
 
     @PutMapping("/friend-groups")
-    public void updateFriendGroup(@AuthenticationPrincipal User user, @RequestBody FriendGroup friendGroup){
-        if(friendGroup.getOwnerId().equals(user.getId())){
-            //TODO: 权限错误处理
-
-            return ;
-        }
-
+    public void updateFriendGroup(@RequestBody FriendGroup friendGroup){
         friendService.updateFriendGroup(friendGroup);
     }
 }

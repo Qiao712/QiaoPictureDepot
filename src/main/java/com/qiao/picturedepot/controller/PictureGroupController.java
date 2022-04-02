@@ -23,13 +23,13 @@ public class PictureGroupController {
     private PictureService pictureService;
     @Autowired
     private PictureGroupMapper pictureGroupMapper;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/albums/{albumId}/picture-groups")
-    public PageInfo getPictureGroups(@PathVariable BigInteger albumId, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize){
+    public PageInfo<PictureGroupPreviewDto> getPictureGroups(@PathVariable BigInteger albumId, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize){
         PageHelper.startPage(pageNo, pageSize);
-        List<PictureGroupPreviewDto> pictureGroupPreviewDtos = pictureService.getPictureGroupsOfAlbum(albumId);
-        return new PageInfo(pictureGroupPreviewDtos);
+        List<PictureGroupPreviewDto> pictureGroupPreviewDtos = pictureService.getPictureGroupsByAlbum(albumId);
+        return new PageInfo<>(pictureGroupPreviewDtos);
     }
 
     @GetMapping("/picture-groups/{pictureGroupId}")
@@ -48,9 +48,9 @@ public class PictureGroupController {
         PictureGroup pictureGroup = new PictureGroup();
         pictureGroup.setTitle(pictureGroupRequest.getTitle());
         pictureGroup.setAlbumId(pictureGroupRequest.getAlbumId());
-        BigInteger pictureGroupId = pictureService.addPictureGroup(pictureGroup);
 
-        pictureService.addPicturesToGroup(pictureGroupId, multipartFiles);
+        pictureService.addPictureGroup(pictureGroup);
+        pictureService.addPicturesToGroup(pictureGroup.getId(), multipartFiles);
     }
 
     @PutMapping("/picture-groups")

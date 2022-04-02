@@ -4,12 +4,17 @@ import com.github.pagehelper.PageHelper;
 import com.qiao.picturedepot.config.MyProperties;
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
-import com.qiao.picturedepot.dao.PictureMapper;
 import com.qiao.picturedepot.dao.UserMapper;
+import com.qiao.picturedepot.exception.AuthorizationException;
+import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.security.ResourceSecurity;
+import com.qiao.picturedepot.util.SecurityUtil;
+import com.qiao.picturedepot.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -25,34 +30,33 @@ public class AlbumServiceImpl implements AlbumService{
     @Autowired
     private PictureService pictureService;
     @Autowired
-    private PictureMapper pictureMapper;
-    @Autowired
     private MyProperties myProperties;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private ResourceSecurity resourceSecurity;
 
     @Override
-    public Album getAlbumById(BigInteger id) {
-        return albumMapper.getAlbumById(id);
+    @PostAuthorize("@rs.canAccessAlbum(returnObject)")
+    public Album getAlbumById(BigInteger albumId) {
+        return albumMapper.getAlbumById(albumId);
     }
 
     @Override
-    public List<Album> getAlbumsOfUser(String ownerUsername, User visiter) {
-        return albumMapper.getAlbums(ownerUsername, ownerUsername == visiter.getUsername());
-    }
-
-    @Override
-    public BigInteger addAlbum(Album album) {
-        albumMapper.addAlbum(album);
-        return album.getId();
+    public List<Album> getAlbumsByOwner(String ownerUsername) {
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        return albumMapper.getAlbumsByOwner(ownerUsername, ownerUsername.equals(user.getUsername()));
     }
 
     //TODO: 改为异步
     @Override
-    public void deleteAlbum(BigInteger albumId) {
+    public void deleteAlbumById(BigInteger albumId) {
         Album album = albumMapper.getAlbumById(albumId);
-        if(album == null) {
-            return;
+        ValidationUtil.checkNull(album, "Album", "id", albumId);
+
+        //检查访问权
+        if(!resourceSecurity.canAccessAlbum(album)){
+            throw new AuthorizationException();
         }
 
         //删除全部图组(分组删除）
@@ -81,7 +85,18 @@ public class AlbumServiceImpl implements AlbumService{
     }
 
     @Override
+    public void addAlbum(Album album) {
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        album.setOwnerId(user.getId());
+
+        albumMapper.addAlbum(album);
+    }
+
+    @Override
     public void updateAlbum(Album album) {
-        albumMapper.updateAlbum(album);
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        album.setOwnerId(user.getId());
+
+        albumMapper.updateAlbumByIdAndOwnerId(album);
     }
 }

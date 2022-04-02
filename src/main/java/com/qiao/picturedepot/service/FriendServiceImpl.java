@@ -10,6 +10,7 @@ import com.qiao.picturedepot.pojo.domain.Friend;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
+import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ public class FriendServiceImpl implements FriendService{
     private UserService userService;
 
     @Override
-    public List<FriendGroupDto> getFriendGroups(BigInteger userId) {
+    public List<FriendGroupDto> getGroupedFriendList(BigInteger userId) {
         List<FriendGroupDto> friendGroupDtos = new ArrayList<>();
         List<FriendGroup> friendGroups = friendGroupMapper.getFriendGroupsByUserId(userId);
 
@@ -44,11 +45,6 @@ public class FriendServiceImpl implements FriendService{
         }
 
         return friendGroupDtos;
-    }
-
-    @Override
-    public List<Friend> getFriendsByGroupId(BigInteger friendGroupId) {
-        return friendMapper.getFriendsByGroupId(friendGroupId);
     }
 
     @Override
@@ -80,7 +76,10 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public void updateFriendGroup(FriendGroup friendGroup) {
-        friendGroupMapper.updateFriendGroup(friendGroup);
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        friendGroup.setOwnerId(user.getId());
+
+        friendGroupMapper.updateFriendGroupByIdAndOwnerId(friendGroup);
     }
 
     @Override
@@ -153,5 +152,9 @@ public class FriendServiceImpl implements FriendService{
         friend2.setFriendGroupId(friendGroup2.getId());
         friend2.setFriendUserId(userId1);
         friendMapper.addFriend(friend2);
+    }
+
+    private List<Friend> getFriendsByGroupId(BigInteger friendGroupId) {
+        return friendMapper.getFriendsByGroupId(friendGroupId);
     }
 }
