@@ -13,6 +13,7 @@ import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
 import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class FriendServiceImpl implements FriendService{
     }
 
     @Override
+    @Transactional
     public void deleteFriend(BigInteger userId, BigInteger friendUserId) {
         if(!checkIsFriend(userId, friendUserId)){
             throw new ServiceException("不存在好友关系");
@@ -107,6 +109,7 @@ public class FriendServiceImpl implements FriendService{
     }
 
     @Override
+    @Transactional
     public void acceptNewFriend(BigInteger userId, AcceptNewFriendRequest acceptNewFriendRequest) {
         BigInteger systemMessageId = acceptNewFriendRequest.getNewFriendSystemMessageId();
         String friendGroupName = acceptNewFriendRequest.getFriendGroupName();

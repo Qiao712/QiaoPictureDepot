@@ -14,6 +14,7 @@ import com.qiao.picturedepot.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -95,6 +96,7 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
+    @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public List<BigInteger> addPicturesToGroup(BigInteger pictureGroupId, MultipartFile[] multipartFiles) {
         if(multipartFiles == null) {
@@ -161,23 +163,36 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
+    @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void deletePictureGroup(BigInteger pictureGroupId) {
+        List<File> pictureFilesToDelete = new ArrayList<>();
         List<Picture> pictures = getPicturesByGroup(pictureGroupId);
         for (Picture picture : pictures) {
             String relativePath = pictureMapper.getPicturePath(pictureGroupId, picture.getId());
             if(relativePath != null){
                 File pictureFile = new File(myProperties.getPictureDepotPath(), relativePath);
-                System.out.println("删除"+pictureFile.getPath()+" "+pictureFile.delete());
+                pictureFilesToDelete.add(pictureFile);
             }
 
             pictureMapper.deletePicture(pictureGroupId, picture.getId());
         }
 
         pictureGroupMapper.deletePictureGroupById(pictureGroupId);
+
+        //数据库操作完成后，再统一删除文件，以免回滚造成图片丢失
+        for (File pictureFile : pictureFilesToDelete) {
+            try{
+                pictureFile.delete();
+            }catch (SecurityException e){
+                //无法删除图片文件
+                System.err.println("图片文件 " + pictureFile.getPath() + "删除失败");
+            }
+        }
     }
 
     @Override
+    @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void updatePictureSequences(BigInteger pictureGroupId, List<BigInteger> idSequence) {
         for(int i = 0; i < idSequence.size(); i++){
@@ -194,16 +209,30 @@ public class PictureServiceImpl implements PictureService{
     }
 
     @Override
+    @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroup.id)")
     public void deletePictures(BigInteger pictureGroupId, List<BigInteger> pictureIds) {
         //TODO: 对残余目录的删除
+        //收集需要删除的图片文件列表
+        List<File> pictureFilesToDelete = new ArrayList<>();
+
         if(pictureIds != null) {
             for (BigInteger pictureId : pictureIds) {
                 String relativePath = pictureMapper.getPicturePath(pictureGroupId, pictureGroupId);
                 File pictureFile = new File(myProperties.getPictureDepotPath(), relativePath);
-                pictureFile.delete();
+                pictureFilesToDelete.add(pictureFile);
 
                 pictureMapper.deletePicture(pictureGroupId, pictureId);
+            }
+        }
+
+        //数据库操作完成后，再统一删除文件，以免回滚造成图片丢失
+        for (File pictureFile : pictureFilesToDelete) {
+            try{
+                pictureFile.delete();
+            }catch (SecurityException e){
+                //无法删除图片文件
+                System.err.println("图片文件 " + pictureFile.getPath() + "删除失败");
             }
         }
     }
