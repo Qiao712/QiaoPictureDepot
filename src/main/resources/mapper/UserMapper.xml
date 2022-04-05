@@ -21,7 +21,7 @@
         SELECT id FROM user WHERE username = #{username}
     </select>
 
-    <select id="getUsernameById">
+    <select id="getUsernameById" resultType="String">
         SELECT username FROM user WHERE id = #{id}
     </select>
 

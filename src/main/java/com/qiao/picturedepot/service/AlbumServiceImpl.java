@@ -6,7 +6,6 @@ import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.exception.AuthorizationException;
-import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
@@ -52,7 +51,7 @@ public class AlbumServiceImpl implements AlbumService{
     @Override
     public void deleteAlbumById(BigInteger albumId) {
         Album album = albumMapper.getAlbumById(albumId);
-        ValidationUtil.checkNull(album, "Album", "id", albumId);
+        ValidationUtil.checkEntityExists(album, "Album", "id", albumId);
 
         //检查访问权
         if(!resourceSecurity.canAccessAlbum(album)){

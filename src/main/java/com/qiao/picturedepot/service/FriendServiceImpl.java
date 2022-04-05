@@ -4,13 +4,12 @@ import com.qiao.picturedepot.dao.FriendGroupMapper;
 import com.qiao.picturedepot.dao.FriendMapper;
 import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.domain.User;
-import com.qiao.picturedepot.pojo.dto.AcceptNewFriendRequest;
-import com.qiao.picturedepot.pojo.dto.ApplyNewFriendRequest;
+import com.qiao.picturedepot.pojo.dto.*;
 import com.qiao.picturedepot.pojo.domain.Friend;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
-import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
-import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
+import com.qiao.picturedepot.pojo.dto.message.NotificationMessageBody;
+import com.qiao.picturedepot.util.MessageSystemUtil;
 import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class FriendServiceImpl implements FriendService{
@@ -27,7 +27,7 @@ public class FriendServiceImpl implements FriendService{
     @Autowired
     private FriendGroupMapper friendGroupMapper;
     @Autowired
-    private SystemMessageService messageService;
+    private SystemMessageService systemMessageService;
     @Autowired
     private UserService userService;
 
@@ -86,6 +86,33 @@ public class FriendServiceImpl implements FriendService{
     }
 
     @Override
+    public void updateFriendInfo(BigInteger userId, UpdateFriendInfoRequest updateFriendInfoRequest) {
+        BigInteger friendUserId = updateFriendInfoRequest.getFriendUserId();
+        assert(friendUserId != null);
+
+        //检查好友关系
+        if(!checkIsFriend(userId, friendUserId)){
+            throw new ServiceException("不存在好友关系");
+        }
+
+        //若分组不存在则创建，创建分组
+        FriendGroup friendGroup = friendGroupMapper.getFriendGroupByName(userId, updateFriendInfoRequest.getFriendGroupName());
+        if(friendGroup == null){
+            //不存在则创建
+            friendGroup = new FriendGroup();
+            friendGroup.setOwnerId(userId);
+            friendGroup.setName(updateFriendInfoRequest.getFriendGroupName());
+            friendGroupMapper.addFriendGroup(friendGroup);
+        }
+
+        if(friendGroup.getId() != null){
+            friendMapper.updateFriendGroup(userId, friendUserId, friendGroup.getName());
+        }else{
+            throw new ServiceException("无法创建好友分组");
+        }
+    }
+
+    @Override
     public void applyToAddFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest) {
         BigInteger friendUserId = userService.getUserIdByUsername(applyNewFriendRequest.getFriendUsername());
         if(friendUserId == null) {
@@ -101,13 +128,13 @@ public class FriendServiceImpl implements FriendService{
         }
 
         //删除旧的申请
-        List<SystemMessageDto> systemMessages = messageService.searchSystemMessage(applicant.getId(), friendUserId, NewFriendMessageBody.class, null);
+        List<SystemMessageDto> systemMessages = systemMessageService.searchSystemMessage(applicant.getId(), friendUserId, NewFriendMessageBody.class, null);
         List<BigInteger> systemMessageIds = new ArrayList<>();
         for (SystemMessageDto systemMessage : systemMessages) {
             systemMessageIds.add(systemMessage.getId());
         }
         if(!systemMessageIds.isEmpty()){
-            messageService.deleteSystemMessagesById(systemMessageIds);
+            systemMessageService.deleteSystemMessagesById(systemMessageIds);
         }
 
         NewFriendMessageBody messageBody = new NewFriendMessageBody();
@@ -115,7 +142,7 @@ public class FriendServiceImpl implements FriendService{
         messageBody.setApplicationMessage(applyNewFriendRequest.getApplicationMessage());
         messageBody.setApplicantUsername(applicant.getUsername());
 
-        messageService.sendSystemMessage(messageBody, applicant.getId(), friendUserId);
+        systemMessageService.sendSystemMessage(messageBody, applicant.getId(), friendUserId);
     }
 
     @Override
@@ -123,17 +150,36 @@ public class FriendServiceImpl implements FriendService{
     public void acceptNewFriend(BigInteger userId, AcceptNewFriendRequest acceptNewFriendRequest) {
         BigInteger systemMessageId = acceptNewFriendRequest.getNewFriendSystemMessageId();
         String friendGroupName = acceptNewFriendRequest.getFriendGroupName();
-        SystemMessageDto systemMessageDto = messageService.getSystemMessageByIdAndReceiver(systemMessageId, userId);
+        SystemMessageDto systemMessageDto = systemMessageService.getSystemMessageByIdAndReceiver(systemMessageId, userId);
 
         if(systemMessageDto != null){
             try{
                 BigInteger applicantId = systemMessageDto.getSenderId();
                 String applicantFriendGroupName = (String) systemMessageDto.getMessageBody().get("friendGroupName");
                 addFriend(userId, friendGroupName, applicantId, applicantFriendGroupName);
-                messageService.deleteSystemMessageById(systemMessageId);
+                systemMessageService.deleteSystemMessageById(systemMessageId);
             }catch (ClassCastException e){
                 throw new ServiceException("消息格式错误");
             }
+        }else{
+            throw new ServiceException("朋友申请消息不存在");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void rejectNewFriend(BigInteger userId, BigInteger systemMessageId) {
+        SystemMessageDto systemMessageDto = systemMessageService.getSystemMessageByIdAndReceiver(systemMessageId, userId);
+
+        final String newFriendMessageType = MessageSystemUtil.getMessageType(NewFriendMessageBody.class);
+        if(systemMessageDto != null && Objects.equals(systemMessageDto.getMessageType(), newFriendMessageType)){
+            systemMessageService.deleteSystemMessageById(systemMessageId);
+
+            //将通知申请者被拒绝
+            NotificationMessageBody messageBody = new NotificationMessageBody();
+            String username = userService.getUsernameById(userId);
+            messageBody.setNotification(username + "拒绝了您的好友申请");
+            systemMessageService.sendSystemMessage(messageBody, userId, systemMessageDto.getSenderId());
         }else{
             throw new ServiceException("朋友申请消息不存在");
         }

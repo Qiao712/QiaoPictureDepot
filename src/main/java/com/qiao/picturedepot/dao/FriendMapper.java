@@ -19,5 +19,5 @@ public interface FriendMapper {
 
     Integer deleteFriendByUserId(BigInteger userId, BigInteger friendUserId);
 
-    Integer updateFriendGroup(BigInteger userId, BigInteger friendUserId, String newFriendGroup);
+    Integer updateFriendGroup(BigInteger userId, BigInteger friendUserId, String friendGroupName);
 }

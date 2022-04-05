@@ -7,6 +7,7 @@ import com.qiao.picturedepot.exception.MessageServiceException;
 import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
 import com.qiao.picturedepot.pojo.domain.SystemMessage;
+import com.qiao.picturedepot.util.MessageSystemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,15 +41,11 @@ public class SystemMessageServiceImpl implements SystemMessageService {
     }
 
     @Override
-    public List<SystemMessageDto> searchSystemMessage(BigInteger senderUserId, BigInteger receiverUserId, Class<? extends MessageBody> messageType, Boolean acknowledged) {
+    public List<SystemMessageDto> searchSystemMessage(BigInteger senderUserId, BigInteger receiverUserId, Class<? extends MessageBody> messageBodyClass, Boolean acknowledged) {
         //取得消息类型字符串
-        String messageTypeStr = null;
-        if(messageType != null){
-            int p = messageType.getSimpleName().indexOf("MessageBody");
-            messageTypeStr = messageType.getSimpleName().substring(0, p);
-        }
+        String messageType = MessageSystemUtil.getMessageType(messageBodyClass);
 
-        List<SystemMessage> systemMessages = systemMessageMapper.searchSystemMessage(senderUserId, receiverUserId, messageTypeStr, acknowledged);
+        List<SystemMessage> systemMessages = systemMessageMapper.searchSystemMessage(senderUserId, receiverUserId, messageType, acknowledged);
         return systemMessages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
     }
 
@@ -117,6 +114,10 @@ public class SystemMessageServiceImpl implements SystemMessageService {
      * 将SystemMessage映射为SystemMessageDto
      */
     private SystemMessageDto systemMessageMapper(SystemMessage systemMessage){
+        if(systemMessage == null){
+            return null;
+        }
+
         SystemMessageDto systemMessageDto = new SystemMessageDto();
 
         systemMessageDto.setId(systemMessage.getId());

@@ -6,6 +6,7 @@ import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AcceptNewFriendRequest;
 import com.qiao.picturedepot.pojo.dto.ApplyNewFriendRequest;
 import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
+import com.qiao.picturedepot.pojo.dto.UpdateFriendInfoRequest;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -37,6 +38,11 @@ public interface FriendService {
     void updateFriendGroup(FriendGroup friendGroup);
 
     /**
+     * 更新好友信息（分组）
+     */
+    void updateFriendInfo(BigInteger userId, UpdateFriendInfoRequest updateFriendInfoRequest);
+
+    /**
      * 申请加为好友。发送申请消息。
      */
     void applyToAddFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest);
@@ -45,4 +51,9 @@ public interface FriendService {
      * 接收好友申请。接收申请消息。
      */
     void acceptNewFriend(BigInteger userId, AcceptNewFriendRequest acceptNewFriendRequest);
+
+    /**
+     * 拒绝好友申请。并向申请者发送拒绝提示。
+     */
+    void rejectNewFriend(BigInteger userId, BigInteger systemMessageId);
 }
