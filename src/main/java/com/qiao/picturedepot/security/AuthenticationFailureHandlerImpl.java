@@ -1,5 +1,8 @@
 package com.qiao.picturedepot.security;
 
+import com.qiao.picturedepot.exception.handler.ApiError;
+import com.qiao.picturedepot.util.ObjectUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -15,8 +18,10 @@ import java.io.IOException;
 public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write("Authentication Failure.");
-        System.out.println("登录失败" + exception.getMessage());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        ApiError apiError = new ApiError(HttpStatus.FORBIDDEN.value(), "认证失败: " + exception.getMessage());
+        response.getWriter().write(ObjectUtil.object2Json(apiError));
     }
 }

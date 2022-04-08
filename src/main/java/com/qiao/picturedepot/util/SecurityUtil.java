@@ -33,7 +33,7 @@ public class SecurityUtil {
         if(principal instanceof User){
             return (User) principal;
         }else{
-            throw new AuthorizationException("匿名用户无权操作");
+            throw new AuthorizationException();
         }
     }
 }

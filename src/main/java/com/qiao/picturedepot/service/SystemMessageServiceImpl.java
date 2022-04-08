@@ -3,7 +3,7 @@ package com.qiao.picturedepot.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qiao.picturedepot.dao.SystemMessageMapper;
-import com.qiao.picturedepot.exception.MessageServiceException;
+import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
 import com.qiao.picturedepot.pojo.domain.SystemMessage;
@@ -50,22 +50,22 @@ public class SystemMessageServiceImpl implements SystemMessageService {
     }
 
     @Override
-    public <T extends MessageBody> T getSystemMessageBodyByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId, Class<T> cls) throws MessageServiceException {
+    public <T extends MessageBody> T getSystemMessageBodyByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId, Class<T> cls) {
         SystemMessage systemMessage = systemMessageMapper.getSystemMessageByIdAndReceiverId(systemMessageId, receiverUserId);
         MessageBody messageBody = null;
         if(systemMessage != null){
             if(!systemMessage.getReceiverId().equals(receiverUserId)){
-                throw new MessageServiceException("接收者错误.");
+                throw new ServiceException("接收者错误.");
             }
 
             if(! (systemMessage.getMessageType() + "MessageBody").equals(cls.getSimpleName())){
-                throw new MessageServiceException("MessageBody类与消息的类型不匹配.");
+                throw new ServiceException("MessageBody类与消息的类型不匹配.");
             }
 
             try {
                 messageBody = objectMapper.readValue(systemMessage.getMessageBody(), cls);
             } catch (JsonProcessingException e) {
-                throw new MessageServiceException(e);
+                throw new ServiceException("MessageBody类与消息的类型不匹配.", e);
             }
         }
         return (T) messageBody;

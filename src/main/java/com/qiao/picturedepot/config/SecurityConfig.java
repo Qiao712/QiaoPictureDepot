@@ -1,6 +1,5 @@
 package com.qiao.picturedepot.config;
 
-import com.qiao.picturedepot.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +10,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 
 @EnableWebSecurity
@@ -20,13 +24,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userServiceImpl;
     @Autowired
-    private CustomizedAuthenticationEntryPoint customizedAuthenticationEntryPoint;
+    private AuthenticationEntryPoint authenticationEntryPoint;
     @Autowired
-    private AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
     @Autowired
-    private AuthenticationFailureHandlerImpl authenticationFailureHandler;
+    private AuthenticationFailureHandler authenticationFailureHandler;
     @Autowired
-    private LogoutSuccessHandlerImpl logoutSuccessHandler;
+    private LogoutSuccessHandler logoutSuccessHandler;
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
     //配置PasswordEncoder
     @Bean
@@ -65,6 +71,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();  //关闭csrf
 
         //认证/授权异常处理
-        http.exceptionHandling().authenticationEntryPoint(customizedAuthenticationEntryPoint);
+        http
+            .exceptionHandling()
+            .authenticationEntryPoint(authenticationEntryPoint)
+            .accessDeniedHandler(accessDeniedHandler);
     }
 }

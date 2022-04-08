@@ -1,6 +1,5 @@
 package com.qiao.picturedepot.service;
 
-import com.qiao.picturedepot.exception.MessageServiceException;
 import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
 
@@ -19,7 +18,7 @@ public interface SystemMessageService {
      */
     List<SystemMessageDto> searchSystemMessage(BigInteger senderUserId, BigInteger receiverUserId, Class<? extends MessageBody> messageType, Boolean acknowledged);
 
-    <T extends MessageBody> T getSystemMessageBodyByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId, Class<T> cls) throws MessageServiceException;
+    <T extends MessageBody> T getSystemMessageBodyByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId, Class<T> cls);
 
     void sendSystemMessage(MessageBody messageBody, BigInteger senderUserId, BigInteger receiverUserId);
 

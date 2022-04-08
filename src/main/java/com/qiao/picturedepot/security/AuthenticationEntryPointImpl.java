@@ -1,5 +1,8 @@
 package com.qiao.picturedepot.security;
 
+import com.qiao.picturedepot.exception.handler.ApiError;
+import com.qiao.picturedepot.util.ObjectUtil;
+import io.jsonwebtoken.lang.Strings;
 import org.apache.ibatis.javassist.tools.web.BadHttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -14,10 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class CustomizedAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("Please Authenticate.");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED.value(), "未认证.");
+        response.getWriter().write(ObjectUtil.object2Json(apiError));
     }
 }
