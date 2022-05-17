@@ -9,4 +9,8 @@ public class ObjectUtil {
     public static String object2Json(Object value) throws JsonProcessingException {
         return objectMapper.writeValueAsString(value);
     }
+
+    public static <T> T json2Object(String json, Class<T> cls) throws JsonProcessingException {
+        return objectMapper.readValue(json, cls);
+    }
 }

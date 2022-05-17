@@ -8,6 +8,7 @@ import java.math.BigInteger;
 @Setter
 @Getter
 public class PictureGroup extends BaseEntity{
-    private BigInteger albumId;
+    private Long albumId;
     private String title;
+    private String description;
 }

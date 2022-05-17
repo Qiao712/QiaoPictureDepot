@@ -20,10 +20,10 @@ Spring Security
 ## 图片文件储存（暂时）
 * 简单地储存为文件
 * 数据库picture表中储存图片的地址
-* /{username}/{albumId}/{picture file}
+* /{username}/{albumId}/{pictureRef file}
 
 ## 图组修改/创建(图片文件上传)
-* 复杂性：图片预览、拖动排序、删除、上传的结合
+* 复杂性：图片预览、拖动排序、删除、上传的结合、事务的维护
 * 方案1：分三个请求完成
   * 1.请求删除图片（上传待删除图片的id数组）
   * 2.请求上传图片（返回新上传的图片的id，将其填入前端的图片列表以进行图片顺序的上传）
@@ -31,6 +31,7 @@ Spring Security
   * 问题：无原子性，上传步骤复杂
 * **方案2（使用）**：通过一个请求form表单，完成图片的上传，和删除信息，位置信息
   * 位置信息: 以图片id的数组表示顺序。未上传的图片的id留空(null)，新上传的图片以此所占的次序。
+* 事务的维护!!!!
 
 ## 图片查看以及授权
   * picture以及pictureGroup表中没用储存图片属主，只有在album表中储存
@@ -38,7 +39,7 @@ Spring Security
   * **用户查看一个有多张picture的pictureGroup时，对同一pictureGroup进行多次访问 --> 使用redis缓存用户对图组的访问权限**
   * 同一时间对一个用户只缓存1个pictureGroup的访问权 --> 成功时，认证时间压缩1/3
   * 过程:
-  * 用户通过pictureGroupId和pictureId请求一张图片(/api/picture-groups/{pictureGroupId}/pictures/{pictureId})
+  * 用户通过pictureGroupId和pictureId请求一张图片(/api/pictureRef-groups/{pictureGroupId}/pictureRefs/{pictureId})
     1. 检查用户是否允许访问该pictureGroup
        * 先查看redis缓存中是否存在 username - pictureGroupId 键值对，若存在则允许访问
        * 若不存在，则查询通过pictureGroupId查询其所属的album，再得到所有者，进行判断是否允许访问。若允许访问设置一个60秒过期的username - pictureGroupId 键值对,加速下次查询

@@ -1,14 +1,16 @@
 package com.qiao.picturedepot.pojo.domain;
 
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigInteger;
 
-@Setter
-@Getter
-public class Friend extends BaseEntity{
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class FriendShip extends BaseEntity{
     private BigInteger friendUserId;
     private BigInteger friendGroupId;
 
+    //------------------------------
     private String friendUsername;
 }

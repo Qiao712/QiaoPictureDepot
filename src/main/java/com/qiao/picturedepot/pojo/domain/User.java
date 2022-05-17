@@ -1,5 +1,7 @@
 package com.qiao.picturedepot.pojo.domain;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,9 +12,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity implements UserDetails {
     private String username;
     private String password;
+    private Long roleId;
+
+    //--------------------
     private Role role;
 
     public User() {

@@ -1,18 +1,13 @@
 package com.qiao.picturedepot.pojo.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.math.BigInteger;
-
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Picture extends BaseEntity{
-    @JsonIgnore
-    private String filepath;
-    @JsonIgnore
-    private String pictureFormat;
-    private BigInteger pictureGroupId;
-    private int sequence;
+    private String uri;
+    private String md5;
+    private String format;
+    private Long refCount;
 }

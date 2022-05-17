@@ -39,7 +39,7 @@
     </insert>
 
     <select id="getMaxPictureSequenceInGroup" resultType="Integer">
-        SELECT MAX(sequence) FROM picture
+        SELECT MAX(sequence) FROM pictureRef
         WHERE picture_group_id = #{pictureGroupId}
     </select>
 

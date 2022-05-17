@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-//                .mvcMatchers("/api/picture-groups/{pictureGroupId}/**").access(pictureAccessAuthorizationManager)
+//                .mvcMatchers("/api/pictureRef-groups/{pictureGroupId}/**").access(pictureAccessAuthorizationManager)
 //                .mvcMatchers("/api/albums/{albumId}/**").access(albumAccessAuthorizationManager)
                 .mvcMatchers("/api/register").permitAll()
                 .anyRequest().authenticated()

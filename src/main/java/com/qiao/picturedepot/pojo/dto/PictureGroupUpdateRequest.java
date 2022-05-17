@@ -1,9 +1,6 @@
 package com.qiao.picturedepot.pojo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -12,7 +9,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PictureGroupUpload {
+@ToString
+public class PictureGroupUpdateRequest {
     private BigInteger pictureGroupId;
     private String title;
     private BigInteger albumId;

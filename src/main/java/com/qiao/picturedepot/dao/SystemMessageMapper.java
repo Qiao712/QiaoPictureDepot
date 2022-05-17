@@ -1,6 +1,6 @@
 package com.qiao.picturedepot.dao;
 
-import com.qiao.picturedepot.pojo.domain.SystemMessage;
+import com.qiao.picturedepot.pojo.domain.Message;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.math.BigInteger;
@@ -10,13 +10,13 @@ import java.util.List;
 public interface SystemMessageMapper {
     Integer getUnacknowledgedSystemMessageCountByReceiverId(BigInteger receiverId);
 
-    List<SystemMessage> getSystemMessagesByReceiverId(BigInteger receiverId);
+    List<Message> getSystemMessagesByReceiverId(BigInteger receiverId);
 
-    SystemMessage getSystemMessageByIdAndReceiverId(BigInteger systemMessageId, BigInteger receiverId);
+    Message getSystemMessageByIdAndReceiverId(BigInteger systemMessageId, BigInteger receiverId);
 
-    List<SystemMessage> searchSystemMessage(BigInteger senderId, BigInteger receiverId, String messageType, Boolean acknowledged);
+    List<Message> searchSystemMessage(BigInteger senderId, BigInteger receiverId, String messageType, Boolean acknowledged);
 
-    Integer addSystemMessage(SystemMessage message);
+    Integer addSystemMessage(Message message);
 
     Integer deleteSystemMessageById(BigInteger id);
 

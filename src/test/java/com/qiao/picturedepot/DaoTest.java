@@ -2,7 +2,7 @@ package com.qiao.picturedepot;
 
 import com.qiao.picturedepot.dao.FriendGroupMapper;
 import com.qiao.picturedepot.dao.FriendMapper;
-import com.qiao.picturedepot.pojo.domain.Friend;
+import com.qiao.picturedepot.pojo.domain.FriendShip;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.service.FriendService;
 import org.junit.jupiter.api.Test;
@@ -24,9 +24,9 @@ public class DaoTest {
     @Test
     void testFriendDao(){
 //        List<Friend> friends = friendMapper.getFriendsByUserId(BigInteger.valueOf(1));
-        List<Friend> friends = friendMapper.getFriendsByGroupId(BigInteger.valueOf(1));
-        for (Friend friend : friends) {
-            System.out.println(friend);
+        List<FriendShip> friendShips = friendMapper.getFriendsByGroupId(BigInteger.valueOf(1));
+        for (FriendShip friendShip : friendShips) {
+            System.out.println(friendShip);
         }
 
 //        friendMapper.addFriend(new Friend(null, BigInteger.valueOf(6), BigInteger.valueOf(1), null, null));

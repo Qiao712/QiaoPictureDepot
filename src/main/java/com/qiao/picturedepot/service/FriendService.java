@@ -45,7 +45,7 @@ public interface FriendService {
     /**
      * 申请加为好友。发送申请消息。
      */
-    void applyToAddFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest);
+    void applyNewFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest);
 
     /**
      * 接收好友申请。接收申请消息。

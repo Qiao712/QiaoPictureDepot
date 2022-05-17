@@ -19,6 +19,7 @@ public class FileUtil {
     }
 
     public static String getNameSuffix(String filename){
+        if(filename == null) return null;
         int p = filename.lastIndexOf('.');
         return filename.substring(p+1);
     }
@@ -29,7 +30,8 @@ public class FileUtil {
         pictureFormats.addAll(Arrays.asList(formats));
     }
 
-    public static boolean isPicture(String suffix){
+    public static boolean isPictureFile(String suffix){
+        if(suffix == null) return false;
         return pictureFormats.contains(suffix.toLowerCase());
     }
 }

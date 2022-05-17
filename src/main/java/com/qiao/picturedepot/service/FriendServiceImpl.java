@@ -5,7 +5,7 @@ import com.qiao.picturedepot.dao.FriendMapper;
 import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.*;
-import com.qiao.picturedepot.pojo.domain.Friend;
+import com.qiao.picturedepot.pojo.domain.FriendShip;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
 import com.qiao.picturedepot.pojo.dto.message.NotificationMessageBody;
@@ -41,7 +41,7 @@ public class FriendServiceImpl implements FriendService{
             BigInteger friendGroupId = friendGroup.getId();
             friendGroupDto.setId(friendGroupId);
             friendGroupDto.setName(friendGroup.getName());
-            friendGroupDto.setFriends(this.getFriendsByGroupId(friendGroupId));
+            friendGroupDto.setFriendShips(this.getFriendsByGroupId(friendGroupId));
 
             friendGroupDtos.add(friendGroupDto);
         }
@@ -113,7 +113,7 @@ public class FriendServiceImpl implements FriendService{
     }
 
     @Override
-    public void applyToAddFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest) {
+    public void applyNewFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest) {
         BigInteger friendUserId = userService.getUserIdByUsername(applyNewFriendRequest.getFriendUsername());
         if(friendUserId == null) {
             throw new ServiceException("用户(username:" + applyNewFriendRequest.getFriendUsername() + ") 不存在");
@@ -208,18 +208,18 @@ public class FriendServiceImpl implements FriendService{
             friendGroupMapper.addFriendGroup(friendGroup2);
         }
 
-        Friend friend1 = new Friend();
-        friend1.setFriendGroupId(friendGroup1.getId());
-        friend1.setFriendUserId(userId2);
-        friendMapper.addFriend(friend1);
+        FriendShip friendShip1 = new FriendShip();
+        friendShip1.setFriendGroupId(friendGroup1.getId());
+        friendShip1.setFriendUserId(userId2);
+        friendMapper.addFriend(friendShip1);
 
-        Friend friend2 = new Friend();
-        friend2.setFriendGroupId(friendGroup2.getId());
-        friend2.setFriendUserId(userId1);
-        friendMapper.addFriend(friend2);
+        FriendShip friendShip2 = new FriendShip();
+        friendShip2.setFriendGroupId(friendGroup2.getId());
+        friendShip2.setFriendUserId(userId1);
+        friendMapper.addFriend(friendShip2);
     }
 
-    private List<Friend> getFriendsByGroupId(BigInteger friendGroupId) {
+    private List<FriendShip> getFriendsByGroupId(BigInteger friendGroupId) {
         return friendMapper.getFriendsByGroupId(friendGroupId);
     }
 }

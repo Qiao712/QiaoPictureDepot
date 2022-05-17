@@ -6,48 +6,48 @@
 <mapper namespace="com.qiao.picturedepot.dao.PictureMapper">
     <select id="getPicturesByGroup" resultType="Picture">
         SELECT id, picture_group_id, picture_format, filepath, sequence, create_time, update_time
-        FROM picture
+        FROM pictureRef
         WHERE picture_group_id = #{pictureGroupId}
         ORDER BY sequence ASC
     </select>
 
     <select id="getFirstPictureOfGroup" parameterType="BigInteger" resultType="BigInteger">
-        SELECT id FROM picture WHERE picture_group_id = #{pictureGroupId} ORDER BY sequence LIMIT 1
+        SELECT id FROM pictureRef WHERE picture_group_id = #{pictureGroupId} ORDER BY sequence LIMIT 1
     </select>
 
     <select id="getPictureCountOfGroup" parameterType="BigInteger" resultType="Integer">
-        SELECT COUNT(id) FROM picture WHERE picture_group_id = #{pictureGroupId}
+        SELECT COUNT(id) FROM pictureRef WHERE picture_group_id = #{pictureGroupId}
     </select>
 
     <delete id="deletePicturesByGroup">
-        DELETE FROM picture WHERE picture_group_id = #{pictureGroupId}
+        DELETE FROM pictureRef WHERE picture_group_id = #{pictureGroupId}
     </delete>
 
     <select id="getPictureById" resultType="Picture">
         SELECT id, picture_group_id, picture_format, filepath, sequence, create_time, update_time
-        FROM picture
+        FROM pictureRef
         WHERE id = #{id}
     </select>
 
     <select id="getPicturePath" resultType="String">
         SELECT filepath
-        FROM picture
+        FROM pictureRef
         WHERE id = #{pictureId} AND picture_group_id = #{pictureGroupId}
     </select>
 
     <insert id="addPicture" parameterType="Picture" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO picture(picture_group_id, picture_format, filepath, sequence)
+        INSERT INTO pictureRef(picture_group_id, picture_format, filepath, sequence)
         VALUES(#{pictureGroupId}, #{pictureFormat}, #{filepath}, #{sequence})
     </insert>
 
     <update id="updateSequence">
-        UPDATE picture
+        UPDATE pictureRef
         SET sequence = #{sequence}
         WHERE id = #{pictureId} AND picture_group_id = #{pictureGroupId}
     </update>
 
     <delete id="deletePicture">
-        DELETE FROM picture
+        DELETE FROM pictureRef
         WHERE picture_group_id = #{pictureGroupId} AND id = #{pictureId}
     </delete>
 </mapper>

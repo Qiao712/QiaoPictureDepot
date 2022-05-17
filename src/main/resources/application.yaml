@@ -6,7 +6,7 @@ spring:
   datasource:
     username: root
     password: lty0712
-    url: jdbc:mysql://localhost:3306/picture_depot?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/picture_depot_2?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
 #  配置redis
   redis:

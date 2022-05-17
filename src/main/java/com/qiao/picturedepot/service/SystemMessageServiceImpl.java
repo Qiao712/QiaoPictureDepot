@@ -6,7 +6,7 @@ import com.qiao.picturedepot.dao.SystemMessageMapper;
 import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
-import com.qiao.picturedepot.pojo.domain.SystemMessage;
+import com.qiao.picturedepot.pojo.domain.Message;
 import com.qiao.picturedepot.util.MessageSystemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,15 +29,15 @@ public class SystemMessageServiceImpl implements SystemMessageService {
 
     @Override
     public List<SystemMessageDto> getSystemMessageByReceiver(BigInteger receiverUserId) {
-        List<SystemMessage> systemMessages = systemMessageMapper.getSystemMessagesByReceiverId(receiverUserId);
+        List<Message> messages = systemMessageMapper.getSystemMessagesByReceiverId(receiverUserId);
         //映射为SystemMessageDto
-        return systemMessages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
+        return messages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
     }
 
     @Override
     public SystemMessageDto getSystemMessageByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId) {
-        SystemMessage systemMessage = systemMessageMapper.getSystemMessageByIdAndReceiverId(systemMessageId, receiverUserId);
-        return systemMessageMapper(systemMessage);
+        Message message = systemMessageMapper.getSystemMessageByIdAndReceiverId(systemMessageId, receiverUserId);
+        return systemMessageMapper(message);
     }
 
     @Override
@@ -45,25 +45,25 @@ public class SystemMessageServiceImpl implements SystemMessageService {
         //取得消息类型字符串
         String messageType = MessageSystemUtil.getMessageType(messageBodyClass);
 
-        List<SystemMessage> systemMessages = systemMessageMapper.searchSystemMessage(senderUserId, receiverUserId, messageType, acknowledged);
-        return systemMessages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
+        List<Message> messages = systemMessageMapper.searchSystemMessage(senderUserId, receiverUserId, messageType, acknowledged);
+        return messages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
     }
 
     @Override
     public <T extends MessageBody> T getSystemMessageBodyByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId, Class<T> cls) {
-        SystemMessage systemMessage = systemMessageMapper.getSystemMessageByIdAndReceiverId(systemMessageId, receiverUserId);
+        Message message = systemMessageMapper.getSystemMessageByIdAndReceiverId(systemMessageId, receiverUserId);
         MessageBody messageBody = null;
-        if(systemMessage != null){
-            if(!systemMessage.getReceiverId().equals(receiverUserId)){
+        if(message != null){
+            if(!message.getReceiverId().equals(receiverUserId)){
                 throw new ServiceException("接收者错误.");
             }
 
-            if(! (systemMessage.getMessageType() + "MessageBody").equals(cls.getSimpleName())){
+            if(! (message.getMessageType() + "MessageBody").equals(cls.getSimpleName())){
                 throw new ServiceException("MessageBody类与消息的类型不匹配.");
             }
 
             try {
-                messageBody = objectMapper.readValue(systemMessage.getMessageBody(), cls);
+                messageBody = objectMapper.readValue(message.getMessageBody(), cls);
             } catch (JsonProcessingException e) {
                 throw new ServiceException("MessageBody类与消息的类型不匹配.", e);
             }
@@ -78,19 +78,19 @@ public class SystemMessageServiceImpl implements SystemMessageService {
         messageType = messageType.substring(0, messageType.length() - "MessageBody".length());
 
         //组装SystemMessage
-        SystemMessage systemMessage = new SystemMessage();
-        systemMessage.setMessageType(messageType);
-        systemMessage.setSenderId(senderUserId);
-        systemMessage.setReceiverId(receiverUserId);
-        systemMessage.setAcknowledged(false);
+        Message message = new Message();
+        message.setMessageType(messageType);
+        message.setSenderId(senderUserId);
+        message.setReceiverId(receiverUserId);
+        message.setAcknowledged(false);
         try {
-            systemMessage.setMessageBody( objectMapper.writeValueAsString(messageBody) );
+            message.setMessageBody( objectMapper.writeValueAsString(messageBody) );
         } catch (JsonProcessingException e) {
             //TODO: 异常处理
             e.printStackTrace();
         }
 
-        systemMessageMapper.addSystemMessage(systemMessage);
+        systemMessageMapper.addSystemMessage(message);
     }
 
     @Override
@@ -113,21 +113,21 @@ public class SystemMessageServiceImpl implements SystemMessageService {
     /**
      * 将SystemMessage映射为SystemMessageDto
      */
-    private SystemMessageDto systemMessageMapper(SystemMessage systemMessage){
-        if(systemMessage == null){
+    private SystemMessageDto systemMessageMapper(Message message){
+        if(message == null){
             return null;
         }
 
         SystemMessageDto systemMessageDto = new SystemMessageDto();
 
-        systemMessageDto.setId(systemMessage.getId());
-        systemMessageDto.setSenderId(systemMessage.getSenderId());
-        systemMessageDto.setReceiverId(systemMessage.getReceiverId());
-        systemMessageDto.setMessageType(systemMessage.getMessageType());
-        systemMessageDto.setAcknowledged(systemMessage.getAcknowledged());
-        systemMessageDto.setCreateTime(systemMessage.getCreateTime());
-        systemMessageDto.setExpirationTime(systemMessage.getExpirationTime());
-        systemMessageDto.setMessageBodyFromJson(systemMessage.getMessageBody());
+        systemMessageDto.setId(message.getId());
+        systemMessageDto.setSenderId(message.getSenderId());
+        systemMessageDto.setReceiverId(message.getReceiverId());
+        systemMessageDto.setMessageType(message.getMessageType());
+        systemMessageDto.setAcknowledged(message.getAcknowledged());
+        systemMessageDto.setCreateTime(message.getCreateTime());
+        systemMessageDto.setExpirationTime(message.getExpirationTime());
+        systemMessageDto.setMessageBodyFromJson(message.getMessageBody());
 
         return systemMessageDto;
     }

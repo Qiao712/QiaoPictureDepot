@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -42,8 +41,8 @@ public class FriendController {
     }
 
     @PostMapping("/friends/apply")
-    public void applyToAddFriend(@AuthenticationPrincipal User user, @RequestBody ApplyNewFriendRequest applyNewFriendRequest){
-        friendService.applyToAddFriend(user, applyNewFriendRequest);
+    public void applyNewFriend(@AuthenticationPrincipal User user, @RequestBody ApplyNewFriendRequest applyNewFriendRequest){
+        friendService.applyNewFriend(user, applyNewFriendRequest);
     }
 
 
