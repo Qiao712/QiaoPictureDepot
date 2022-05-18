@@ -1,4 +1,4 @@
-package com.qiao.picturedepot.dao.pictureRef;
+package com.qiao.picturedepot.dao.picture;
 
 import com.qiao.picturedepot.config.MyProperties;
 import com.qiao.picturedepot.util.FileUtil;
@@ -19,14 +19,14 @@ public class LocalPictureRepository implements PictureRepository{
 
     @Override
     public String savePictureFile(MultipartFile pictureFile) {
-        String pictureFileId = null;
+        String uri = null;
 
         String filename = pictureFile.getOriginalFilename();
         String filetype = FileUtil.getNameSuffix(filename);
         if(FileUtil.isPictureFile(filetype)){
             //使用UUID加后缀名作为文件名
             filename = UUID.randomUUID() + "." + filetype;
-            pictureFileId = filename;
+            uri = filename;
             File file = new File(properties.getPictureDepotPath() + File.separator + filename);
 
             //保存图片
@@ -38,19 +38,19 @@ public class LocalPictureRepository implements PictureRepository{
             }
         }
 
-        return pictureFileId;
+        return uri;
     }
 
     @Override
-    public boolean deletePictureFile(String pictureFileId) {
-        if(pictureFileId == null) return false;
-        return getFile(pictureFileId).delete();
+    public boolean deletePictureFile(String uri) {
+        if(uri == null) return false;
+        return getFile(uri).delete();
     }
 
     @Override
-    public void getPictureFile(String pictureFileId, OutputStream outputStream) {
+    public void getPictureFile(String uri, OutputStream outputStream) {
         try {
-            FileInputStream fileInputStream = new FileInputStream(getFile(pictureFileId));
+            FileInputStream fileInputStream = new FileInputStream(getFile(uri));
             FileUtil.copy(fileInputStream, outputStream);
         } catch (IOException e) {
             throw new RuntimeException("无法读取图片文件", e);

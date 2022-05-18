@@ -12,12 +12,12 @@
         FROM role WHERE id = #{id}
     </select>
 
-    <select id="getUserByUsername" resultMap="userRole">
+    <select id="getByUsername" resultMap="userRole">
         SELECT id, username, password, role_id, create_time, update_time
         FROM user WHERE username = #{username}
     </select>
 
-    <select id="getUserIdByUsername" resultType="BigInteger">
+    <select id="getUserIdByUsername" resultType="Long">
         SELECT id FROM user WHERE username = #{username}
     </select>
 
@@ -25,15 +25,15 @@
         SELECT username FROM user WHERE id = #{id}
     </select>
 
-    <select id="getUserById" resultMap="userRole">
+    <select id="getById" resultMap="userRole">
         SELECT id, username, password, role_id, create_time, update_time
         FROM user WHERE id = #{id}
     </select>
 
-    <insert id="addUser">
+    <insert id="add">
         INSERT INTO user(username, password, role_id)
         VALUES(#{username}, #{password},
-            (select id FROM role WHERE role.name = #{name})
+            (select id FROM role WHERE role.name = #{rolename})
         )
     </insert>
 </mapper>

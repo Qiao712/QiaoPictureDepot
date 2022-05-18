@@ -4,23 +4,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.qiao.picturedepot.dao.PictureGroupMapper">
-    <select id="getPictureGroupCountByAlbumId" resultType="BigInteger">
+    <select id="getPictureGroupCountByAlbumId" resultType="Long">
         SELECT COUNT(id) FROM picture_group WHERE album_id = #{albumId}
     </select>
 
-    <select id="getPictureGroupsByAlbumId" resultType="PictureGroup">
-        SELECT id, album_id, title, create_time, update_time
+    <select id="listByAlbumId" resultType="PictureGroup">
+        SELECT id, album_id, title, description, create_time, update_time
         FROM picture_group
         WHERE album_id = #{albumId}
     </select>
 
-    <select id="getPictureGroupById" resultType="PictureGroup">
-        SELECT id, album_id, title, create_time, update_time
+    <select id="getById" resultType="PictureGroup">
+        SELECT id, album_id, title, description, create_time, update_time
         FROM picture_group
         WHERE id = #{id}
     </select>
 
-    <update id="updatePictureGroup" parameterType="PictureGroup">
+    <update id="update" parameterType="PictureGroup">
         UPDATE picture_group
         <set>
             <if test="albumId != null">
@@ -33,9 +33,9 @@
         WHERE id = #{id}
     </update>
 
-    <insert id="addPictureGroup" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-        INSERT INTO picture_group(album_id, title)
-        VALUES(#{albumId}, #{title})
+    <insert id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO picture_group(album_id, title, description)
+        VALUES(#{albumId}, #{title}, #{description})
     </insert>
 
     <select id="getMaxPictureSequenceInGroup" resultType="Integer">
@@ -43,8 +43,8 @@
         WHERE picture_group_id = #{pictureGroupId}
     </select>
 
-    <delete id="deletePictureGroupById">
-        delete from picture_group
-        where id = #{id}
+    <delete id="deleteById">
+        DELETE FROM picture_group
+        WHERE id = #{id}
     </delete>
 </mapper>

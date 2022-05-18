@@ -1,10 +1,10 @@
 package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.dao.FriendGroupMapper;
-import com.qiao.picturedepot.dao.FriendMapper;
+import com.qiao.picturedepot.dao.FriendshipMapper;
 import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
-import com.qiao.picturedepot.pojo.domain.FriendShip;
+import com.qiao.picturedepot.pojo.domain.Friendship;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.*;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
@@ -22,11 +22,11 @@ import java.util.Objects;
 @Component
 public class FriendServiceImpl implements FriendService{
     @Autowired
-    private FriendMapper friendMapper;
+    private FriendshipMapper friendshipMapper;
     @Autowired
     private FriendGroupMapper friendGroupMapper;
     @Autowired
-    private SystemMessageService systemMessageService;
+    private MessageService messageService;
     @Autowired
     private UserService userService;
 
@@ -40,7 +40,7 @@ public class FriendServiceImpl implements FriendService{
             Long friendGroupId = friendGroup.getId();
             friendGroupDto.setId(friendGroupId);
             friendGroupDto.setName(friendGroup.getName());
-            friendGroupDto.setFriendShips(this.getFriendsByGroupId(friendGroupId));
+            friendGroupDto.setFriendships(this.getFriendsByGroupId(friendGroupId));
 
             friendGroupDtos.add(friendGroupDto);
         }
@@ -62,7 +62,7 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public boolean checkIsFriend(Long userId1, Long userId2) {
-        return friendMapper.checkFriendRelationship(userId1, userId2);
+        return friendshipMapper.checkFriendRelationship(userId1, userId2);
     }
 
     @Override
@@ -72,8 +72,8 @@ public class FriendServiceImpl implements FriendService{
             throw new ServiceException("不存在好友关系");
         }
         //互相删除
-        friendMapper.deleteByUserId(userId, friendUserId);
-        friendMapper.deleteByUserId(friendUserId, userId);
+        friendshipMapper.deleteByUserId(userId, friendUserId);
+        friendshipMapper.deleteByUserId(friendUserId, userId);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class FriendServiceImpl implements FriendService{
         }
 
         if(friendGroup.getId() != null){
-            friendMapper.update(userId, friendUserId, friendGroup.getName());
+            friendshipMapper.update(userId, friendUserId, friendGroup.getName());
         }else{
             throw new ServiceException("无法创建好友分组");
         }
@@ -127,13 +127,13 @@ public class FriendServiceImpl implements FriendService{
         }
 
         //删除旧的申请
-        List<SystemMessageDto> systemMessages = systemMessageService.searchSystemMessage(applicant.getId(), friendUserId, NewFriendMessageBody.class, null);
+        List<SystemMessageDto> systemMessages = messageService.searchMessage(applicant.getId(), friendUserId, NewFriendMessageBody.class, null);
         List<Long> systemMessageIds = new ArrayList<>();
         for (SystemMessageDto systemMessage : systemMessages) {
             systemMessageIds.add(systemMessage.getId());
         }
         if(!systemMessageIds.isEmpty()){
-            systemMessageService.deleteSystemMessagesById(systemMessageIds);
+            messageService.deleteMessagesById(systemMessageIds);
         }
 
         NewFriendMessageBody messageBody = new NewFriendMessageBody();
@@ -141,22 +141,22 @@ public class FriendServiceImpl implements FriendService{
         messageBody.setApplicationMessage(applyNewFriendRequest.getApplicationMessage());
         messageBody.setApplicantUsername(applicant.getUsername());
 
-        systemMessageService.sendSystemMessage(messageBody, applicant.getId(), friendUserId);
+        messageService.sendMessage(messageBody, applicant.getId(), friendUserId);
     }
 
     @Override
     @Transactional
     public void acceptNewFriend(Long userId, AcceptNewFriendRequest acceptNewFriendRequest) {
-        Long systemMessageId = acceptNewFriendRequest.getNewFriendSystemMessageId();
+        Long systemMessageId = acceptNewFriendRequest.getNewFriendMessageId();
         String friendGroupName = acceptNewFriendRequest.getFriendGroupName();
-        SystemMessageDto systemMessageDto = systemMessageService.getSystemMessageByIdAndReceiver(systemMessageId, userId);
+        SystemMessageDto systemMessageDto = messageService.getMessageByIdAndReceiver(systemMessageId, userId);
 
         if(systemMessageDto != null){
             try{
                 Long applicantId = systemMessageDto.getSenderId();
                 String applicantFriendGroupName = (String) systemMessageDto.getMessageBody().get("friendGroupName");
                 addFriend(userId, friendGroupName, applicantId, applicantFriendGroupName);
-                systemMessageService.deleteSystemMessageById(systemMessageId);
+                messageService.deleteMessageById(systemMessageId);
             }catch (ClassCastException e){
                 throw new ServiceException("消息格式错误");
             }
@@ -168,17 +168,17 @@ public class FriendServiceImpl implements FriendService{
     @Override
     @Transactional
     public void rejectNewFriend(Long userId, Long systemMessageId) {
-        SystemMessageDto systemMessageDto = systemMessageService.getSystemMessageByIdAndReceiver(systemMessageId, userId);
+        SystemMessageDto systemMessageDto = messageService.getMessageByIdAndReceiver(systemMessageId, userId);
 
         final String newFriendMessageType = MessageSystemUtil.getMessageType(NewFriendMessageBody.class);
         if(systemMessageDto != null && Objects.equals(systemMessageDto.getMessageType(), newFriendMessageType)){
-            systemMessageService.deleteSystemMessageById(systemMessageId);
+            messageService.deleteMessageById(systemMessageId);
 
             //将通知申请者被拒绝
             NotificationMessageBody messageBody = new NotificationMessageBody();
             String username = userService.getUsernameById(userId);
             messageBody.setNotification(username + "拒绝了您的好友申请");
-            systemMessageService.sendSystemMessage(messageBody, userId, systemMessageDto.getSenderId());
+            messageService.sendMessage(messageBody, userId, systemMessageDto.getSenderId());
         }else{
             throw new ServiceException("朋友申请消息不存在");
         }
@@ -186,7 +186,7 @@ public class FriendServiceImpl implements FriendService{
 
     //-----------------------------------------------------------------------------------------------------
     private void addFriend(Long userId1, String friendGroupName1, Long userId2, String friendGroupName2) {
-        if(friendMapper.checkFriendRelationship(userId1, userId2)) {
+        if(friendshipMapper.checkFriendRelationship(userId1, userId2)) {
             return;
         }
 
@@ -207,18 +207,18 @@ public class FriendServiceImpl implements FriendService{
             friendGroupMapper.add(friendGroup2);
         }
 
-        FriendShip friendShip1 = new FriendShip();
-        friendShip1.setFriendGroupId(friendGroup1.getId());
-        friendShip1.setFriendUserId(userId2);
-        friendMapper.add(friendShip1);
+        Friendship friendship1 = new Friendship();
+        friendship1.setFriendGroupId(friendGroup1.getId());
+        friendship1.setFriendUserId(userId2);
+        friendshipMapper.add(friendship1);
 
-        FriendShip friendShip2 = new FriendShip();
-        friendShip2.setFriendGroupId(friendGroup2.getId());
-        friendShip2.setFriendUserId(userId1);
-        friendMapper.add(friendShip2);
+        Friendship friendship2 = new Friendship();
+        friendship2.setFriendGroupId(friendGroup2.getId());
+        friendship2.setFriendUserId(userId1);
+        friendshipMapper.add(friendship2);
     }
 
-    private List<FriendShip> getFriendsByGroupId(Long friendGroupId) {
-        return friendMapper.listByGroupId(friendGroupId);
+    private List<Friendship> getFriendsByGroupId(Long friendGroupId) {
+        return friendshipMapper.listByGroupId(friendGroupId);
     }
 }

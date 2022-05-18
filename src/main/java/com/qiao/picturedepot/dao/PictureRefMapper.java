@@ -17,11 +17,11 @@ public interface PictureRefMapper {
 
     PictureRef getById(Long id);
 
-    String getPictureUri(Long pictureGroupId, Long pictureId);
+    String getPictureUri(Long pictureGroupId, Long pictureRefId);
 
     Integer add(PictureRef pictureRef);
 
-    Integer updateSequence(Long pictureGroupId ,Long pictureId, Integer sequence);
+    Integer updateSequence(Long pictureGroupId ,Long pictureRefId, Integer sequence);
 
-    Integer delete(Long pictureGroupId, Long pictureId);
+    Integer delete(Long pictureGroupId, Long pictureRefId);
 }

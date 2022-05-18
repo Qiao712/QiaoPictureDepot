@@ -21,7 +21,11 @@ spring:
       file-size-threshold: 20MB   #当文件达到多少时进行磁盘写入
 
 mybatis:
-  configLocation: classpath:mybatis-config.xml
+  mapperLocations:
+    - classpath:mapper/**.xml
+  typeAliasesPackage: com.qiao.picturedepot.pojo.domain
+  configuration:
+    mapUnderscoreToCamelCase: true
 
 #pagehelper
 pagehelper:

@@ -4,27 +4,27 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.qiao.picturedepot.dao.MessageMapper">
-    <select id="getUnacknowledgedSystemMessageCountByReceiverId" resultType="Integer">
+    <select id="countUnacknowledgedByReceiverId" resultType="Integer">
         SELECT count(id)
-        FROM system_message
+        FROM message
         WHERE receiver_id = #{receiverId} AND is_acknowledged = false
     </select>
 
-    <select id="getSystemMessagesByReceiverId" resultType="SystemMessage">
+    <select id="listByReceiverId" resultType="Message">
         SELECT id, sender_id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
-        FROM system_message
+        FROM message
         WHERE receiver_id = #{receiverId}
     </select>
 
-    <select id="getSystemMessageByIdAndReceiverId" resultType="SystemMessage">
+    <select id="getByIdAndReceiverId" resultType="Message">
         SELECT id, sender_id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
-        FROM system_message
+        FROM message
         WHERE id = #{systemMessageId} AND receiver_id = #{receiverId}
     </select>
 
-    <select id="searchSystemMessage" resultType="SystemMessage">
+    <select id="searchMessage" resultType="Message">
         SELECT id, sender_id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
-        FROM system_message
+        FROM message
         <where>
             <if test="senderId != null">
                 sender_id = #{senderId}
@@ -41,18 +41,18 @@
         </where>
     </select>
 
-    <insert id="addSystemMessage">
-        INSERT INTO system_message(id, sender_id, receiver_id, message_type, message_body, is_acknowledged, expiration_time)
+    <insert id="add">
+        INSERT INTO message(id, sender_id, receiver_id, message_type, message_body, is_acknowledged, expiration_time)
         VALUES(#{id}, #{senderId}, #{receiverId}, #{messageType}, #{messageBody}, #{acknowledged}, #{expirationTime})
     </insert>
 
-    <delete id="deleteSystemMessageById">
-        DELETE FROM system_message
+    <delete id="deleteById">
+        DELETE FROM message
         WHERE id = #{id}
     </delete>
 
-    <delete id="deleteSystemMessagesById">
-        DELETE FROM system_message
+    <delete id="deleteBatchById">
+        DELETE FROM message
         <where>
             <foreach collection="ids" item="item" index="index"
                      open="id in (" separator="," close=")" nullable="true">
@@ -62,7 +62,7 @@
     </delete>
 
     <update id="updateAcknowledged">
-        UPDATE system_message
+        UPDATE message
         SET is_acknowledged = #{acknowledged}
         <where>
             <foreach collection="systemMessageIds" item="item" index="index"

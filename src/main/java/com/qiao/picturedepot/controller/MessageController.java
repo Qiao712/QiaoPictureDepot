@@ -2,7 +2,7 @@ package com.qiao.picturedepot.controller;
 
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
-import com.qiao.picturedepot.service.SystemMessageService;
+import com.qiao.picturedepot.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -11,22 +11,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class SystemMessageController {
+public class MessageController {
     @Autowired
-    private SystemMessageService systemMessageService;
+    private MessageService messageService;
 
-    @GetMapping("/system-messages")
+    @GetMapping("/messages")
     public List<SystemMessageDto> getSystemMessages(@AuthenticationPrincipal User user){
-        return systemMessageService.getSystemMessageByReceiver(user.getId());
+        return messageService.getMessageByReceiver(user.getId());
     }
 
-    @GetMapping("/system-messages/unacknowledged-message-count")
+    @GetMapping("/messages/unacknowledged-message-count")
     public Integer getUnacknowledgedSystemMessageCount(@AuthenticationPrincipal User user){
-        return systemMessageService.getUnacknowledgedMessageCountByReceiver(user.getId());
+        return messageService.getUnacknowledgedMessageCountByReceiver(user.getId());
     }
 
-    @PostMapping("/system-messages/acknowledge")
+    @PostMapping("/messages/acknowledge")
     public void acknowledgeSystemMessage(@RequestBody List<Long> systemMessageIds, @AuthenticationPrincipal User user) {
-        systemMessageService.acknowledgeSystemMessage(user.getId(), systemMessageIds);
+        messageService.acknowledgeMessage(user.getId(), systemMessageIds);
     }
 }

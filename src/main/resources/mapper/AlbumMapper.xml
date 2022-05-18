@@ -4,13 +4,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.qiao.picturedepot.dao.AlbumMapper">
-    <select id="getAlbumById" resultType="Album">
+    <select id="getById" resultType="Album">
         SELECT id, name, owner_id, is_public, description, create_time, update_time
         FROM album
         WHERE id = #{id}
     </select>
 
-    <select id="getAlbumsByOwner" resultType="Album">
+    <select id="listByOwnerUsername" resultType="Album">
         SELECT id, name, owner_id, is_public, description, create_time, update_time
         FROM album
         <where>
@@ -22,12 +22,12 @@
     </select>
 
 
-    <insert id="addAlbum" parameterType="Album" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="add" parameterType="Album" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO album(name, owner_id, is_public, description)
-        VALUES(#{name}, #{ownerId}, #{isPublic}, description)
+        VALUES(#{name}, #{ownerId}, #{isPublic}, #{description})
     </insert>
 
-    <update id="updateAlbumByIdAndOwnerId" parameterType="Album">
+    <update id="updateByIdAndOwnerId" parameterType="Album">
         UPDATE album
         <set>
             <if test="name != null">
@@ -43,7 +43,7 @@
         WHERE id = #{id} AND owner_id = #{ownerId}
     </update>
 
-    <delete id="deleteAlbumById">
+    <delete id="deleteById">
         DELETE FROM album
         WHERE id = #{id}
     </delete>

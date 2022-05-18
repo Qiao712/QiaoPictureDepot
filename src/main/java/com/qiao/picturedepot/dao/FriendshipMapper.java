@@ -1,20 +1,20 @@
 package com.qiao.picturedepot.dao;
 
-import com.qiao.picturedepot.pojo.domain.FriendShip;
+import com.qiao.picturedepot.pojo.domain.Friendship;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
-public interface FriendMapper {
-    List<FriendShip> listByUserId(Long userId);
+public interface FriendshipMapper {
+    List<Friendship> listByUserId(Long userId);
 
-    List<FriendShip> listByGroupId(Long friendGroupId);
+    List<Friendship> listByGroupId(Long friendGroupId);
 
     Boolean checkFriendRelationship(@Param("user1") Long userId1, @Param("user2") Long userId2);
 
-    Integer add(FriendShip friendShip);
+    Integer add(Friendship friendShip);
 
     Integer deleteByUserId(Long userId, Long friendUserId);
 

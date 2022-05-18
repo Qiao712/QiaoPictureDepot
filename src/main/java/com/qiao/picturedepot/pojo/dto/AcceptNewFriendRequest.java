@@ -6,6 +6,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class AcceptNewFriendRequest {
-    private Long newFriendSystemMessageId;
+    private Long newFriendMessageId;
     private String friendGroupName;
 }

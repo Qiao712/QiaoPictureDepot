@@ -1,21 +1,16 @@
 package com.qiao.picturedepot;
 
 import com.qiao.picturedepot.dao.FriendGroupMapper;
-import com.qiao.picturedepot.dao.FriendMapper;
-import com.qiao.picturedepot.pojo.domain.FriendShip;
-import com.qiao.picturedepot.pojo.domain.FriendGroup;
+import com.qiao.picturedepot.dao.FriendshipMapper;
 import com.qiao.picturedepot.service.FriendService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigInteger;
-import java.util.List;
-
 @SpringBootTest
 public class DaoTest {
     @Autowired
-    FriendMapper friendMapper;
+    FriendshipMapper friendshipMapper;
     @Autowired
     FriendGroupMapper friendGroupMapper;
     @Autowired
@@ -24,10 +19,10 @@ public class DaoTest {
     @Test
     void testFriendDao(){
 //        List<Friend> friends = friendMapper.getFriendsByUserId(BigInteger.valueOf(1));
-        List<FriendShip> friendShips = friendMapper.listByGroupId(BigInteger.valueOf(1));
-        for (FriendShip friendShip : friendShips) {
-            System.out.println(friendShip);
-        }
+//        List<FriendShip> friendShips = friendMapper.listByGroupId(BigInteger.valueOf(1));
+//        for (FriendShip friendShip : friendShips) {
+//            System.out.println(friendShip);
+//        }
 
 //        friendMapper.addFriend(new Friend(null, BigInteger.valueOf(6), BigInteger.valueOf(1), null, null));
 //        friendMapper.deleteFriendById(BigInteger.valueOf(4));
@@ -35,10 +30,10 @@ public class DaoTest {
 
     @Test
     void testFriendGroupDao(){
-        List<FriendGroup> friendGroups = friendGroupMapper.listByUserId(BigInteger.valueOf(1));
-        for (FriendGroup friendGroup : friendGroups) {
-            System.out.println(friendGroup);
-        }
+//        List<FriendGroup> friendGroups = friendGroupMapper.listByUserId(BigInteger.valueOf(1));
+//        for (FriendGroup friendGroup : friendGroups) {
+//            System.out.println(friendGroup);
+//        }
 //        System.out.println(friendGroupMapper.getFriendGroupById(BigInteger.valueOf(1)));
 //        friendGroupMapper.addFriendGroup(new FriendGroup(null, "水友", BigInteger.valueOf(1), null, null, null));
 //        friendGroupMapper.deleteFriendGroupById(BigInteger.valueOf(3));

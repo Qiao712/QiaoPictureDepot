@@ -2,17 +2,15 @@ package com.qiao.picturedepot;
 
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
 import com.qiao.picturedepot.service.FriendService;
-import com.qiao.picturedepot.service.SystemMessageServiceImpl;
+import com.qiao.picturedepot.service.MessageServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigInteger;
-
 @SpringBootTest
 public class TestMessage {
     @Autowired
-    SystemMessageServiceImpl messageService;
+    MessageServiceImpl messageService;
     @Autowired
     FriendService friendService;
 

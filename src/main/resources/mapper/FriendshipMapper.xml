@@ -2,25 +2,25 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.qiao.picturedepot.dao.FriendMapper">
+<mapper namespace="com.qiao.picturedepot.dao.FriendshipMapper">
     <select id="getUsername" resultType="String">
         SELECT username
         FROM user
         WHERE user.id = #{id}
     </select>
 
-    <resultMap id="FriendWithName" type="Friend">
+    <resultMap id="friendshipMap" type="Friendship">
         <result property="friendUserId" column="friend_user_id"/>
         <association property="friendUsername" column="friend_user_id" select="getUsername"/>
     </resultMap>
 
-    <select id="getFriendsByUserId" resultMap="FriendWithName">
+    <select id="listByUserId" resultMap="friendshipMap">
         SELECT id, friend_user_id, friend_group_id, create_time, update_time
         FROM friendShip
         WHERE owner_id = #{useId}
     </select>
 
-    <select id="getFriendsByGroupId" resultMap="FriendWithName">
+    <select id="listByGroupId" resultMap="friendshipMap">
         SELECT id, friend_user_id, friend_group_id, create_time, update_time
         FROM friendShip
         WHERE friend_group_id = #{friendGroupId}
@@ -34,17 +34,12 @@
             ) AS is_friend
     </select>
 
-    <insert id="addFriend" parameterType="Friend">
+    <insert id="add" parameterType="Friendship">
         INSERT INTO friendShip(friend_user_id, friend_group_id)
         VALUES(#{friendUserId}, #{friendGroupId})
     </insert>
 
-    <delete id="deleteFriendById">
-        DELETE FROM friendShip
-        WHERE id = #{id}
-    </delete>
-
-    <update id="updateFriendGroup">
+    <update id="update">
         UPDATE friendShip
         SET friend_group_id =
             (SELECT id FROM friend_group WHERE owner_id = #{userId} AND name = #{friendGroupName})
@@ -54,7 +49,7 @@
             friend_user_id = #{friendUserId};
     </update>
 
-    <delete id="deleteFriendByUserId">
+    <delete id="deleteByUserId">
         DELETE FROM friendShip
         WHERE
             friend_group_id IN (SELECT id FROM friend_group WHERE owner_id = #{userId})
