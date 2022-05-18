@@ -2,7 +2,6 @@ package com.qiao.picturedepot.security;
 
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
-import com.qiao.picturedepot.exception.AuthorizationException;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
@@ -11,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -51,15 +47,15 @@ public class ResourceSecurity {
     /**
      * 判断当前用户对相册的访问权
      */
-    public boolean canAccessAlbum(BigInteger albumId){
-        Album album = albumMapper.getAlbumById(albumId);
+    public boolean canAccessAlbum(Long albumId){
+        Album album = albumMapper.getById(albumId);
         return canAccessAlbum(album);
     }
 
     /**
     * 判断当前用户对图组的访问权
     */
-    public boolean canAccessPictureGroup(BigInteger pictureGroupId){
+    public boolean canAccessPictureGroup(Long pictureGroupId){
         User user = SecurityUtil.getCurrentUser();
         if(user == null){
             return false;
@@ -74,12 +70,12 @@ public class ResourceSecurity {
             return true;
         }
 
-        PictureGroup pictureGroup = pictureGroupMapper.getPictureGroupById(pictureGroupId);
+        PictureGroup pictureGroup = pictureGroupMapper.getById(pictureGroupId);
         Album album = null;
         if(pictureGroup != null){
-            BigInteger albumId = pictureGroup.getAlbumId();
+            Long albumId = pictureGroup.getAlbumId();
             if(albumId != null){
-                album = albumMapper.getAlbumById(albumId);
+                album = albumMapper.getById(albumId);
             }
         }
 
@@ -106,7 +102,7 @@ public class ResourceSecurity {
     /**
      * 通过缓存判断图组的访问权
      */
-    private boolean checkByCache(String username, BigInteger pictureGroupId){
+    private boolean checkByCache(String username, Long pictureGroupId){
         String cachedPictureGroupId = null;
 
         try {
@@ -127,7 +123,7 @@ public class ResourceSecurity {
     /**
      * 缓存图组访问权 (pictureGroupId - userId)
      */
-    private void cache(String username, BigInteger pictureGroupId){
+    private void cache(String username, Long pictureGroupId){
         try {
             //pictureGroupId - userId 对 60秒后失效
             redisTemplate.opsForValue().set(username, pictureGroupId.toString(), 60, TimeUnit.SECONDS);

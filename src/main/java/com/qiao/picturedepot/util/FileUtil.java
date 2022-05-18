@@ -2,10 +2,10 @@ package com.qiao.picturedepot.util;
 
 import org.springframework.util.FileCopyUtils;
 
-import java.io.*;
-import java.lang.reflect.Array;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 

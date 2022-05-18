@@ -6,7 +6,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,7 +23,7 @@ public class User extends BaseEntity implements UserDetails {
 
     public User() {
     }
-    public User(BigInteger id, String username, String password, Role role, Date createTime, Date updateTime) {
+    public User(Long id, String username, String password, Role role, Date createTime, Date updateTime) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -33,7 +32,7 @@ public class User extends BaseEntity implements UserDetails {
         this.updateTime = updateTime;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -57,7 +56,7 @@ public class User extends BaseEntity implements UserDetails {
         this.updateTime = updateTime;
     }
 
-    public BigInteger getId() {
+    public Long getId() {
         return id;
     }
 

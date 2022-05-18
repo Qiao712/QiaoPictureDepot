@@ -1,9 +1,9 @@
 package com.qiao.picturedepot.controller;
 
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
+import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AcceptNewFriendRequest;
 import com.qiao.picturedepot.pojo.dto.ApplyNewFriendRequest;
-import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
 import com.qiao.picturedepot.pojo.dto.UpdateFriendInfoRequest;
 import com.qiao.picturedepot.service.FriendService;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -36,7 +35,7 @@ public class FriendController {
     }
 
     @PostMapping("/friends/reject/{systemMessageId}")
-    public void rejectNewFriend(@AuthenticationPrincipal User user, @PathVariable("systemMessageId") BigInteger systemMessageId){
+    public void rejectNewFriend(@AuthenticationPrincipal User user, @PathVariable("systemMessageId") Long systemMessageId){
         friendService.rejectNewFriend(user.getId(), systemMessageId);
     }
 
@@ -47,7 +46,7 @@ public class FriendController {
 
 
     @DeleteMapping("/friends/{friendUserId}")
-    public void deleteFriend(@AuthenticationPrincipal User user, @PathVariable BigInteger friendUserId){
+    public void deleteFriend(@AuthenticationPrincipal User user, @PathVariable Long friendUserId){
         friendService.deleteFriend(user.getId(), friendUserId);
     }
 

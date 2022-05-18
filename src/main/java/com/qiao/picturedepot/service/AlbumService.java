@@ -2,11 +2,10 @@ package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.pojo.domain.Album;
 
-import java.math.BigInteger;
 import java.util.List;
 
 public interface AlbumService {
-    Album getAlbumById(BigInteger albumId);
+    Album getAlbumById(Long albumId);
 
     /**
      * 返回当前用户可查看的目标用户的相册列表
@@ -15,7 +14,7 @@ public interface AlbumService {
      */
     List<Album> getAlbumsByOwner(String ownerUsername);
 
-    void deleteAlbumById(BigInteger albumId);
+    void deleteAlbumById(Long albumId);
 
     void addAlbum(Album album);
 

@@ -5,16 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.Map;
 
 @Setter
 @Getter
 public class SystemMessageDto {
-    private BigInteger id;
-    private BigInteger senderId;
-    private BigInteger receiverId;
+    private Long id;
+    private Long senderId;
+    private Long receiverId;
     private Boolean acknowledged;
     private String messageType;
     private Date expirationTime;

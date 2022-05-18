@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -27,7 +26,7 @@ public class SystemMessageController {
     }
 
     @PostMapping("/system-messages/acknowledge")
-    public void acknowledgeSystemMessage(@RequestBody List<BigInteger> systemMessageIds, @AuthenticationPrincipal User user) {
+    public void acknowledgeSystemMessage(@RequestBody List<Long> systemMessageIds, @AuthenticationPrincipal User user) {
         systemMessageService.acknowledgeSystemMessage(user.getId(), systemMessageIds);
     }
 }

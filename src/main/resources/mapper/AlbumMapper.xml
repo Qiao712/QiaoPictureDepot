@@ -4,8 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.qiao.picturedepot.dao.AlbumMapper">
+    <select id="getAlbumById" resultType="Album">
+        SELECT id, name, owner_id, is_public, description, create_time, update_time
+        FROM album
+        WHERE id = #{id}
+    </select>
+
     <select id="getAlbumsByOwner" resultType="Album">
-        SELECT id, name, owner_id, is_public, secret_key, create_time, update_time
+        SELECT id, name, owner_id, is_public, description, create_time, update_time
         FROM album
         <where>
             owner_id = (SELECT id FROM user WHERE username = #{ownerUsername})
@@ -15,15 +21,10 @@
         </where>
     </select>
 
-    <select id="getAlbumById" resultType="Album">
-        SELECT id, name, owner_id, is_public, secret_key, create_time, update_time
-        FROM album
-        WHERE id = #{id}
-    </select>
 
     <insert id="addAlbum" parameterType="Album" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO album(name, owner_id, is_public, secret_key)
-        VALUES(#{name}, #{ownerId}, #{isPublic}, #{secretKey})
+        INSERT INTO album(name, owner_id, is_public, description)
+        VALUES(#{name}, #{ownerId}, #{isPublic}, description)
     </insert>
 
     <update id="updateAlbumByIdAndOwnerId" parameterType="Album">
@@ -35,8 +36,8 @@
             <if test="isPublic != null">
                 is_public = #{isPublic},
             </if>
-            <if test="secretKey != null">
-                secret_key = #{secretKey},
+            <if test="description != null">
+                description = #{description},
             </if>
         </set>
         WHERE id = #{id} AND owner_id = #{ownerId}

@@ -3,17 +3,15 @@ package com.qiao.picturedepot.dao;
 import com.qiao.picturedepot.pojo.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.math.BigInteger;
-
 @Mapper
 public interface UserMapper {
-    User getUserByUsername(String username);
+    User getByUsername(String username);
 
-    BigInteger getUserIdByUsername(String username);
+    User getById(Long id);
 
-    String getUsernameById(BigInteger id);
+    Long getUserIdByUsername(String username);
 
-    User getUserById(BigInteger id);
+    String getUsernameById(Long id);
 
-    Integer addUser(String username, String password, String rolename);
+    Integer add(String username, String password, String rolename);
 }

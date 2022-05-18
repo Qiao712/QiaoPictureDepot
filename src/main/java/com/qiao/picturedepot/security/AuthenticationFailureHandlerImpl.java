@@ -3,10 +3,8 @@ package com.qiao.picturedepot.security;
 import com.qiao.picturedepot.exception.handler.ApiError;
 import com.qiao.picturedepot.util.ObjectUtil;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;

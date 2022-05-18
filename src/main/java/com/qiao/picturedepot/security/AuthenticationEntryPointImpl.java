@@ -2,14 +2,10 @@ package com.qiao.picturedepot.security;
 
 import com.qiao.picturedepot.exception.handler.ApiError;
 import com.qiao.picturedepot.util.ObjectUtil;
-import io.jsonwebtoken.lang.Strings;
-import org.apache.ibatis.javassist.tools.web.BadHttpRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

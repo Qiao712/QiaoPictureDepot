@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 @Setter
@@ -14,11 +13,11 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PictureGroupPreviewDto {
-    private BigInteger id;
+    private Long id;
     private String title;
     private Date createTime;
     private Date updateTime;
-    private BigInteger firstPictureId;
+    private Long firstPictureId;
     private Integer pictureCount;
 
     public PictureGroupPreviewDto(PictureGroup pictureGroup){

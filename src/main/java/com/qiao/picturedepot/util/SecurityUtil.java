@@ -4,9 +4,6 @@ import com.qiao.picturedepot.exception.AuthorizationException;
 import com.qiao.picturedepot.pojo.domain.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.lang.reflect.Field;
-import java.math.BigInteger;
-
 /**
  * 安全框架工具类
  */

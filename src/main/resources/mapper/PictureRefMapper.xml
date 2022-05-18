@@ -3,51 +3,51 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qiao.picturedepot.dao.PictureMapper">
-    <select id="getPicturesByGroup" resultType="Picture">
+<mapper namespace="com.qiao.picturedepot.dao.PictureRefMapper">
+    <select id="getPicturesByGroup" resultType="PictureRef">
         SELECT id, picture_group_id, picture_format, filepath, sequence, create_time, update_time
-        FROM pictureRef
+        FROM picture_ref
         WHERE picture_group_id = #{pictureGroupId}
         ORDER BY sequence ASC
     </select>
 
-    <select id="getFirstPictureOfGroup" parameterType="BigInteger" resultType="BigInteger">
-        SELECT id FROM pictureRef WHERE picture_group_id = #{pictureGroupId} ORDER BY sequence LIMIT 1
+    <select id="getFirstPictureOfGroup" parameterType="Long" resultType="Long">
+        SELECT id FROM picture_ref WHERE picture_group_id = #{pictureGroupId} ORDER BY sequence LIMIT 1
     </select>
 
-    <select id="getPictureCountOfGroup" parameterType="BigInteger" resultType="Integer">
-        SELECT COUNT(id) FROM pictureRef WHERE picture_group_id = #{pictureGroupId}
+    <select id="getPictureCountOfGroup" parameterType="Long" resultType="Integer">
+        SELECT COUNT(id) FROM picture_ref WHERE picture_group_id = #{pictureGroupId}
     </select>
 
     <delete id="deletePicturesByGroup">
-        DELETE FROM pictureRef WHERE picture_group_id = #{pictureGroupId}
+        DELETE FROM picture_ref WHERE picture_group_id = #{pictureGroupId}
     </delete>
 
     <select id="getPictureById" resultType="Picture">
         SELECT id, picture_group_id, picture_format, filepath, sequence, create_time, update_time
-        FROM pictureRef
+        FROM picture_ref
         WHERE id = #{id}
     </select>
 
     <select id="getPicturePath" resultType="String">
         SELECT filepath
-        FROM pictureRef
+        FROM picture_ref
         WHERE id = #{pictureId} AND picture_group_id = #{pictureGroupId}
     </select>
 
     <insert id="addPicture" parameterType="Picture" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO pictureRef(picture_group_id, picture_format, filepath, sequence)
+        INSERT INTO picture_ref(picture_group_id, picture_format, filepath, sequence)
         VALUES(#{pictureGroupId}, #{pictureFormat}, #{filepath}, #{sequence})
     </insert>
 
     <update id="updateSequence">
-        UPDATE pictureRef
+        UPDATE picture_ref
         SET sequence = #{sequence}
         WHERE id = #{pictureId} AND picture_group_id = #{pictureGroupId}
     </update>
 
     <delete id="deletePicture">
-        DELETE FROM pictureRef
+        DELETE FROM picture_ref
         WHERE picture_group_id = #{pictureGroupId} AND id = #{pictureId}
     </delete>
 </mapper>

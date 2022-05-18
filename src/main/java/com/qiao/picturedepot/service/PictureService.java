@@ -1,13 +1,12 @@
 package com.qiao.picturedepot.service;
 
-import com.qiao.picturedepot.pojo.domain.PictureRef;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
+import com.qiao.picturedepot.pojo.domain.PictureRef;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.util.List;
 
 public interface PictureService {
@@ -17,13 +16,13 @@ public interface PictureService {
      * @param pictureId
      * @param outputStream
      */
-    void getPictureFile(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream);
+    void getPictureFile(Long pictureGroupId, Long pictureId, OutputStream outputStream);
 
-    List<PictureRef> getPictureListByGroup(BigInteger pictureGroupId);
+    List<PictureRef> getPictureListByGroup(Long pictureGroupId);
 
-    List<PictureGroupPreviewDto> getPictureGroupsByAlbum(BigInteger albumId);
+    List<PictureGroupPreviewDto> getPictureGroupsByAlbum(Long albumId);
 
-    PictureGroup getPictureGroupById(BigInteger pictureGroupId);
+    PictureGroup getPictureGroupById(Long pictureGroupId);
 
     void addPictureGroup(PictureGroup pictureGroup, MultipartFile[] pictures);
 
@@ -37,5 +36,5 @@ public interface PictureService {
      */
     void updatePictureGroup(PictureGroupUpdateRequest pictureGroupUpdateRequest, MultipartFile[] pictures);
 
-    void deletePictureGroup(BigInteger pictureGroupId);
+    void deletePictureGroup(Long pictureGroupId);
 }

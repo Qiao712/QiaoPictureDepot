@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -29,7 +28,7 @@ public class AlbumController{
     }
 
     @GetMapping("/albums/{albumId}")
-    public Album getAlbum(@PathVariable BigInteger albumId){
+    public Album getAlbum(@PathVariable Long albumId){
         return albumService.getAlbumById(albumId);
     }
 
@@ -44,7 +43,7 @@ public class AlbumController{
     }
 
     @DeleteMapping("/albums/{albumId}")
-    public void deleteAlbum(@PathVariable BigInteger albumId){
+    public void deleteAlbum(@PathVariable Long albumId){
         albumService.deleteAlbumById(albumId);
     }
 }

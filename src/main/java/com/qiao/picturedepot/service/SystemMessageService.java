@@ -3,28 +3,27 @@ package com.qiao.picturedepot.service;
 import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
 
-import java.math.BigInteger;
 import java.util.List;
 
 public interface SystemMessageService {
-    Integer getUnacknowledgedMessageCountByReceiver(BigInteger receiverUserId);
+    Integer getUnacknowledgedMessageCountByReceiver(Long receiverUserId);
 
-    List<SystemMessageDto> getSystemMessageByReceiver(BigInteger receiverUserId);
+    List<SystemMessageDto> getSystemMessageByReceiver(Long receiverUserId);
 
-    SystemMessageDto getSystemMessageByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId);
+    SystemMessageDto getSystemMessageByIdAndReceiver(Long systemMessageId, Long receiverUserId);
 
     /**
      * 模糊搜索系统消息
      */
-    List<SystemMessageDto> searchSystemMessage(BigInteger senderUserId, BigInteger receiverUserId, Class<? extends MessageBody> messageType, Boolean acknowledged);
+    List<SystemMessageDto> searchSystemMessage(Long senderUserId, Long receiverUserId, Class<? extends MessageBody> messageType, Boolean acknowledged);
 
-    <T extends MessageBody> T getSystemMessageBodyByIdAndReceiver(BigInteger systemMessageId, BigInteger receiverUserId, Class<T> cls);
+    <T extends MessageBody> T getSystemMessageBodyByIdAndReceiver(Long systemMessageId, Long receiverUserId, Class<T> cls);
 
-    void sendSystemMessage(MessageBody messageBody, BigInteger senderUserId, BigInteger receiverUserId);
+    void sendSystemMessage(MessageBody messageBody, Long senderUserId, Long receiverUserId);
 
-    void acknowledgeSystemMessage(BigInteger receiverUserId, List<BigInteger> systemMessageIds);
+    void acknowledgeSystemMessage(Long receiverUserId, List<Long> systemMessageIds);
 
-    void deleteSystemMessageById(BigInteger systemMessageId);
+    void deleteSystemMessageById(Long systemMessageId);
 
-    void deleteSystemMessagesById(List<BigInteger> systemMessageIds);
+    void deleteSystemMessagesById(List<Long> systemMessageIds);
 }

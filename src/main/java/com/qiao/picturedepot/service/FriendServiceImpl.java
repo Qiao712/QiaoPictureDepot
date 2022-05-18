@@ -3,10 +3,10 @@ package com.qiao.picturedepot.service;
 import com.qiao.picturedepot.dao.FriendGroupMapper;
 import com.qiao.picturedepot.dao.FriendMapper;
 import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.pojo.domain.FriendGroup;
+import com.qiao.picturedepot.pojo.domain.FriendShip;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.*;
-import com.qiao.picturedepot.pojo.domain.FriendShip;
-import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
 import com.qiao.picturedepot.pojo.dto.message.NotificationMessageBody;
 import com.qiao.picturedepot.util.MessageSystemUtil;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,13 +31,13 @@ public class FriendServiceImpl implements FriendService{
     private UserService userService;
 
     @Override
-    public List<FriendGroupDto> getGroupedFriendList(BigInteger userId) {
+    public List<FriendGroupDto> getGroupedFriendList(Long userId) {
         List<FriendGroupDto> friendGroupDtos = new ArrayList<>();
-        List<FriendGroup> friendGroups = friendGroupMapper.getFriendGroupsByUserId(userId);
+        List<FriendGroup> friendGroups = friendGroupMapper.listByUserId(userId);
 
         for (FriendGroup friendGroup : friendGroups) {
             FriendGroupDto friendGroupDto = new FriendGroupDto();
-            BigInteger friendGroupId = friendGroup.getId();
+            Long friendGroupId = friendGroup.getId();
             friendGroupDto.setId(friendGroupId);
             friendGroupDto.setName(friendGroup.getName());
             friendGroupDto.setFriendShips(this.getFriendsByGroupId(friendGroupId));
@@ -50,9 +49,9 @@ public class FriendServiceImpl implements FriendService{
     }
 
     @Override
-    public List<String> getFriendGroupNames(BigInteger userId) {
+    public List<String> getFriendGroupNames(Long userId) {
         List<String> friendGroupNames = new ArrayList<>();
-        List<FriendGroup> friendGroups = friendGroupMapper.getFriendGroupsByUserId(userId);
+        List<FriendGroup> friendGroups = friendGroupMapper.listByUserId(userId);
 
         for (FriendGroup friendGroup : friendGroups) {
             friendGroupNames.add(friendGroup.getName());
@@ -62,19 +61,19 @@ public class FriendServiceImpl implements FriendService{
     }
 
     @Override
-    public boolean checkIsFriend(BigInteger userId1, BigInteger userId2) {
+    public boolean checkIsFriend(Long userId1, Long userId2) {
         return friendMapper.checkFriendRelationship(userId1, userId2);
     }
 
     @Override
     @Transactional
-    public void deleteFriend(BigInteger userId, BigInteger friendUserId) {
+    public void deleteFriend(Long userId, Long friendUserId) {
         if(!checkIsFriend(userId, friendUserId)){
             throw new ServiceException("不存在好友关系");
         }
         //互相删除
-        friendMapper.deleteFriendByUserId(userId, friendUserId);
-        friendMapper.deleteFriendByUserId(friendUserId, userId);
+        friendMapper.deleteByUserId(userId, friendUserId);
+        friendMapper.deleteByUserId(friendUserId, userId);
     }
 
     @Override
@@ -82,12 +81,12 @@ public class FriendServiceImpl implements FriendService{
         User user = SecurityUtil.getNonAnonymousCurrentUser();
         friendGroup.setOwnerId(user.getId());
 
-        friendGroupMapper.updateFriendGroupByIdAndOwnerId(friendGroup);
+        friendGroupMapper.updateByIdAndOwnerId(friendGroup);
     }
 
     @Override
-    public void updateFriendInfo(BigInteger userId, UpdateFriendInfoRequest updateFriendInfoRequest) {
-        BigInteger friendUserId = updateFriendInfoRequest.getFriendUserId();
+    public void updateFriendInfo(Long userId, UpdateFriendInfoRequest updateFriendInfoRequest) {
+        Long friendUserId = updateFriendInfoRequest.getFriendUserId();
         assert(friendUserId != null);
 
         //检查好友关系
@@ -96,17 +95,17 @@ public class FriendServiceImpl implements FriendService{
         }
 
         //若分组不存在则创建，创建分组
-        FriendGroup friendGroup = friendGroupMapper.getFriendGroupByName(userId, updateFriendInfoRequest.getFriendGroupName());
+        FriendGroup friendGroup = friendGroupMapper.getByName(userId, updateFriendInfoRequest.getFriendGroupName());
         if(friendGroup == null){
             //不存在则创建
             friendGroup = new FriendGroup();
             friendGroup.setOwnerId(userId);
             friendGroup.setName(updateFriendInfoRequest.getFriendGroupName());
-            friendGroupMapper.addFriendGroup(friendGroup);
+            friendGroupMapper.add(friendGroup);
         }
 
         if(friendGroup.getId() != null){
-            friendMapper.updateFriendGroup(userId, friendUserId, friendGroup.getName());
+            friendMapper.update(userId, friendUserId, friendGroup.getName());
         }else{
             throw new ServiceException("无法创建好友分组");
         }
@@ -114,7 +113,7 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     public void applyNewFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest) {
-        BigInteger friendUserId = userService.getUserIdByUsername(applyNewFriendRequest.getFriendUsername());
+        Long friendUserId = userService.getUserIdByUsername(applyNewFriendRequest.getFriendUsername());
         if(friendUserId == null) {
             throw new ServiceException("用户(username:" + applyNewFriendRequest.getFriendUsername() + ") 不存在");
         }
@@ -129,7 +128,7 @@ public class FriendServiceImpl implements FriendService{
 
         //删除旧的申请
         List<SystemMessageDto> systemMessages = systemMessageService.searchSystemMessage(applicant.getId(), friendUserId, NewFriendMessageBody.class, null);
-        List<BigInteger> systemMessageIds = new ArrayList<>();
+        List<Long> systemMessageIds = new ArrayList<>();
         for (SystemMessageDto systemMessage : systemMessages) {
             systemMessageIds.add(systemMessage.getId());
         }
@@ -147,14 +146,14 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     @Transactional
-    public void acceptNewFriend(BigInteger userId, AcceptNewFriendRequest acceptNewFriendRequest) {
-        BigInteger systemMessageId = acceptNewFriendRequest.getNewFriendSystemMessageId();
+    public void acceptNewFriend(Long userId, AcceptNewFriendRequest acceptNewFriendRequest) {
+        Long systemMessageId = acceptNewFriendRequest.getNewFriendSystemMessageId();
         String friendGroupName = acceptNewFriendRequest.getFriendGroupName();
         SystemMessageDto systemMessageDto = systemMessageService.getSystemMessageByIdAndReceiver(systemMessageId, userId);
 
         if(systemMessageDto != null){
             try{
-                BigInteger applicantId = systemMessageDto.getSenderId();
+                Long applicantId = systemMessageDto.getSenderId();
                 String applicantFriendGroupName = (String) systemMessageDto.getMessageBody().get("friendGroupName");
                 addFriend(userId, friendGroupName, applicantId, applicantFriendGroupName);
                 systemMessageService.deleteSystemMessageById(systemMessageId);
@@ -168,7 +167,7 @@ public class FriendServiceImpl implements FriendService{
 
     @Override
     @Transactional
-    public void rejectNewFriend(BigInteger userId, BigInteger systemMessageId) {
+    public void rejectNewFriend(Long userId, Long systemMessageId) {
         SystemMessageDto systemMessageDto = systemMessageService.getSystemMessageByIdAndReceiver(systemMessageId, userId);
 
         final String newFriendMessageType = MessageSystemUtil.getMessageType(NewFriendMessageBody.class);
@@ -186,40 +185,40 @@ public class FriendServiceImpl implements FriendService{
     }
 
     //-----------------------------------------------------------------------------------------------------
-    private void addFriend(BigInteger userId1, String friendGroupName1, BigInteger userId2, String friendGroupName2) {
+    private void addFriend(Long userId1, String friendGroupName1, Long userId2, String friendGroupName2) {
         if(friendMapper.checkFriendRelationship(userId1, userId2)) {
             return;
         }
 
-        FriendGroup friendGroup1 = friendGroupMapper.getFriendGroupByName(userId1, friendGroupName1);
-        FriendGroup friendGroup2 = friendGroupMapper.getFriendGroupByName(userId2, friendGroupName2);
+        FriendGroup friendGroup1 = friendGroupMapper.getByName(userId1, friendGroupName1);
+        FriendGroup friendGroup2 = friendGroupMapper.getByName(userId2, friendGroupName2);
 
         //FriendGroup不存在则创建
         if(friendGroup1 == null){
             friendGroup1 = new FriendGroup();
             friendGroup1.setName(friendGroupName1);
             friendGroup1.setOwnerId(userId1);
-            friendGroupMapper.addFriendGroup(friendGroup1);
+            friendGroupMapper.add(friendGroup1);
         }
         if(friendGroup2 == null){
             friendGroup2 = new FriendGroup();
             friendGroup2.setName(friendGroupName2);
             friendGroup2.setOwnerId(userId2);
-            friendGroupMapper.addFriendGroup(friendGroup2);
+            friendGroupMapper.add(friendGroup2);
         }
 
         FriendShip friendShip1 = new FriendShip();
         friendShip1.setFriendGroupId(friendGroup1.getId());
         friendShip1.setFriendUserId(userId2);
-        friendMapper.addFriend(friendShip1);
+        friendMapper.add(friendShip1);
 
         FriendShip friendShip2 = new FriendShip();
         friendShip2.setFriendGroupId(friendGroup2.getId());
         friendShip2.setFriendUserId(userId1);
-        friendMapper.addFriend(friendShip2);
+        friendMapper.add(friendShip2);
     }
 
-    private List<FriendShip> getFriendsByGroupId(BigInteger friendGroupId) {
-        return friendMapper.getFriendsByGroupId(friendGroupId);
+    private List<FriendShip> getFriendsByGroupId(Long friendGroupId) {
+        return friendMapper.listByGroupId(friendGroupId);
     }
 }

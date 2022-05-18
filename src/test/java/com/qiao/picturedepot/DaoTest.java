@@ -24,7 +24,7 @@ public class DaoTest {
     @Test
     void testFriendDao(){
 //        List<Friend> friends = friendMapper.getFriendsByUserId(BigInteger.valueOf(1));
-        List<FriendShip> friendShips = friendMapper.getFriendsByGroupId(BigInteger.valueOf(1));
+        List<FriendShip> friendShips = friendMapper.listByGroupId(BigInteger.valueOf(1));
         for (FriendShip friendShip : friendShips) {
             System.out.println(friendShip);
         }
@@ -35,7 +35,7 @@ public class DaoTest {
 
     @Test
     void testFriendGroupDao(){
-        List<FriendGroup> friendGroups = friendGroupMapper.getFriendGroupsByUserId(BigInteger.valueOf(1));
+        List<FriendGroup> friendGroups = friendGroupMapper.listByUserId(BigInteger.valueOf(1));
         for (FriendGroup friendGroup : friendGroups) {
             System.out.println(friendGroup);
         }

@@ -10,8 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
-
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
     @Autowired
@@ -20,7 +18,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("try to authentication:" + username);
-        User user = userMapper.getUserByUsername(username);
+        User user = userMapper.getByUsername(username);
         if(user != null){
             user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
             return user;
@@ -33,13 +31,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void registerUser(String username, String password){
         final String DEFAULT_ROLE = "normal";
-        userMapper.addUser(username, password, DEFAULT_ROLE);
+        userMapper.add(username, password, DEFAULT_ROLE);
     }
 
     @Override
-    public UserBaseInfoDto getUserBaseInfo(BigInteger userId) {
+    public UserBaseInfoDto getUserBaseInfo(Long userId) {
         //TODO: 自动映射
-        User user = userMapper.getUserById(userId);
+        User user = userMapper.getById(userId);
         UserBaseInfoDto userBaseInfoDto = new UserBaseInfoDto();
         userBaseInfoDto.setId(userId);
         userBaseInfoDto.setUsername(user.getUsername());
@@ -47,12 +45,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public BigInteger getUserIdByUsername(String username) {
+    public Long getUserIdByUsername(String username) {
         return userMapper.getUserIdByUsername(username);
     }
 
     @Override
-    public String getUsernameById(BigInteger userId) {
+    public String getUsernameById(Long userId) {
         return userMapper.getUsernameById(userId);
     }
 }

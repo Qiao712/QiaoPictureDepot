@@ -4,20 +4,19 @@ import com.qiao.picturedepot.pojo.domain.FriendShip;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @Mapper
 public interface FriendMapper {
-    List<FriendShip> getFriendsByUserId(BigInteger userId);
+    List<FriendShip> listByUserId(Long userId);
 
-    List<FriendShip> getFriendsByGroupId(BigInteger friendGroupId);
+    List<FriendShip> listByGroupId(Long friendGroupId);
 
-    Boolean checkFriendRelationship(@Param("user1") BigInteger userId1, @Param("user2") BigInteger userId2);
+    Boolean checkFriendRelationship(@Param("user1") Long userId1, @Param("user2") Long userId2);
 
-    Integer addFriend(FriendShip friendShip);
+    Integer add(FriendShip friendShip);
 
-    Integer deleteFriendByUserId(BigInteger userId, BigInteger friendUserId);
+    Integer deleteByUserId(Long userId, Long friendUserId);
 
-    Integer updateFriendGroup(BigInteger userId, BigInteger friendUserId, String friendGroupName);
+    Integer update(Long userId, Long friendUserId, String friendGroupName);
 }

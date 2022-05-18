@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @Setter
@@ -14,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FriendGroupDto {
-    BigInteger id;
+    Long id;
     String name;
     List<FriendShip> friendShips;
 }

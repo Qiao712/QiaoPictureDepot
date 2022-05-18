@@ -3,12 +3,12 @@ package com.qiao.picturedepot.service;
 import com.qiao.picturedepot.config.MyProperties;
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
-import com.qiao.picturedepot.dao.PictureMapper;
+import com.qiao.picturedepot.dao.PictureRefMapper;
 import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.dao.pictureRef.PictureRepository;
 import com.qiao.picturedepot.exception.ServiceException;
-import com.qiao.picturedepot.pojo.domain.PictureRef;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
+import com.qiao.picturedepot.pojo.domain.PictureRef;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import com.qiao.picturedepot.util.FileUtil;
@@ -18,8 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.math.BigInteger;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class PictureServiceImpl implements PictureService{
     @Autowired
     PictureGroupMapper pictureGroupMapper;
     @Autowired
-    PictureMapper pictureMapper;
+    PictureRefMapper pictureMapper;
     @Autowired
     UserMapper userMapper;
     @Autowired
@@ -40,14 +39,14 @@ public class PictureServiceImpl implements PictureService{
 
     @Override
     @PreAuthorize("@rs.canAccessAlbum(#albumId)")
-    public List<PictureGroupPreviewDto> getPictureGroupsByAlbum(BigInteger albumId) {
-        List<PictureGroup> pictureGroups = pictureGroupMapper.getPictureGroupsByAlbumId(albumId);
+    public List<PictureGroupPreviewDto> getPictureGroupsByAlbum(Long albumId) {
+        List<PictureGroup> pictureGroups = pictureGroupMapper.listByAlbumId(albumId);
         List<PictureGroupPreviewDto> pictureGroupPreviewDtos = new ArrayList<>(pictureGroups.size());
 
         for (PictureGroup pictureGroup : pictureGroups) {
             PictureGroupPreviewDto dto = new PictureGroupPreviewDto(pictureGroup);
-            dto.setFirstPictureId( pictureMapper.getFirstPictureOfGroup(pictureGroup.getId()) );
-            dto.setPictureCount( pictureMapper.getPictureCountOfGroup(pictureGroup.getId()) );
+            dto.setFirstPictureId( pictureMapper.getFirstPictureRefIdOfGroup(pictureGroup.getId()) );
+            dto.setPictureCount( pictureMapper.countByGroupId(pictureGroup.getId()) );
             pictureGroupPreviewDtos.add(dto);
         }
 
@@ -56,21 +55,21 @@ public class PictureServiceImpl implements PictureService{
 
     @Override
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
-    public PictureGroup getPictureGroupById(BigInteger pictureGroupId) {
-        return pictureGroupMapper.getPictureGroupById(pictureGroupId);
+    public PictureGroup getPictureGroupById(Long pictureGroupId) {
+        return pictureGroupMapper.getById(pictureGroupId);
     }
 
     @Override
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
-    public void getPictureFile(BigInteger pictureGroupId, BigInteger pictureId, OutputStream outputStream) {
-        String pictureFileId = pictureMapper.getPicturePath(pictureGroupId, pictureId);
+    public void getPictureFile(Long pictureGroupId, Long pictureId, OutputStream outputStream) {
+        String pictureFileId = pictureMapper.getPictureUri(pictureGroupId, pictureId);
         pictureRepository.getPictureFile(pictureFileId, outputStream);
     }
 
     @Override
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
-    public List<PictureRef> getPictureListByGroup(BigInteger pictureGroupId) {
-        return pictureMapper.getPicturesByGroup(pictureGroupId);
+    public List<PictureRef> getPictureListByGroup(Long pictureGroupId) {
+        return pictureMapper.listByGroupId(pictureGroupId);
     }
 
     @Override
@@ -80,7 +79,7 @@ public class PictureServiceImpl implements PictureService{
         //TODO: 参数检查错误处理
         if(pictureGroup.getAlbumId() == null) throw new ServiceException("图组所属的相册不可为空");
 
-        pictureGroupMapper.addPictureGroup(pictureGroup);
+        pictureGroupMapper.add(pictureGroup);
 
         //TODO: 编程式事务控制
         int sequence = 0;
@@ -94,7 +93,7 @@ public class PictureServiceImpl implements PictureService{
             pictureRef.setFilepath(pictureFileId);
             pictureRef.setPictureFormat(FileUtil.getNameSuffix(pictureFile.getOriginalFilename()));
             pictureRef.setSequence(sequence++);
-            pictureMapper.addPicture(pictureRef);
+            pictureMapper.add(pictureRef);
         }
     }
 
@@ -104,25 +103,25 @@ public class PictureServiceImpl implements PictureService{
                   "@rs.canAccessAlbum(#pictureGroupUpdateRequest.albumId)")
     public void updatePictureGroup(PictureGroupUpdateRequest pictureGroupUpdateRequest, MultipartFile[] pictureFiles) {
         //TODO: 编程式事务
-        BigInteger pictureGroupId = pictureGroupUpdateRequest.getPictureGroupId();
+        Long pictureGroupId = pictureGroupUpdateRequest.getPictureGroupId();
 
         //删除图片
         List<String> pictureFileToDelete = new ArrayList<>();   //事务成功后再删除图片文件
-        for (BigInteger pictureId : pictureGroupUpdateRequest.getPicturesToDelete()) {
-            String pictureFileId = pictureMapper.getPicturePath(pictureGroupId, pictureId);
+        for (Long pictureId : pictureGroupUpdateRequest.getPicturesToDelete()) {
+            String pictureFileId = pictureMapper.getPictureUri(pictureGroupId, pictureId);
             if(pictureFileId != null) pictureFileToDelete.add(pictureFileId);
 
-            pictureMapper.deletePicture(pictureGroupId, pictureId);
+            pictureMapper.delete(pictureGroupId, pictureId);
         }
 
         //更新图片排序 与 新增图片
-        List<BigInteger> idSequences = pictureGroupUpdateRequest.getIdSequence();
+        List<Long> idSequences = pictureGroupUpdateRequest.getIdSequence();
         //指向pictures中元素
         int j = 0;
         //删除后，添加前，图组中图片数量，用于判断是否每一个图片的位置都被重新确定
-        int pictureCount = pictureMapper.getPictureCountOfGroup(pictureGroupId);
+        int pictureCount = pictureMapper.countByGroupId(pictureGroupId);
         for(int i = 0; i < idSequences.size(); i++){
-            BigInteger pictureId = idSequences.get(i);
+            Long pictureId = idSequences.get(i);
             if(pictureId == null){
                 //位置i的id为空，即位置i要插入新图片
                 if(j == pictureFiles.length){
@@ -136,7 +135,7 @@ public class PictureServiceImpl implements PictureService{
                 pictureRef.setFilepath(pictureFileId);
                 pictureRef.setPictureFormat(FileUtil.getNameSuffix(pictureFiles[j].getOriginalFilename()));
                 pictureRef.setSequence(i);
-                pictureMapper.addPicture(pictureRef);
+                pictureMapper.add(pictureRef);
             }else{
                 //位置i的id不为空，id为idSequences[i]的图片次序为i
                 pictureMapper.updateSequence(pictureGroupId, idSequences.get(i), i);
@@ -154,7 +153,7 @@ public class PictureServiceImpl implements PictureService{
         pictureGroup.setId(pictureGroupId);
         pictureGroup.setTitle(pictureGroupUpdateRequest.getTitle());
         pictureGroup.setAlbumId(pictureGroupUpdateRequest.getAlbumId());
-        pictureGroupMapper.updatePictureGroup(pictureGroup);
+        pictureGroupMapper.update(pictureGroup);
 
         //删除图片文件
         for (String pictureFileId : pictureFileToDelete) {
@@ -165,14 +164,14 @@ public class PictureServiceImpl implements PictureService{
     @Override
     @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
-    public void deletePictureGroup(BigInteger pictureGroupId) {
+    public void deletePictureGroup(Long pictureGroupId) {
         List<String> pictureFilesToDelete = new ArrayList<>();
         List<PictureRef> pictureRefs = getPictureListByGroup(pictureGroupId);
         for (PictureRef pictureRef : pictureRefs) {
             if(pictureRef.getFilepath() != null) pictureFilesToDelete.add(pictureRef.getFilepath());
         }
-        pictureMapper.deletePicturesByGroup(pictureGroupId);
-        pictureGroupMapper.deletePictureGroupById(pictureGroupId);
+        pictureMapper.deleteByGroupId(pictureGroupId);
+        pictureGroupMapper.deleteById(pictureGroupId);
 
         //数据库操作完成后，再统一删除文件，以免回滚造成图片丢失
         for (String pictureFileId : pictureFilesToDelete) {
