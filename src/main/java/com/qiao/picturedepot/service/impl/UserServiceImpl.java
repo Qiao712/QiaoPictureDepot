@@ -1,8 +1,9 @@
-package com.qiao.picturedepot.service;
+package com.qiao.picturedepot.service.impl;
 
 import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.UserBaseInfoDto;
+import com.qiao.picturedepot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

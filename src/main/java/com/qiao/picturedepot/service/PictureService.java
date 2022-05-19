@@ -1,22 +1,21 @@
 package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
+import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.OutputStream;
 import java.util.List;
 
 public interface PictureService {
     /**
-     * 通过流返回图片。需提供picture的id 和 其所在的picture group的id 以确保所属关系。
+     * 通过流返回图片标识。需提供picture的id 和 其所在的picture group的id 以确保所属关系。
      * @param pictureGroupId 图片所在的picture group的id。
-     * @param pictureId
-     * @param outputStream
+     * @param pictureRefId
      */
-    void getPictureFile(Long pictureGroupId, Long pictureId, OutputStream outputStream);
+    PictureIdentity getPictureIdentity(Long pictureGroupId, Long pictureRefId);
 
     List<PictureRef> getPictureListByGroup(Long pictureGroupId);
 
@@ -24,6 +23,11 @@ public interface PictureService {
 
     PictureGroup getPictureGroupById(Long pictureGroupId);
 
+    /**
+     * 上传图片添加图组
+     * @param pictureGroup
+     * @param pictures
+     */
     void addPictureGroup(PictureGroup pictureGroup, MultipartFile[] pictures);
 
     /**

@@ -1,4 +1,4 @@
-package com.qiao.picturedepot.service;
+package com.qiao.picturedepot.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,7 @@ import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.domain.Message;
 import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
+import com.qiao.picturedepot.service.MessageService;
 import com.qiao.picturedepot.util.MessageSystemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.qiao.picturedepot.service;
+package com.qiao.picturedepot.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.qiao.picturedepot.config.MyProperties;
@@ -10,6 +10,8 @@ import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.security.ResourceSecurity;
+import com.qiao.picturedepot.service.AlbumService;
+import com.qiao.picturedepot.service.PictureService;
 import com.qiao.picturedepot.util.SecurityUtil;
 import com.qiao.picturedepot.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ import java.io.File;
 import java.util.List;
 
 @Component
-public class AlbumServiceImpl implements AlbumService{
+public class AlbumServiceImpl implements AlbumService {
     @Autowired
     private AlbumMapper albumMapper;
     @Autowired

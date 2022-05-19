@@ -1,6 +1,7 @@
 package com.qiao.picturedepot;
 
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
+import com.qiao.picturedepot.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -14,5 +15,14 @@ public class MyTest {
         System.out.println(messageBodyClassName);
 
         Class<?> cls = Class.forName(messageBodyClassName);
+    }
+
+    @Test
+    public void test2(){
+        System.out.println(FileUtil.getContentType("jpeg"));
+        System.out.println(FileUtil.getContentType("png"));
+        System.out.println(FileUtil.getContentType("xasfsadf"));
+        System.out.println(FileUtil.isPictureFile("gif"));
+        System.out.println(FileUtil.isPictureFile("txt"));
     }
 }

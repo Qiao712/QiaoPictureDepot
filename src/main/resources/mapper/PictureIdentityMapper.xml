@@ -9,4 +9,26 @@
         FROM picture_identity
         WHERE id = #{id}
     </select>
+
+    <select id="getByMD5" resultType="PictureIdentity">
+        SELECT uri, md5, format, ref_count, update_time, create_time
+        FROM picture_identity
+        WHERE md5 = #{md5}
+    </select>
+
+    <insert id="add" parameterType="PictureIdentity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO picture_identity(uri, md5, format, ref_count)
+        VALUES(#{uri}, #{md5}, #{format}, #{refCount})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM picture_identity
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateRefCount">
+        UPDATE picture_identity
+        SET ref_count = #{refCount}
+        WHERE id = #{id}
+    </update>
 </mapper>

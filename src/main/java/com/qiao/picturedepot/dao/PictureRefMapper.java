@@ -17,9 +17,13 @@ public interface PictureRefMapper {
 
     PictureRef getById(Long id);
 
+    Long getReferencedPictureId(Long pictureGroupId, Long pictureRefId);
+
     String getPictureUri(Long pictureGroupId, Long pictureRefId);
 
     Integer add(PictureRef pictureRef);
+
+    Integer addBatch(List<PictureRef> pictureRefs);
 
     Integer updateSequence(Long pictureGroupId ,Long pictureRefId, Integer sequence);
 

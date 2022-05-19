@@ -24,25 +24,25 @@ public class PictureGroupController {
     @Autowired
     private PictureGroupMapper pictureGroupMapper;
 
-    @GetMapping("/albums/{albumId}/pictureRef-groups")
+    @GetMapping("/albums/{albumId}/picture-groups")
     public PageInfo<PictureGroupPreviewDto> getPictureGroups(@PathVariable Long albumId, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize){
         PageHelper.startPage(pageNo, pageSize);
         List<PictureGroupPreviewDto> pictureGroupPreviewDtos = pictureService.getPictureGroupsByAlbum(albumId);
         return new PageInfo<>(pictureGroupPreviewDtos);
     }
 
-    @GetMapping("/pictureRef-groups/{pictureGroupId}")
+    @GetMapping("/picture-groups/{pictureGroupId}")
     public PictureGroup getPictureGroup(@PathVariable Long pictureGroupId){
         return pictureService.getPictureGroupById(pictureGroupId);
     }
 
-    @DeleteMapping("/pictureRef-groups/{pictureGroupId}")
+    @DeleteMapping("/picture-groups/{pictureGroupId}")
     public void deletePictureGroup(@PathVariable Long pictureGroupId){
         pictureService.deletePictureGroup(pictureGroupId);
     }
 
-    @PostMapping("/pictureRef-groups")
-    public void addPictureGroup(@RequestPart("pictureRef-group") String pictureGroupJson, @RequestPart("pictures") MultipartFile[] multipartFiles){
+    @PostMapping("/picture-groups")
+    public void addPictureGroup(@RequestPart("picture-group") String pictureGroupJson, @RequestPart("pictures") MultipartFile[] multipartFiles){
         try {
             PictureGroup pictureGroup = ObjectUtil.json2Object(pictureGroupJson, PictureGroup.class);
             pictureService.addPictureGroup(pictureGroup, multipartFiles);
@@ -51,8 +51,8 @@ public class PictureGroupController {
         }
     }
 
-    @PutMapping("/pictureRef-groups")
-    public void updatePictureGroup(@RequestPart("pictureRef-group") String pictureGroupUpdateRequestJson, @RequestPart(name = "pictures", required = false) MultipartFile[] multipartFiles){
+    @PutMapping("/picture-groups")
+    public void updatePictureGroup(@RequestPart("picture-group") String pictureGroupUpdateRequestJson, @RequestPart(name = "pictures", required = false) MultipartFile[] multipartFiles){
         try{
             PictureGroupUpdateRequest pictureGroupUpdateRequest =  ObjectUtil.json2Object(pictureGroupUpdateRequestJson, PictureGroupUpdateRequest.class);
             pictureService.updatePictureGroup(pictureGroupUpdateRequest, multipartFiles);

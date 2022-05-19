@@ -11,7 +11,7 @@ spring:
 #  配置redis
   redis:
     host: 8.141.151.176
-    password: lty0712
+    password: haihaihai
 # 文件上传大小限制
   servlet:
     multipart:

@@ -4,11 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.qiao.picturedepot.dao.PictureRefMapper">
-    <resultMap id="pictureRefMap" type="PictureRef">
-        <collection property="picture" column="picture_id" select="com.qiao.picturedepot.dao.PictureIdentityMapper.getById"/>
-    </resultMap>
-
-    <select id="listByGroup" resultMap="pictureRefMap">
+    <select id="listByGroupId" resultType="PictureRef">
         SELECT id, picture_group_id, picture_id, sequence, create_time, update_time
         FROM picture_ref
         WHERE picture_group_id = #{pictureGroupId}
@@ -27,10 +23,14 @@
         DELETE FROM picture_ref WHERE picture_group_id = #{pictureGroupId}
     </delete>
 
-    <select id="getById" resultMap="pictureRefMap">
+    <select id="getById" resultType="PictureRef">
         SELECT id, picture_group_id, picture_id, sequence, create_time, update_time
         FROM picture_ref
         WHERE id = #{id}
+    </select>
+
+    <select id="getReferencedPictureId" resultType="Long">
+        SELECT picture_id FROM picture_ref WHERE id = #{pictureRefId} AND picture_group_id = #{pictureGroupId}
     </select>
 
     <select id="getPictureUri" resultType="String">
@@ -43,6 +43,14 @@
     <insert id="add" parameterType="PictureRef" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO picture_ref(picture_group_id, picture_id, sequence)
         VALUES(#{pictureGroupId}, #{pictureRefId}, #{sequence})
+    </insert>
+
+    <insert id="addBatch" parameterType="PictureRef" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO picture_ref(picture_group_id, picture_id, sequence)
+        VALUES
+        <foreach collection="pictureRefs" item="pictureRef" separator=",">
+            (#{pictureRef.pictureGroupId}, #{pictureRef.pictureId}, #{pictureRef.sequence})
+        </foreach>
     </insert>
 
     <update id="updateSequence">

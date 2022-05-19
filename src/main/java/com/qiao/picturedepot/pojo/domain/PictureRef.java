@@ -9,6 +9,4 @@ public class PictureRef extends BaseEntity{
     private Long pictureGroupId;
     private Long pictureId;
     private Integer sequence;
-
-    private PictureIdentity picture;
 }

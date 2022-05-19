@@ -1,4 +1,4 @@
-package com.qiao.picturedepot.service;
+package com.qiao.picturedepot.service.impl;
 
 import com.qiao.picturedepot.dao.FriendGroupMapper;
 import com.qiao.picturedepot.dao.FriendshipMapper;
@@ -9,6 +9,9 @@ import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.*;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
 import com.qiao.picturedepot.pojo.dto.message.NotificationMessageBody;
+import com.qiao.picturedepot.service.FriendService;
+import com.qiao.picturedepot.service.MessageService;
+import com.qiao.picturedepot.service.UserService;
 import com.qiao.picturedepot.util.MessageSystemUtil;
 import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class FriendServiceImpl implements FriendService{
+public class FriendServiceImpl implements FriendService {
     @Autowired
     private FriendshipMapper friendshipMapper;
     @Autowired

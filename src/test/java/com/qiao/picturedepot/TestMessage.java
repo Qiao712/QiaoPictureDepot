@@ -2,7 +2,7 @@ package com.qiao.picturedepot;
 
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
 import com.qiao.picturedepot.service.FriendService;
-import com.qiao.picturedepot.service.MessageServiceImpl;
+import com.qiao.picturedepot.service.impl.MessageServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
