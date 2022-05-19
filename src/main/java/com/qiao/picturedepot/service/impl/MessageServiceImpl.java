@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qiao.picturedepot.dao.MessageMapper;
 import com.qiao.picturedepot.exception.ServiceException;
 import com.qiao.picturedepot.pojo.domain.Message;
-import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
+import com.qiao.picturedepot.pojo.dto.MessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
 import com.qiao.picturedepot.service.MessageService;
 import com.qiao.picturedepot.util.MessageSystemUtil;
@@ -28,20 +28,20 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<SystemMessageDto> getMessageByReceiver(Long receiverUserId) {
+    public List<MessageDto> getMessageByReceiver(Long receiverUserId) {
         List<Message> messages = messageMapper.listByReceiverId(receiverUserId);
         //映射为SystemMessageDto
         return messages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
     }
 
     @Override
-    public SystemMessageDto getMessageByIdAndReceiver(Long systemMessageId, Long receiverUserId) {
-        Message message = messageMapper.getByIdAndReceiverId(systemMessageId, receiverUserId);
+    public MessageDto getMessageByIdAndReceiver(Long messageId, Long receiverUserId) {
+        Message message = messageMapper.getByIdAndReceiverId(messageId, receiverUserId);
         return systemMessageMapper(message);
     }
 
     @Override
-    public List<SystemMessageDto> searchMessage(Long senderUserId, Long receiverUserId, Class<? extends MessageBody> messageBodyClass, Boolean acknowledged) {
+    public List<MessageDto> searchMessage(Long senderUserId, Long receiverUserId, Class<? extends MessageBody> messageBodyClass, Boolean acknowledged) {
         //取得消息类型字符串
         String messageType = MessageSystemUtil.getMessageType(messageBodyClass);
 
@@ -50,8 +50,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public <T extends MessageBody> T getMessageBodyByIdAndReceiver(Long systemMessageId, Long receiverUserId, Class<T> cls) {
-        Message message = messageMapper.getByIdAndReceiverId(systemMessageId, receiverUserId);
+    public <T extends MessageBody> T getMessageBodyByIdAndReceiver(Long messageId, Long receiverUserId, Class<T> cls) {
+        Message message = messageMapper.getByIdAndReceiverId(messageId, receiverUserId);
         MessageBody messageBody = null;
         if(message != null){
             if(!message.getReceiverId().equals(receiverUserId)){
@@ -94,18 +94,18 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void acknowledgeMessage(Long receiverUserId, List<Long> systemMessageIds) {
-        messageMapper.updateAcknowledged(systemMessageIds, receiverUserId, true);
+    public void acknowledgeMessage(Long receiverUserId, List<Long> messageIds) {
+        messageMapper.updateAcknowledged(messageIds, receiverUserId, true);
     }
 
     @Override
-    public void deleteMessageById(Long systemMessageId) {
-        messageMapper.deleteById(systemMessageId);
+    public void deleteMessageById(Long messageId) {
+        messageMapper.deleteById(messageId);
     }
 
     @Override
-    public void deleteMessagesById(List<Long> systemMessageIds) {
-        messageMapper.deleteBatchById(systemMessageIds);
+    public void deleteMessagesById(List<Long> messageIds) {
+        messageMapper.deleteBatchById(messageIds);
     }
 
     //----------------------------------------------------------------
@@ -113,22 +113,22 @@ public class MessageServiceImpl implements MessageService {
     /**
      * 将SystemMessage映射为SystemMessageDto
      */
-    private SystemMessageDto systemMessageMapper(Message message){
+    private MessageDto systemMessageMapper(Message message){
         if(message == null){
             return null;
         }
 
-        SystemMessageDto systemMessageDto = new SystemMessageDto();
+        MessageDto messageDto = new MessageDto();
 
-        systemMessageDto.setId(message.getId());
-        systemMessageDto.setSenderId(message.getSenderId());
-        systemMessageDto.setReceiverId(message.getReceiverId());
-        systemMessageDto.setMessageType(message.getMessageType());
-        systemMessageDto.setAcknowledged(message.getAcknowledged());
-        systemMessageDto.setCreateTime(message.getCreateTime());
-        systemMessageDto.setExpirationTime(message.getExpirationTime());
-        systemMessageDto.setMessageBodyFromJson(message.getMessageBody());
+        messageDto.setId(message.getId());
+        messageDto.setSenderId(message.getSenderId());
+        messageDto.setReceiverId(message.getReceiverId());
+        messageDto.setMessageType(message.getMessageType());
+        messageDto.setAcknowledged(message.getAcknowledged());
+        messageDto.setCreateTime(message.getCreateTime());
+        messageDto.setExpirationTime(message.getExpirationTime());
+        messageDto.setMessageBodyFromJson(message.getMessageBody());
 
-        return systemMessageDto;
+        return messageDto;
     }
 }

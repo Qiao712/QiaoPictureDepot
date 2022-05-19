@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Setter
 @Getter
-public class SystemMessageDto {
+public class MessageDto {
     private Long id;
     private Long senderId;
     private Long receiverId;

@@ -130,9 +130,9 @@ public class FriendServiceImpl implements FriendService {
         }
 
         //删除旧的申请
-        List<SystemMessageDto> systemMessages = messageService.searchMessage(applicant.getId(), friendUserId, NewFriendMessageBody.class, null);
+        List<MessageDto> systemMessages = messageService.searchMessage(applicant.getId(), friendUserId, NewFriendMessageBody.class, null);
         List<Long> systemMessageIds = new ArrayList<>();
-        for (SystemMessageDto systemMessage : systemMessages) {
+        for (MessageDto systemMessage : systemMessages) {
             systemMessageIds.add(systemMessage.getId());
         }
         if(!systemMessageIds.isEmpty()){
@@ -152,12 +152,12 @@ public class FriendServiceImpl implements FriendService {
     public void acceptNewFriend(Long userId, AcceptNewFriendRequest acceptNewFriendRequest) {
         Long systemMessageId = acceptNewFriendRequest.getNewFriendMessageId();
         String friendGroupName = acceptNewFriendRequest.getFriendGroupName();
-        SystemMessageDto systemMessageDto = messageService.getMessageByIdAndReceiver(systemMessageId, userId);
+        MessageDto messageDto = messageService.getMessageByIdAndReceiver(systemMessageId, userId);
 
-        if(systemMessageDto != null){
+        if(messageDto != null){
             try{
-                Long applicantId = systemMessageDto.getSenderId();
-                String applicantFriendGroupName = (String) systemMessageDto.getMessageBody().get("friendGroupName");
+                Long applicantId = messageDto.getSenderId();
+                String applicantFriendGroupName = (String) messageDto.getMessageBody().get("friendGroupName");
                 addFriend(userId, friendGroupName, applicantId, applicantFriendGroupName);
                 messageService.deleteMessageById(systemMessageId);
             }catch (ClassCastException e){
@@ -171,17 +171,17 @@ public class FriendServiceImpl implements FriendService {
     @Override
     @Transactional
     public void rejectNewFriend(Long userId, Long systemMessageId) {
-        SystemMessageDto systemMessageDto = messageService.getMessageByIdAndReceiver(systemMessageId, userId);
+        MessageDto messageDto = messageService.getMessageByIdAndReceiver(systemMessageId, userId);
 
         final String newFriendMessageType = MessageSystemUtil.getMessageType(NewFriendMessageBody.class);
-        if(systemMessageDto != null && Objects.equals(systemMessageDto.getMessageType(), newFriendMessageType)){
+        if(messageDto != null && Objects.equals(messageDto.getMessageType(), newFriendMessageType)){
             messageService.deleteMessageById(systemMessageId);
 
             //将通知申请者被拒绝
             NotificationMessageBody messageBody = new NotificationMessageBody();
             String username = userService.getUsernameById(userId);
             messageBody.setNotification(username + "拒绝了您的好友申请");
-            messageService.sendMessage(messageBody, userId, systemMessageDto.getSenderId());
+            messageService.sendMessage(messageBody, userId, messageDto.getSenderId());
         }else{
             throw new ServiceException("朋友申请消息不存在");
         }

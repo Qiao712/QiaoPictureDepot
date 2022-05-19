@@ -1,7 +1,7 @@
 package com.qiao.picturedepot.controller;
 
 import com.qiao.picturedepot.pojo.domain.User;
-import com.qiao.picturedepot.pojo.dto.SystemMessageDto;
+import com.qiao.picturedepot.pojo.dto.MessageDto;
 import com.qiao.picturedepot.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +16,7 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping("/messages")
-    public List<SystemMessageDto> getMessages(@AuthenticationPrincipal User user){
+    public List<MessageDto> getMessages(@AuthenticationPrincipal User user){
         return messageService.getMessageByReceiver(user.getId());
     }
 
@@ -26,7 +26,7 @@ public class MessageController {
     }
 
     @PostMapping("/messages/acknowledge")
-    public void acknowledgeMessage(@RequestBody List<Long> systemMessageIds, @AuthenticationPrincipal User user) {
-        messageService.acknowledgeMessage(user.getId(), systemMessageIds);
+    public void acknowledgeMessage(@RequestBody List<Long> messageIds, @AuthenticationPrincipal User user) {
+        messageService.acknowledgeMessage(user.getId(), messageIds);
     }
 }
