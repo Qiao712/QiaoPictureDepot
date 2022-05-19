@@ -16,17 +16,17 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping("/messages")
-    public List<SystemMessageDto> getSystemMessages(@AuthenticationPrincipal User user){
+    public List<SystemMessageDto> getMessages(@AuthenticationPrincipal User user){
         return messageService.getMessageByReceiver(user.getId());
     }
 
     @GetMapping("/messages/unacknowledged-message-count")
-    public Integer getUnacknowledgedSystemMessageCount(@AuthenticationPrincipal User user){
+    public Integer getUnacknowledgedMessageCount(@AuthenticationPrincipal User user){
         return messageService.getUnacknowledgedMessageCountByReceiver(user.getId());
     }
 
     @PostMapping("/messages/acknowledge")
-    public void acknowledgeSystemMessage(@RequestBody List<Long> systemMessageIds, @AuthenticationPrincipal User user) {
+    public void acknowledgeMessage(@RequestBody List<Long> systemMessageIds, @AuthenticationPrincipal User user) {
         messageService.acknowledgeMessage(user.getId(), systemMessageIds);
     }
 }
