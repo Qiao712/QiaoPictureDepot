@@ -44,7 +44,7 @@ public class PictureServiceImpl implements PictureService {
 
         for (PictureGroup pictureGroup : pictureGroups) {
             PictureGroupPreviewDto dto = new PictureGroupPreviewDto(pictureGroup);
-            dto.setFirstPictureId( pictureRefMapper.getFirstPictureRefIdOfGroup(pictureGroup.getId()) );
+            dto.setFirstPictureRefId( pictureRefMapper.getFirstPictureRefIdOfGroup(pictureGroup.getId()) );
             dto.setPictureCount( pictureRefMapper.countByGroupId(pictureGroup.getId()) );
             pictureGroupPreviewDtos.add(dto);
         }
@@ -77,6 +77,7 @@ public class PictureServiceImpl implements PictureService {
     public void addPictureGroup(PictureGroup pictureGroup, MultipartFile[] picturesFiles) {
         //TODO: 参数检查错误处理
         if(pictureGroup.getAlbumId() == null) throw new ServiceException("图组所属的相册不可为空");
+        if(picturesFiles.length == 0) throw new ServiceException("不允许新建空相册");
 
         pictureGroupMapper.add(pictureGroup);
 
@@ -95,7 +96,10 @@ public class PictureServiceImpl implements PictureService {
             pictureRef.setSequence(sequence++);
             pictureRefs.add(pictureRef);
         }
-        pictureRefMapper.addBatch(pictureRefs);
+
+        if(! pictureRefs.isEmpty()){
+            pictureRefMapper.addBatch(pictureRefs);
+        }
     }
 
     @Override
@@ -105,6 +109,10 @@ public class PictureServiceImpl implements PictureService {
     public void updatePictureGroup(PictureGroupUpdateRequest pictureGroupUpdateRequest, MultipartFile[] pictureFiles) {
         //TODO: 编程式事务
         Long pictureGroupId = pictureGroupUpdateRequest.getPictureGroupId();
+
+        if(pictureFiles == null){
+            pictureFiles = new MultipartFile[0];
+        }
 
         //删除PictureRef
         List<Long> deletingPictureIds = new ArrayList<>(pictureGroupUpdateRequest.getPicturesToDelete().size());
@@ -153,7 +161,9 @@ public class PictureServiceImpl implements PictureService {
         }
 
         //插入
-        pictureRefMapper.addBatch(newPictureRefs);
+        if(!newPictureRefs.isEmpty()){
+            pictureRefMapper.addBatch(newPictureRefs);
+        }
 
         //更新图组属性
         PictureGroup pictureGroup = new PictureGroup();

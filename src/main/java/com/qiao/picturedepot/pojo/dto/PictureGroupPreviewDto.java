@@ -17,7 +17,7 @@ public class PictureGroupPreviewDto {
     private String title;
     private Date createTime;
     private Date updateTime;
-    private Long firstPictureId;
+    private Long firstPictureRefId;
     private Integer pictureCount;
 
     public PictureGroupPreviewDto(PictureGroup pictureGroup){

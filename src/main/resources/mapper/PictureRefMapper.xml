@@ -11,7 +11,7 @@
         ORDER BY sequence ASC
     </select>
 
-    <select id="getFirstPictureOfGroup" parameterType="Long" resultType="Long">
+    <select id="getFirstPictureRefIdOfGroup" parameterType="Long" resultType="Long">
         SELECT id FROM picture_ref WHERE picture_group_id = #{pictureGroupId} ORDER BY sequence LIMIT 1
     </select>
 
