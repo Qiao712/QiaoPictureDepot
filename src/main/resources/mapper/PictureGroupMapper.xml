@@ -47,4 +47,10 @@
         DELETE FROM picture_group
         WHERE id = #{id}
     </delete>
+
+    <select id="getOwnerIdById" resultType="Long">
+        SELECT album.owner_id
+        FROM album, picture_group
+        WHERE album.id = picture_group.album_id AND picture_group.id = #{id}
+    </select>
 </mapper>

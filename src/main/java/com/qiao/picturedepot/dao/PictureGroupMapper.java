@@ -18,4 +18,6 @@ public interface PictureGroupMapper {
     Integer getMaxPictureSequenceInGroup(Long pictureGroupId);
 
     Integer deleteById(Long id);
+
+    Long getOwnerIdById(Long id);
 }

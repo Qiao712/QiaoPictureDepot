@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qiao.picturedepot.dao.CommentMapper">
+    <select id="getById" resultType="Comment">
+        SELECT id, picture_group_id, author_id, parent_id, replied_id, content, create_time, update_time
+        FROM comment
+        WHERE id = #{id}
+    </select>
+
+    <select id="getByPictureGroupIdAndParentId" resultType="Comment">
+        SELECT id, picture_group_id, author_id, parent_id, replied_id, content, create_time, update_time
+        FROM comment
+        <where>
+            <if test="pictureGroupId != null">
+                picture_group_id = #{pictureGroupId}
+            </if>
+            <if test="parentId != null">
+                AND parent_id = #{parentId}
+            </if>
+            <if test="parentId == null">
+                AND parent_id is null
+            </if>
+        </where>
+    </select>
+
+    <insert id="add" parameterType="Comment" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO comment(picture_group_id, author_id, parent_id, replied_id, content)
+        VALUES(#{pictureGroupId}, #{authorId}, #{parentId}, #{repliedId}, #{content})
+    </insert>
+</mapper>

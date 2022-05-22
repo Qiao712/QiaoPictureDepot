@@ -2,7 +2,7 @@ package com.qiao.picturedepot.service.impl;
 
 import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.pojo.domain.User;
-import com.qiao.picturedepot.pojo.dto.UserBaseInfoDto;
+import com.qiao.picturedepot.pojo.dto.UserDetailDto;
 import com.qiao.picturedepot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,13 +36,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public UserBaseInfoDto getUserBaseInfo(Long userId) {
+    public UserDetailDto getUserBaseInfo(Long userId) {
         //TODO: 自动映射
         User user = userMapper.getById(userId);
-        UserBaseInfoDto userBaseInfoDto = new UserBaseInfoDto();
-        userBaseInfoDto.setId(userId);
-        userBaseInfoDto.setUsername(user.getUsername());
-        return userBaseInfoDto;
+        UserDetailDto userDetailDto = new UserDetailDto();
+        userDetailDto.setId(userId);
+        userDetailDto.setUsername(user.getUsername());
+        return userDetailDto;
     }
 
     @Override
