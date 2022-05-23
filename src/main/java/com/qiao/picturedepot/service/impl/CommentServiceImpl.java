@@ -48,9 +48,16 @@ public class CommentServiceImpl implements CommentService {
         comment.setContent(commentAdd.getContent());
         comment.setRepliedId(commentAdd.getReplyTo());
 
+        //被评论的图组
+        PictureGroup pictureGroup = pictureGroupMapper.getById(commentAdd.getPictureGroupId());
+        if(pictureGroup == null){
+            throw new ServiceException("被评论图组不存在");
+        }
+
         if(commentAdd.getReplyTo() != null){
+            //被回复评论
             Comment repliedComment = commentMapper.getById(commentAdd.getReplyTo());
-            if(repliedComment == null){
+            if(repliedComment == null || !repliedComment.getPictureGroupId().equals(pictureGroup.getId())){
                 throw new ServiceException("被回复的评论不存在");
             }
 
@@ -64,10 +71,10 @@ public class CommentServiceImpl implements CommentService {
             }
 
             //发送提示消息给被回复者
-            sendReplyMessage(comment, repliedComment);
+            sendReplyMessage(comment, repliedComment, pictureGroup);
         }else{
             //发送提示消息给楼主
-            sendReplyMessageToOwner(comment);
+            sendReplyMessageToOwner(comment, pictureGroup);
         }
 
         commentMapper.add(comment);
@@ -129,10 +136,8 @@ public class CommentServiceImpl implements CommentService {
      * @param comment
      * @param repliedComment
      */
-    private void sendReplyMessage(Comment comment, Comment repliedComment){
+    private void sendReplyMessage(Comment comment, Comment repliedComment, PictureGroup pictureGroup){
         if(comment.getAuthorId().equals(repliedComment.getAuthorId())) return;
-
-        PictureGroup pictureGroup = pictureGroupMapper.getById(repliedComment.getPictureGroupId());
 
         String commentText = comment.getContent();
         commentText = commentText.length() <= 100 ? commentText : commentText.substring(0, 100) + "...";
@@ -151,11 +156,9 @@ public class CommentServiceImpl implements CommentService {
      * 发送消息给图组属主
      * @param comment
      */
-    private void sendReplyMessageToOwner(Comment comment){
+    private void sendReplyMessageToOwner(Comment comment, PictureGroup pictureGroup){
         Long pictureGroupOwnerId = pictureGroupMapper.getOwnerIdById(comment.getPictureGroupId());
         if(pictureGroupOwnerId.equals(comment.getAuthorId())) return;
-
-        PictureGroup pictureGroup = pictureGroupMapper.getById(comment.getPictureGroupId());
 
         String commentText = comment.getContent();
         commentText = commentText.length() <= 100 ? commentText : commentText.substring(0, 100) + "...";
