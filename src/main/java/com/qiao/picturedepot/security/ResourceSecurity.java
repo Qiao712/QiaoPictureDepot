@@ -1,5 +1,6 @@
 package com.qiao.picturedepot.security;
 
+import com.qiao.picturedepot.dao.AlbumAccessMapper;
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.pojo.domain.Album;
@@ -16,9 +17,11 @@ import java.util.concurrent.TimeUnit;
 @Component("rs")
 public class ResourceSecurity {
     @Autowired
-    PictureGroupMapper pictureGroupMapper;
+    private PictureGroupMapper pictureGroupMapper;
     @Autowired
-    AlbumMapper albumMapper;
+    private AlbumMapper albumMapper;
+    @Autowired
+    private AlbumAccessMapper albumAccessMapper;
     @Autowired
     private StringRedisTemplate redisTemplate;
 
@@ -35,13 +38,14 @@ public class ResourceSecurity {
             return true;
         }
 
-        //访问者是否为属主
         User user = SecurityUtil.getCurrentUser();
         if(user != null){
-            return user.getId().equals(album.getOwnerId());
-        }else{
-            return false;
+            //是否为属主 或 被授权
+            return  Objects.equals(user.getId(), album.getOwnerId())
+                    || albumAccessMapper.existsByUserIdAndAlbumId(user.getId(), album.getId());
         }
+
+        return false;
     }
 
     /**
@@ -84,19 +88,14 @@ public class ResourceSecurity {
             return false;
         }
 
-        //Album为public，允许访问
-        if(album.isPublic()){
-            return true;
-        }
-
-        //判断所属
-        if(Objects.equals(album.getOwnerId(), user.getId())){
+        //判断Album访问权
+        if(canAccessAlbum(album)){
             //缓存访问信息
             cache(user.getUsername(), pictureGroupId);
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     /**

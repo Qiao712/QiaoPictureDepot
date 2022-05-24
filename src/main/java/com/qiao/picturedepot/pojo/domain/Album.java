@@ -8,8 +8,8 @@ import lombok.EqualsAndHashCode;
 @Data
 public class Album extends BaseEntity{
     private String name;
-    private Long ownerId;
     private String description;
     @JsonIgnore
     private boolean isPublic;
+    private Long ownerId;
 }

@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,5 +46,10 @@ public class AlbumController{
     @DeleteMapping("/albums/{albumId}")
     public void deleteAlbum(@PathVariable Long albumId){
         albumService.deleteAlbumById(albumId);
+    }
+
+    @PostMapping("/albums/grant")
+    public void grantFriendGroup(@RequestBody AlbumGrantRequest albumGrantRequest){
+        albumService.grantAlbum(albumGrantRequest);
     }
 }

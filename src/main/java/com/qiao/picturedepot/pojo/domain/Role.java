@@ -5,6 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Role extends BaseEntity{
+public class Role extends BaseEntity {
     private String name;
 }

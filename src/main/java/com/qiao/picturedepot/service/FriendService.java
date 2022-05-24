@@ -54,5 +54,10 @@ public interface FriendService {
     /**
      * 拒绝好友申请。并向申请者发送拒绝提示。
      */
-    void rejectNewFriend(Long userId, Long systemMessageId);
+    void rejectNewFriend(Long userId, Long messageId);
+
+    /**
+     * 用户是否拥有该好友分组
+     */
+    boolean ownFriendGroup(Long userId, Long friendGroupId);
 }

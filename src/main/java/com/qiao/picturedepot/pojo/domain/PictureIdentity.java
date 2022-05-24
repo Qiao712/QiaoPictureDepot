@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PictureIdentity extends BaseEntity{
+public class PictureIdentity extends BaseEntity {
     private String uri;
     private byte[] md5;
     private String format;

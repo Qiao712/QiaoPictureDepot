@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Comment extends BaseEntity{
+public class Comment extends BaseEntity {
     private Long pictureGroupId;
     private Long authorId;
     private Long parentId;

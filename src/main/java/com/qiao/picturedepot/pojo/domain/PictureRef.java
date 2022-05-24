@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PictureRef extends BaseEntity{
+public class PictureRef extends BaseEntity {
     private Long pictureGroupId;
     private Long pictureId;
     private Integer sequence;

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class PictureGroup extends BaseEntity{
+public class PictureGroup extends BaseEntity {
     private Long albumId;
     private String title;
     private String description;

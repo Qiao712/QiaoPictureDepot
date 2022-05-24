@@ -170,12 +170,12 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     @Transactional
-    public void rejectNewFriend(Long userId, Long systemMessageId) {
-        MessageDto messageDto = messageService.getMessageByIdAndReceiver(systemMessageId, userId);
+    public void rejectNewFriend(Long userId, Long messageId) {
+        MessageDto messageDto = messageService.getMessageByIdAndReceiver(messageId, userId);
 
         final String newFriendMessageType = MessageSystemUtil.getMessageType(NewFriendMessageBody.class);
         if(messageDto != null && Objects.equals(messageDto.getMessageType(), newFriendMessageType)){
-            messageService.deleteMessageById(systemMessageId);
+            messageService.deleteMessageById(messageId);
 
             //将通知申请者被拒绝
             NotificationMessageBody messageBody = new NotificationMessageBody();
@@ -185,6 +185,12 @@ public class FriendServiceImpl implements FriendService {
         }else{
             throw new ServiceException("朋友申请消息不存在");
         }
+    }
+
+    @Override
+    public boolean ownFriendGroup(Long userId, Long friendGroupId) {
+        FriendGroup friendGroup = friendGroupMapper.getById(friendGroupId);
+        return friendGroup != null && Objects.equals(userId, friendGroup.getOwnerId());
     }
 
     //-----------------------------------------------------------------------------------------------------

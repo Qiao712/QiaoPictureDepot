@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Friendship extends BaseEntity{
+public class Friendship extends BaseEntity {
     private Long friendUserId;
     private Long friendGroupId;
 

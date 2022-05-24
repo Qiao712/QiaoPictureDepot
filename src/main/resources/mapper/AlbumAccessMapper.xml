@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qiao.picturedepot.dao.AlbumAccessMapper">
+    <select id="get" resultType="AlbumAccess">
+        SELECT album_id, friend_group_id, create_time, update_time
+        FROM album_access
+        WHERE friend_group_id = #{friendGroupId} AND album_id = #{albumId}
+    </select>
+
+    <insert id="add" parameterType="AlbumAccess">
+        INSERT INTO album_access(album_id, friend_group_id)
+        VALUES(#{albumId}, #{friendGroupId})
+    </insert>
+
+    <insert id="addBatch" parameterType="AlbumAccess">
+        INSERT IGNORE INTO album_access(album_id, friend_group_id)
+        VALUES
+        <foreach collection="albumAccesses" item="albumAccess" separator=",">
+            (#{albumAccess.albumId}, #{albumAccess.friendGroupId})
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM album_access
+        WHERE album_id = #{albumId} AND friend_group_id = #{friendGroupId}
+    </delete>
+
+    <delete id="deleteBatch">
+        DELETE FROM album_access
+        WHERE album_id = #{albumId}
+        AND friend_group_id IN
+        <foreach collection="friendGroupIds" item="friendGroupId" open="(" close=")" separator=",">
+            #{friendGroupId}
+        </foreach>
+    </delete>
+
+    <select id="existsByUserIdAndAlbumId" resultType="Boolean">
+        SELECT EXISTS(
+            SELECT * FROM album_access, friendship
+            WHERE album_access.friend_group_id = friendship.friend_group_id
+            AND album_id = #{albumId}
+            AND friendship.friend_user_id = #{userId}
+        ) AS canAccess
+    </select>
+</mapper>
