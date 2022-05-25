@@ -33,3 +33,12 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
+
+# 日志
+logging:
+  file:
+    name: application.log
+  # 日志级别
+  level:
+    root: INFO
+    com.qiao.picturedepot: INFO

@@ -1,6 +1,8 @@
 package com.qiao.picturedepot.exception.handler;
 
 import com.qiao.picturedepot.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -11,15 +13,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler{
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     /**
      * 处理所有业务异常。
      * 提取异常中的错误描述，打包成错误描述对象并返回。
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiError> handleBusinessException(BusinessException e){
-        //TODO: 记录日志
-        //... (可不打印堆栈信息)
-
         return buildErrorResponse(new ApiError(e.getStatus(), e.getMessage()));
     }
 
@@ -28,9 +29,6 @@ public class GlobalExceptionHandler{
      */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException e){
-        //TODO: 记录日志
-        //...
-
         return buildErrorResponse(new ApiError("认证失败"));
     }
 
@@ -39,9 +37,6 @@ public class GlobalExceptionHandler{
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        //TODO: 细化错误信息
-        //TODO: 记录日志
-
         return buildErrorResponse(new ApiError("请求参数错误"));
     }
 
@@ -55,8 +50,8 @@ public class GlobalExceptionHandler{
             throw e;
         }
 
-        //TODO: 记录日志
-        e.printStackTrace();
+        //记录日志
+        log.error("处理时请求发生异常", e);
 
         return buildErrorResponse(new ApiError("请求失败"));
     }
