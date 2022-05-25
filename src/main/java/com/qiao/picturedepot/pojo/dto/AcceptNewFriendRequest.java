@@ -1,11 +1,13 @@
 package com.qiao.picturedepot.pojo.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+import javax.validation.constraints.NotNull;
+
+@Data
 public class AcceptNewFriendRequest {
+    @NotNull
     private Long newFriendMessageId;
+    @NotNull
     private String friendGroupName;
 }

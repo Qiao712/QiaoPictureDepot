@@ -6,7 +6,7 @@ import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AcceptNewFriendRequest;
 import com.qiao.picturedepot.pojo.dto.ApplyNewFriendRequest;
 import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
-import com.qiao.picturedepot.pojo.dto.UpdateFriendInfoRequest;
+import com.qiao.picturedepot.pojo.dto.FriendInfoUpdateRequest;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public interface FriendService {
     /**
      * 更新好友信息（分组）
      */
-    void updateFriendInfo(Long userId, UpdateFriendInfoRequest updateFriendInfoRequest);
+    void updateFriendInfo(Long userId, FriendInfoUpdateRequest friendInfoUpdateRequest);
 
     /**
      * 申请加为好友。发送申请消息。

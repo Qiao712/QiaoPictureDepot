@@ -2,14 +2,19 @@ package com.qiao.picturedepot.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.qiao.picturedepot.pojo.AddGroup;
+import com.qiao.picturedepot.pojo.UpdateGroup;
 import com.qiao.picturedepot.pojo.domain.Album;
+import com.qiao.picturedepot.pojo.domain.BaseEntity;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,6 +28,7 @@ public class AlbumController{
                               @RequestParam("pageSize") Integer pageSize,
                               @RequestParam(value = "user", required = false) String username,
                               @AuthenticationPrincipal User user){
+        //TODO: 修改查看其他用户相册的功能
         PageHelper.startPage(pageNo, pageSize);
         List<Album> albums = albumService.getAlbumsByOwner(username == null ? user.getUsername() : username);
         return new PageInfo<Album>(albums);
@@ -34,12 +40,12 @@ public class AlbumController{
     }
 
     @PostMapping("/albums")
-    public void addAlbum(@RequestBody Album album){
+    public void addAlbum(@Validated(AddGroup.class) @RequestBody Album album){
         albumService.addAlbum(album);
     }
 
     @PutMapping("/albums")
-    public void updateAlbum(@RequestBody Album album){
+    public void updateAlbum(@Validated(UpdateGroup.class) @RequestBody Album album){
         albumService.updateAlbum(album);
     }
 
@@ -49,7 +55,7 @@ public class AlbumController{
     }
 
     @PostMapping("/albums/grant")
-    public void grantFriendGroup(@RequestBody AlbumGrantRequest albumGrantRequest){
+    public void grantFriendGroup(@Valid @RequestBody AlbumGrantRequest albumGrantRequest){
         albumService.grantAlbum(albumGrantRequest);
     }
 }

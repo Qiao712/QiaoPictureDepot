@@ -6,11 +6,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class ApplyNewFriendRequest {
+public class CommentAddRequest {
     @NotNull
-    private String friendUsername;
+    private Long pictureGroupId;
+
     @NotBlank
-    private String friendGroupName;
-    @NotBlank
-    private String applicationMessage;
+    private String content;
+
+    private Long replyTo;
 }

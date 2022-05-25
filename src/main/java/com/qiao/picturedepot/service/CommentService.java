@@ -1,11 +1,11 @@
 package com.qiao.picturedepot.service;
 
 import com.github.pagehelper.PageInfo;
-import com.qiao.picturedepot.pojo.dto.CommentAdd;
+import com.qiao.picturedepot.pojo.dto.CommentAddRequest;
 import com.qiao.picturedepot.pojo.dto.CommentDto;
 
 public interface CommentService {
-    void addComment(CommentAdd commentAdd);
+    void addComment(CommentAddRequest commentAddRequest);
 
     /**
      * 获取子评论（二级评论）

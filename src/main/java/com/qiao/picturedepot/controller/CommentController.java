@@ -1,11 +1,13 @@
 package com.qiao.picturedepot.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.qiao.picturedepot.pojo.dto.CommentAdd;
+import com.qiao.picturedepot.pojo.dto.CommentAddRequest;
 import com.qiao.picturedepot.pojo.dto.CommentDto;
 import com.qiao.picturedepot.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -14,8 +16,8 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping("/picture-groups/comments")
-    void addComment(@RequestBody CommentAdd commentAdd){
-        commentService.addComment(commentAdd);
+    void addComment(@Valid @RequestBody CommentAddRequest commentAddRequest){
+        commentService.addComment(commentAddRequest);
     }
 
     @GetMapping("/picture-groups/{pictureGroupId}/comments")

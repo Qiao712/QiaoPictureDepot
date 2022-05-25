@@ -6,11 +6,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class ApplyNewFriendRequest {
+public class FriendInfoUpdateRequest {
     @NotNull
-    private String friendUsername;
+    private Long friendUserId;
     @NotBlank
     private String friendGroupName;
-    @NotBlank
-    private String applicationMessage;
 }

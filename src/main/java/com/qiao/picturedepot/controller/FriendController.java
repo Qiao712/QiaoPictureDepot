@@ -1,16 +1,19 @@
 package com.qiao.picturedepot.controller;
 
+import com.qiao.picturedepot.pojo.UpdateGroup;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AcceptNewFriendRequest;
 import com.qiao.picturedepot.pojo.dto.ApplyNewFriendRequest;
 import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
-import com.qiao.picturedepot.pojo.dto.UpdateFriendInfoRequest;
+import com.qiao.picturedepot.pojo.dto.FriendInfoUpdateRequest;
 import com.qiao.picturedepot.service.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,17 +33,17 @@ public class FriendController {
     }
 
     @PostMapping("/friends/accept")
-    public void acceptNewFriend(@AuthenticationPrincipal User user, @RequestBody AcceptNewFriendRequest acceptNewFriendRequest){
+    public void acceptNewFriend(@AuthenticationPrincipal User user, @Valid @RequestBody AcceptNewFriendRequest acceptNewFriendRequest){
         friendService.acceptNewFriend(user.getId(), acceptNewFriendRequest);
     }
 
-    @PostMapping("/friends/reject/{systemMessageId}")
-    public void rejectNewFriend(@AuthenticationPrincipal User user, @PathVariable("systemMessageId") Long systemMessageId){
-        friendService.rejectNewFriend(user.getId(), systemMessageId);
+    @PostMapping("/friends/reject/{messageId}")
+    public void rejectNewFriend(@AuthenticationPrincipal User user, @PathVariable("messageId") Long messageId){
+        friendService.rejectNewFriend(user.getId(), messageId);
     }
 
     @PostMapping("/friends/apply")
-    public void applyNewFriend(@AuthenticationPrincipal User user, @RequestBody ApplyNewFriendRequest applyNewFriendRequest){
+    public void applyNewFriend(@AuthenticationPrincipal User user, @Valid @RequestBody ApplyNewFriendRequest applyNewFriendRequest){
         friendService.applyNewFriend(user, applyNewFriendRequest);
     }
 
@@ -51,12 +54,12 @@ public class FriendController {
     }
 
     @PutMapping("/friends/info")
-    public void updateFriendInfo(@AuthenticationPrincipal User user, @RequestBody UpdateFriendInfoRequest updateFriendInfoRequest){
-        friendService.updateFriendInfo(user.getId(), updateFriendInfoRequest);
+    public void updateFriendInfo(@AuthenticationPrincipal User user, @Valid @RequestBody FriendInfoUpdateRequest friendInfoUpdateRequest){
+        friendService.updateFriendInfo(user.getId(), friendInfoUpdateRequest);
     }
 
     @PutMapping("/friend-groups")
-    public void updateFriendGroup(@RequestBody FriendGroup friendGroup){
+    public void updateFriendGroup(@Validated(UpdateGroup.class) @RequestBody FriendGroup friendGroup){
         friendService.updateFriendGroup(friendGroup);
     }
 }

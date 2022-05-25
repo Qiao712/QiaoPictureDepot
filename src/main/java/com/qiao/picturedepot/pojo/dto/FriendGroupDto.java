@@ -1,15 +1,11 @@
 package com.qiao.picturedepot.pojo.dto;
 
 import com.qiao.picturedepot.pojo.domain.Friendship;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FriendGroupDto {

@@ -9,7 +9,7 @@ import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.Comment;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
-import com.qiao.picturedepot.pojo.dto.CommentAdd;
+import com.qiao.picturedepot.pojo.dto.CommentAddRequest;
 import com.qiao.picturedepot.pojo.dto.CommentDto;
 import com.qiao.picturedepot.pojo.dto.UserDetailDto;
 import com.qiao.picturedepot.pojo.dto.message.ReplyMessageBody;
@@ -41,22 +41,22 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#commentAdd.pictureGroupId)")
-    public void addComment(CommentAdd commentAdd) {
+    public void addComment(CommentAddRequest commentAddRequest) {
         Comment comment = new Comment();
-        comment.setPictureGroupId(commentAdd.getPictureGroupId());
+        comment.setPictureGroupId(commentAddRequest.getPictureGroupId());
         comment.setAuthorId(SecurityUtil.getNonAnonymousCurrentUser().getId());
-        comment.setContent(commentAdd.getContent());
-        comment.setRepliedId(commentAdd.getReplyTo());
+        comment.setContent(commentAddRequest.getContent());
+        comment.setRepliedId(commentAddRequest.getReplyTo());
 
         //被评论的图组
-        PictureGroup pictureGroup = pictureGroupMapper.getById(commentAdd.getPictureGroupId());
+        PictureGroup pictureGroup = pictureGroupMapper.getById(commentAddRequest.getPictureGroupId());
         if(pictureGroup == null){
             throw new BusinessException("被评论图组不存在");
         }
 
-        if(commentAdd.getReplyTo() != null){
+        if(commentAddRequest.getReplyTo() != null){
             //被回复评论
-            Comment repliedComment = commentMapper.getById(commentAdd.getReplyTo());
+            Comment repliedComment = commentMapper.getById(commentAddRequest.getReplyTo());
             if(repliedComment == null || !repliedComment.getPictureGroupId().equals(pictureGroup.getId())){
                 throw new BusinessException("被回复的评论不存在");
             }

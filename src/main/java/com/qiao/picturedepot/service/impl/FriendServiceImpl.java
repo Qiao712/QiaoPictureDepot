@@ -88,8 +88,8 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public void updateFriendInfo(Long userId, UpdateFriendInfoRequest updateFriendInfoRequest) {
-        Long friendUserId = updateFriendInfoRequest.getFriendUserId();
+    public void updateFriendInfo(Long userId, FriendInfoUpdateRequest friendInfoUpdateRequest) {
+        Long friendUserId = friendInfoUpdateRequest.getFriendUserId();
         assert(friendUserId != null);
 
         //检查好友关系
@@ -98,12 +98,12 @@ public class FriendServiceImpl implements FriendService {
         }
 
         //若分组不存在则创建，创建分组
-        FriendGroup friendGroup = friendGroupMapper.getByName(userId, updateFriendInfoRequest.getFriendGroupName());
+        FriendGroup friendGroup = friendGroupMapper.getByName(userId, friendInfoUpdateRequest.getFriendGroupName());
         if(friendGroup == null){
             //不存在则创建
             friendGroup = new FriendGroup();
             friendGroup.setOwnerId(userId);
-            friendGroup.setName(updateFriendInfoRequest.getFriendGroupName());
+            friendGroup.setName(friendInfoUpdateRequest.getFriendGroupName());
             friendGroupMapper.add(friendGroup);
         }
 
