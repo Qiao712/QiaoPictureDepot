@@ -7,7 +7,7 @@ import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.exception.AuthorizationException;
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.AlbumAccess;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
@@ -116,7 +116,7 @@ public class AlbumServiceImpl implements AlbumService {
     public void grantAlbum(AlbumGrantRequest albumGrantRequest) {
         Long currentUserId = SecurityUtil.getNonAnonymousCurrentUser().getId();
         if(! ownAlbum(currentUserId, albumGrantRequest.getAlbumId())){
-            throw new ServiceException("相册不存在");
+            throw new BusinessException("相册不存在");
         }
 
         //添加AlbumAccess
@@ -125,7 +125,7 @@ public class AlbumServiceImpl implements AlbumService {
             List<AlbumAccess> addedAlbumAccesses = new ArrayList<>(friendGroupIdsGranted.size());
             for (Long friendGroupId : friendGroupIdsGranted) {
                 if(! friendService.ownFriendGroup(currentUserId, friendGroupId)){
-                    throw new ServiceException("好友分组不存在");
+                    throw new BusinessException("好友分组不存在");
                 }
 
                 AlbumAccess albumAccess = new AlbumAccess();

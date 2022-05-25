@@ -1,6 +1,6 @@
 package com.qiao.picturedepot.exception.handler;
 
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,8 +15,8 @@ public class GlobalExceptionHandler{
      * 处理所有业务异常。
      * 提取异常中的错误描述，打包成错误描述对象并返回。
      */
-    @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<ApiError> handleServiceException(ServiceException e){
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiError> handleBusinessException(BusinessException e){
         //TODO: 记录日志
         //... (可不打印堆栈信息)
 
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler{
         //TODO: 记录日志
         //...
 
-        return buildErrorResponse(new ApiError("认证错误"));
+        return buildErrorResponse(new ApiError("认证失败"));
     }
 
     /**
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler{
         //TODO: 记录日志
         e.printStackTrace();
 
-        return buildErrorResponse(new ApiError(e.getMessage()));
+        return buildErrorResponse(new ApiError("请求失败"));
     }
 
     /**

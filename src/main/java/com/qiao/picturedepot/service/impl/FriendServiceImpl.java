@@ -2,7 +2,7 @@ package com.qiao.picturedepot.service.impl;
 
 import com.qiao.picturedepot.dao.FriendGroupMapper;
 import com.qiao.picturedepot.dao.FriendshipMapper;
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.pojo.domain.Friendship;
 import com.qiao.picturedepot.pojo.domain.User;
@@ -72,7 +72,7 @@ public class FriendServiceImpl implements FriendService {
     @Transactional
     public void deleteFriend(Long userId, Long friendUserId) {
         if(!checkIsFriend(userId, friendUserId)){
-            throw new ServiceException("不存在好友关系");
+            throw new BusinessException("不存在好友关系");
         }
         //互相删除
         friendshipMapper.deleteByUserId(userId, friendUserId);
@@ -94,7 +94,7 @@ public class FriendServiceImpl implements FriendService {
 
         //检查好友关系
         if(!checkIsFriend(userId, friendUserId)){
-            throw new ServiceException("不存在好友关系");
+            throw new BusinessException("不存在好友关系");
         }
 
         //若分组不存在则创建，创建分组
@@ -110,7 +110,7 @@ public class FriendServiceImpl implements FriendService {
         if(friendGroup.getId() != null){
             friendshipMapper.update(userId, friendUserId, friendGroup.getName());
         }else{
-            throw new ServiceException("无法创建好友分组");
+            throw new BusinessException("无法创建好友分组");
         }
     }
 
@@ -118,15 +118,15 @@ public class FriendServiceImpl implements FriendService {
     public void applyNewFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest) {
         Long friendUserId = userService.getUserIdByUsername(applyNewFriendRequest.getFriendUsername());
         if(friendUserId == null) {
-            throw new ServiceException("用户(username:" + applyNewFriendRequest.getFriendUsername() + ") 不存在");
+            throw new BusinessException("用户(username:" + applyNewFriendRequest.getFriendUsername() + ") 不存在");
         }
 
         if(friendUserId.equals(applicant.getId())){
-            throw new ServiceException("不能添加自己为好友");
+            throw new BusinessException("不能添加自己为好友");
         }
 
         if(checkIsFriend(applicant.getId(), friendUserId)){
-            throw new ServiceException("不可重复添加好友");
+            throw new BusinessException("不可重复添加好友");
         }
 
         //删除旧的申请
@@ -161,10 +161,10 @@ public class FriendServiceImpl implements FriendService {
                 addFriend(userId, friendGroupName, applicantId, applicantFriendGroupName);
                 messageService.deleteMessageById(systemMessageId);
             }catch (ClassCastException e){
-                throw new ServiceException("消息格式错误");
+                throw new BusinessException("消息格式错误");
             }
         }else{
-            throw new ServiceException("朋友申请消息不存在");
+            throw new BusinessException("朋友申请消息不存在");
         }
     }
 
@@ -183,7 +183,7 @@ public class FriendServiceImpl implements FriendService {
             messageBody.setNotification(username + "拒绝了您的好友申请");
             messageService.sendMessage(messageBody, userId, messageDto.getSenderId());
         }else{
-            throw new ServiceException("朋友申请消息不存在");
+            throw new BusinessException("朋友申请消息不存在");
         }
     }
 

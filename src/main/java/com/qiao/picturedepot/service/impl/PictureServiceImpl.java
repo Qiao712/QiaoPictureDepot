@@ -2,7 +2,7 @@ package com.qiao.picturedepot.service.impl;
 
 import com.qiao.picturedepot.config.MyProperties;
 import com.qiao.picturedepot.dao.*;
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
@@ -76,8 +76,8 @@ public class PictureServiceImpl implements PictureService {
     @PreAuthorize("@rs.canAccessAlbum(#pictureGroup.albumId)")
     public void addPictureGroup(PictureGroup pictureGroup, MultipartFile[] picturesFiles) {
         //TODO: 参数检查错误处理
-        if(pictureGroup.getAlbumId() == null) throw new ServiceException("图组所属的相册不可为空");
-        if(picturesFiles.length == 0) throw new ServiceException("不允许新建空相册");
+        if(pictureGroup.getAlbumId() == null) throw new BusinessException("图组所属的相册不可为空");
+        if(picturesFiles.length == 0) throw new BusinessException("不允许新建空相册");
 
         pictureGroupMapper.add(pictureGroup);
 
@@ -119,7 +119,7 @@ public class PictureServiceImpl implements PictureService {
         for (Long pictureRefId : pictureGroupUpdateRequest.getPicturesToDelete()) {
             Long pictureId = pictureRefMapper.getReferencedPictureId(pictureGroupId, pictureRefId);
             if(pictureId == null){
-                throw new ServiceException("尝试删除不存在的图片");
+                throw new BusinessException("尝试删除不存在的图片");
             }
             deletingPictureIds.add(pictureId);
             pictureRefMapper.delete(pictureGroupId, pictureRefId);
@@ -138,7 +138,7 @@ public class PictureServiceImpl implements PictureService {
                 //位置i的id为空，即位置i要插入新图片
                 if(j == pictureFiles.length){
                     //空位数量大于新插入图片数量
-                    throw new ServiceException("次序参数非法");
+                    throw new BusinessException("次序参数非法");
                 }
 
                 PictureIdentity pictureIdentity = pictureStoreService.savePictureFile(pictureFiles[j]);
@@ -157,7 +157,7 @@ public class PictureServiceImpl implements PictureService {
 
         //判断是否原有图片都已经重新确定顺序
         if(pictureCount != 0){
-            throw new ServiceException("次序参数非法");
+            throw new BusinessException("次序参数非法");
         }
 
         //插入

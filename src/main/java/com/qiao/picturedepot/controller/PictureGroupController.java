@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
@@ -47,7 +47,7 @@ public class PictureGroupController {
             PictureGroup pictureGroup = ObjectUtil.json2Object(pictureGroupJson, PictureGroup.class);
             pictureService.addPictureGroup(pictureGroup, multipartFiles);
         } catch (JsonProcessingException e) {
-            throw new ServiceException("PictureGroup对象不合法", e);
+            throw new BusinessException("PictureGroup对象不合法", e);
         }
     }
 
@@ -57,7 +57,7 @@ public class PictureGroupController {
             PictureGroupUpdateRequest pictureGroupUpdateRequest =  ObjectUtil.json2Object(pictureGroupUpdateRequestJson, PictureGroupUpdateRequest.class);
             pictureService.updatePictureGroup(pictureGroupUpdateRequest, multipartFiles);
         } catch (JsonProcessingException e) {
-            throw new ServiceException("PictureGroupUpdateRequest对象不合法", e);
+            throw new BusinessException("PictureGroupUpdateRequest对象不合法", e);
         }
     }
 }

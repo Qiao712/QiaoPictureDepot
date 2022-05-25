@@ -3,7 +3,7 @@ package com.qiao.picturedepot.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qiao.picturedepot.dao.MessageMapper;
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.Message;
 import com.qiao.picturedepot.pojo.dto.MessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
@@ -55,17 +55,17 @@ public class MessageServiceImpl implements MessageService {
         MessageBody messageBody = null;
         if(message != null){
             if(!message.getReceiverId().equals(receiverUserId)){
-                throw new ServiceException("接收者错误.");
+                throw new BusinessException("接收者错误.");
             }
 
             if(! (message.getMessageType() + "MessageBody").equals(cls.getSimpleName())){
-                throw new ServiceException("MessageBody类与消息的类型不匹配.");
+                throw new BusinessException("MessageBody类与消息的类型不匹配.");
             }
 
             try {
                 messageBody = objectMapper.readValue(message.getMessageBody(), cls);
             } catch (JsonProcessingException e) {
-                throw new ServiceException("MessageBody类与消息的类型不匹配.", e);
+                throw new BusinessException("MessageBody类与消息的类型不匹配.", e);
             }
         }
         return (T) messageBody;

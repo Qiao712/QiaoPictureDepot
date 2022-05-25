@@ -2,7 +2,7 @@ package com.qiao.picturedepot.service.impl;
 
 import com.qiao.picturedepot.config.MyProperties;
 import com.qiao.picturedepot.dao.PictureIdentityMapper;
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.service.PictureStoreService;
 import com.qiao.picturedepot.util.FileUtil;
@@ -53,7 +53,7 @@ public class LocalPictureStoreService implements PictureStoreService {
                 throw new RuntimeException("图片保存失败", e);
             }
         }else{
-            throw new ServiceException("文件格式错误");
+            throw new BusinessException("文件格式错误");
         }
 
         return pictureIdentity;

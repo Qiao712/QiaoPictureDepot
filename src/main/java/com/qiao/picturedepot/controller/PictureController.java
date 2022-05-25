@@ -1,7 +1,7 @@
 package com.qiao.picturedepot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
 import com.qiao.picturedepot.service.PictureService;
@@ -32,7 +32,7 @@ public class PictureController {
     public void getPicture(@PathVariable Long pictureGroupId, @PathVariable Long pictureRefId, HttpServletResponse response) throws IOException {
         PictureIdentity pictureIdentity = pictureService.getPictureIdentity(pictureGroupId, pictureRefId);
         if(pictureIdentity == null){
-            throw new ServiceException("图片不存在");
+            throw new BusinessException("图片不存在");
         }
 
         String contentType = FileUtil.getContentType(pictureIdentity.getFormat());

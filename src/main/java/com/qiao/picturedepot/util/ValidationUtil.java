@@ -1,6 +1,6 @@
 package com.qiao.picturedepot.util;
 
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 
 public class ValidationUtil {
     /**
@@ -10,7 +10,7 @@ public class ValidationUtil {
     public static void checkEntityExists(Object object, String entityName, String parameter, Object value){
         if(object == null){
             String msg = entityName + "(" + parameter + " = " + value + ")" + "不存在";
-            throw new ServiceException(msg);
+            throw new BusinessException(msg);
         }
     }
 }

@@ -5,7 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.CommentMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.dao.UserMapper;
-import com.qiao.picturedepot.exception.ServiceException;
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.Comment;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
@@ -51,14 +51,14 @@ public class CommentServiceImpl implements CommentService {
         //被评论的图组
         PictureGroup pictureGroup = pictureGroupMapper.getById(commentAdd.getPictureGroupId());
         if(pictureGroup == null){
-            throw new ServiceException("被评论图组不存在");
+            throw new BusinessException("被评论图组不存在");
         }
 
         if(commentAdd.getReplyTo() != null){
             //被回复评论
             Comment repliedComment = commentMapper.getById(commentAdd.getReplyTo());
             if(repliedComment == null || !repliedComment.getPictureGroupId().equals(pictureGroup.getId())){
-                throw new ServiceException("被回复的评论不存在");
+                throw new BusinessException("被回复的评论不存在");
             }
 
             //设置二级评论的parentId
