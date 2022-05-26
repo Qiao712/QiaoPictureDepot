@@ -1,6 +1,6 @@
 package com.qiao.picturedepot.security;
 
-import com.qiao.picturedepot.exception.handler.ApiError;
+import com.qiao.picturedepot.pojo.dto.ApiError;
 import com.qiao.picturedepot.util.ObjectUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

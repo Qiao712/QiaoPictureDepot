@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class FriendController {
     @Autowired
-    FriendService friendService;
+    private FriendService friendService;
 
     @GetMapping("/friends")
     public List<FriendGroupDto> getGroupedFriendList(@AuthenticationPrincipal User user){

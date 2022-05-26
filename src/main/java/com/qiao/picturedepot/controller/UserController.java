@@ -1,5 +1,6 @@
 package com.qiao.picturedepot.controller;
 
+import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,19 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    ResponseEntity register(@RequestParam("username") String username,
-                            @RequestParam("password") String password,
-                            @RequestParam("invitationCode") String invitationCode){
+    void register(@RequestParam("username") String username,
+                  @RequestParam("password") String password,
+                  @RequestParam("invitationCode") String invitationCode){
         if(invitationCode != null && invitationCode.equals("123456")){
             userService.registerUser(username, password);
-            return ResponseEntity.ok(null);
         }else{
-            return ResponseEntity.badRequest().build();
+            throw new BusinessException("注册失败");
         }
     }
+
+    //TODO: 用户注册
+
+    //TODO: 用户头像
+
+    //TODO: 用户级别，与使限制（相册数量....）
 }

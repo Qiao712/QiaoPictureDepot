@@ -1,6 +1,7 @@
 package com.qiao.picturedepot.exception.handler;
 
 import com.qiao.picturedepot.exception.BusinessException;
+import com.qiao.picturedepot.pojo.dto.ApiError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

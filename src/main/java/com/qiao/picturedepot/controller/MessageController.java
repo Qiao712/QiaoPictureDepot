@@ -29,4 +29,6 @@ public class MessageController {
     public void acknowledgeMessage(@RequestBody List<Long> messageIds, @AuthenticationPrincipal User user) {
         messageService.acknowledgeMessage(user.getId(), messageIds);
     }
+
+    //TODO: 根据时间戳Ack
 }

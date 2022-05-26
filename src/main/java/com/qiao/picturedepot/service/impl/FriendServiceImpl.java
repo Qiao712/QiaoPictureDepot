@@ -193,6 +193,8 @@ public class FriendServiceImpl implements FriendService {
         return friendGroup != null && Objects.equals(userId, friendGroup.getOwnerId());
     }
 
+    //TODO: *好友动态
+
     //-----------------------------------------------------------------------------------------------------
     private void addFriend(Long userId1, String friendGroupName1, Long userId2, String friendGroupName2) {
         if(friendshipMapper.checkFriendRelationship(userId1, userId2)) {

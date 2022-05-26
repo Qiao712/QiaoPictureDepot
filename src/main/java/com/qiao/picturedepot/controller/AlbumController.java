@@ -24,14 +24,14 @@ public class AlbumController{
     AlbumService albumService;
 
     @GetMapping("/albums")
-    public PageInfo getAlbums(@RequestParam("pageNo") Integer pageNo,
+    public PageInfo<Album> getAlbums(@RequestParam("pageNo") Integer pageNo,
                               @RequestParam("pageSize") Integer pageSize,
                               @RequestParam(value = "user", required = false) String username,
                               @AuthenticationPrincipal User user){
         //TODO: 修改查看其他用户相册的功能
         PageHelper.startPage(pageNo, pageSize);
         List<Album> albums = albumService.getAlbumsByOwner(username == null ? user.getUsername() : username);
-        return new PageInfo<Album>(albums);
+        return new PageInfo<>(albums);
     }
 
     @GetMapping("/albums/{albumId}")

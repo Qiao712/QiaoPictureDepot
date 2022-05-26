@@ -100,4 +100,8 @@ public class LocalPictureStoreService implements PictureStoreService {
     private File getFile(String uri){
         return new File(properties.getPictureDepotPath() + File.separator + uri);
     }
+
+    //TODO: 相同图片合并
+
+    //TODO: ***** 使用第三方OSS
 }

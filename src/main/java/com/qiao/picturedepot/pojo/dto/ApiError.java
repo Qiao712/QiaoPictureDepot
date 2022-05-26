@@ -1,11 +1,12 @@
-package com.qiao.picturedepot.exception.handler;
+package com.qiao.picturedepot.pojo.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-@Setter
-@Getter
+/**
+ * 携带错误信息
+ */
+@Data
 public class ApiError {
     private Integer status = HttpStatus.BAD_REQUEST.value();
     private String message;

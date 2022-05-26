@@ -198,4 +198,6 @@ public class PictureServiceImpl implements PictureService {
             pictureStoreService.releasePicture(pictureId);
         }
     }
+
+    //TODO: ***缩略图
 }
