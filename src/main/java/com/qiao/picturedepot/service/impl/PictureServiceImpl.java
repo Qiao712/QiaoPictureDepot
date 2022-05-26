@@ -10,6 +10,7 @@ import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import com.qiao.picturedepot.service.PictureService;
 import com.qiao.picturedepot.service.PictureStoreService;
+import com.qiao.picturedepot.util.ObjectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,8 @@ public class PictureServiceImpl implements PictureService {
         List<PictureGroupPreviewDto> pictureGroupPreviewDtos = new ArrayList<>(pictureGroups.size());
 
         for (PictureGroup pictureGroup : pictureGroups) {
-            PictureGroupPreviewDto dto = new PictureGroupPreviewDto(pictureGroup);
+            PictureGroupPreviewDto dto = new PictureGroupPreviewDto();
+            ObjectUtil.mergeBean(pictureGroup, dto);
             dto.setFirstPictureRefId( pictureRefMapper.getFirstPictureRefIdOfGroup(pictureGroup.getId()) );
             dto.setPictureCount( pictureRefMapper.countByGroupId(pictureGroup.getId()) );
             pictureGroupPreviewDtos.add(dto);

@@ -15,13 +15,4 @@ public class PictureGroupPreviewDto {
     private Date updateTime;
     private Long firstPictureRefId;
     private Integer pictureCount;
-
-    public PictureGroupPreviewDto(PictureGroup pictureGroup){
-        //TODO: 改为自动反射
-
-        this.id = pictureGroup.getId();
-        this.title = pictureGroup.getTitle();
-        this.createTime = pictureGroup.getCreateTime();
-        this.updateTime = pictureGroup.getUpdateTime();
-    }
 }
