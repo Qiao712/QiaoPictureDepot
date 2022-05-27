@@ -7,6 +7,8 @@ import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.util.SecurityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,8 @@ public class ResourceSecurity {
     private AlbumAccessMapper albumAccessMapper;
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    private static final Logger log = LoggerFactory.getLogger(ResourceSecurity.class);
 
     /**
      * 判断当前用户对相册的访问权
@@ -107,8 +111,7 @@ public class ResourceSecurity {
         try {
             cachedPictureGroupId = redisTemplate.opsForValue().get(username);
         }catch (Exception e){
-            //TODO: 异常处理
-            e.printStackTrace();
+            log.error("redis 异常", e);
         }
 
         if(cachedPictureGroupId != null){
@@ -127,10 +130,9 @@ public class ResourceSecurity {
             //pictureGroupId - userId 对 60秒后失效
             redisTemplate.opsForValue().set(username, pictureGroupId.toString(), 60, TimeUnit.SECONDS);
         }catch (Exception e){
-            //TODO: 异常处理
-            e.printStackTrace();
+            log.error("redis 异常", e);
         }
     }
 
-    //TODO:
+    //TODO: 使用更优的缓存
 }

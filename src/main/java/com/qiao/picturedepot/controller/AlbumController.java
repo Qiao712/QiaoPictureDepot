@@ -58,4 +58,9 @@ public class AlbumController{
     public void grantFriendGroup(@Valid @RequestBody AlbumGrantRequest albumGrantRequest){
         albumService.grantAlbum(albumGrantRequest);
     }
+
+    @GetMapping("/test")
+    public void test(){
+
+    }
 }

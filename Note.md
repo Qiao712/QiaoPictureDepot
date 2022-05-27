@@ -49,8 +49,11 @@ Spring Security
 ### 消息系统
 * 分为**系统消息** 与 **用户消息**（用户之间的私信，暂未实现）
 
-
-
 ## 表单验证
 * 在Dto和Domain的类字段上添加注解约束
 * 使用分组验证，分为Update时的约束(id != null) 和 Add时的约束
+
+## controller返回值处理
+* Controller直接返回DTO或Domain对象
+* 通过AOP添加对返回值的检查，若返回值类型不为空，则不允许为null，否则抛出异常
+* 通过全局的异常处理器捕获异常，并返回ApiError对象，传递错误信息
