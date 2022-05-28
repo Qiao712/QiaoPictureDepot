@@ -17,13 +17,12 @@ public class GlobalExceptionHandler{
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * 处理所有业务异常。
+     * 处理所有业务异常(可预知的错误)
      * 提取异常中的错误描述，打包成错误描述对象并返回。
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiError> handleBusinessException(BusinessException e){
-        //debug
-        e.printStackTrace();
+        log.debug("业务异常", e);
 
         return buildErrorResponse(new ApiError(e.getStatus(), e.getMessage()));
     }
@@ -33,8 +32,7 @@ public class GlobalExceptionHandler{
      */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException e){
-        //debug
-        e.printStackTrace();
+        log.debug("认证授权错误", e);
 
         return buildErrorResponse(new ApiError("认证失败"));
     }
@@ -45,7 +43,7 @@ public class GlobalExceptionHandler{
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
         //debug
-        e.printStackTrace();
+        log.debug("参数非法", e);
 
         return buildErrorResponse(new ApiError("请求参数错误"));
     }
@@ -61,9 +59,7 @@ public class GlobalExceptionHandler{
         }
 
         //记录日志
-        log.error("处理时请求发生异常", e);
-        //debug
-        e.printStackTrace();
+        log.error("未知异常", e);
 
         return buildErrorResponse(new ApiError("请求失败"));
     }
