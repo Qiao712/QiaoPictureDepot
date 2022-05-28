@@ -1,11 +1,18 @@
 package com.qiao.picturedepot.pojo.domain;
 
+import com.qiao.picturedepot.pojo.AddGroup;
+import com.qiao.picturedepot.pojo.UpdateGroup;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -14,8 +21,15 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity implements UserDetails {
+    @NotBlank(groups = AddGroup.class)
+    @Length(min = 5, max = 16)
     private String username;
+
+    @NotNull(groups = {AddGroup.class, UpdateGroup.class})
+    @Length(min = 8, max = 32)
     private String password;
+
+    @Null(groups = {AddGroup.class, UpdateGroup.class})
     private Long roleId;
 
     //--------------------

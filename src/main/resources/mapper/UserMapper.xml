@@ -32,8 +32,18 @@
 
     <insert id="add">
         INSERT INTO user(username, password, role_id)
-        VALUES(#{username}, #{password},
-            (select id FROM role WHERE role.name = #{rolename})
+        VALUES(#{user.username}, #{user.password},
+            (SELECT id FROM role WHERE role.name = #{rolename})
         )
+    </insert>
+
+    <select id="getAvatarByUserId" resultType="java.io.InputStream">
+        SELECT avatar FROM user WHERE id = #{userId}
+    </select>
+
+    <insert id="setAvatarByUserId">
+        UPDATE user
+        SET avatar = #{image}
+        WHERE id = #{userId}
     </insert>
 </mapper>
