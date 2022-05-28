@@ -1,9 +1,7 @@
 package com.qiao.picturedepot.exception.handler;
 
-import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.exception.EntityNotFoundException;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;

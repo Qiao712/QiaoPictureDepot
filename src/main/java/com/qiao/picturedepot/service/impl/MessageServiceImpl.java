@@ -9,6 +9,7 @@ import com.qiao.picturedepot.pojo.dto.MessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
 import com.qiao.picturedepot.service.MessageService;
 import com.qiao.picturedepot.util.MessageSystemUtil;
+import com.qiao.picturedepot.util.ObjectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class MessageServiceImpl implements MessageService {
-    private static ObjectMapper objectMapper = new ObjectMapper();
-
     @Autowired
     private MessageMapper messageMapper;
 
@@ -63,7 +62,7 @@ public class MessageServiceImpl implements MessageService {
             }
 
             try {
-                messageBody = objectMapper.readValue(message.getMessageBody(), cls);
+                messageBody = ObjectUtil.json2Object(message.getMessageBody(), cls);
             } catch (JsonProcessingException e) {
                 throw new BusinessException("MessageBody类与消息的类型不匹配.", e);
             }
@@ -84,10 +83,9 @@ public class MessageServiceImpl implements MessageService {
         message.setReceiverId(receiverUserId);
         message.setAcknowledged(false);
         try {
-            message.setMessageBody( objectMapper.writeValueAsString(messageBody) );
+            message.setMessageBody( ObjectUtil.object2Json(messageBody) );
         } catch (JsonProcessingException e) {
-            //TODO: 异常处理
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         messageMapper.add(message);

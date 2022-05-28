@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.AddGroup;
 import com.qiao.picturedepot.pojo.UpdateGroup;
 import com.qiao.picturedepot.pojo.domain.Album;
-import com.qiao.picturedepot.pojo.domain.BaseEntity;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
 import com.qiao.picturedepot.service.AlbumService;
@@ -57,10 +56,5 @@ public class AlbumController{
     @PostMapping("/albums/grant")
     public void grantFriendGroup(@Valid @RequestBody AlbumGrantRequest albumGrantRequest){
         albumService.grantAlbum(albumGrantRequest);
-    }
-
-    @GetMapping("/test")
-    public void test(){
-
     }
 }
