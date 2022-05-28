@@ -28,7 +28,7 @@ public class ObjectUtil {
      */
     public static void mergeBean(Object src, Object dest){
         Class<?> srcClass = src.getClass();
-        Class<?> destClass = src.getClass();
+        Class<?> destClass = dest.getClass();
         Field[] srcFields = srcClass.getDeclaredFields();
         Field[] destFields = destClass.getDeclaredFields();
 
