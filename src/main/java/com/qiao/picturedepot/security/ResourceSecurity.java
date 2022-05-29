@@ -2,8 +2,10 @@ package com.qiao.picturedepot.security;
 
 import com.qiao.picturedepot.dao.AlbumAccessMapper;
 import com.qiao.picturedepot.dao.AlbumMapper;
+import com.qiao.picturedepot.dao.FriendshipMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.pojo.domain.Album;
+import com.qiao.picturedepot.pojo.domain.AlbumAccess;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.util.SecurityUtil;
@@ -18,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 @Component("rs")
 public class ResourceSecurity {
+    @Autowired
+    private FriendshipMapper friendshipMapper;
     @Autowired
     private PictureGroupMapper pictureGroupMapper;
     @Autowired
@@ -37,16 +41,20 @@ public class ResourceSecurity {
             return true;
         }
 
-        //是否公开
-        if(album.isPublic()){
+        Album.AccessPolicy accessPolicy = Album.AccessPolicy.values()[album.getAccessPolicy()];
+        if(Album.AccessPolicy.ALL_USERS == accessPolicy){
             return true;
-        }
+        }else{
+            User user = SecurityUtil.getCurrentUser();
+            if(user == null) return false;
 
-        User user = SecurityUtil.getCurrentUser();
-        if(user != null){
-            //是否为属主 或 被授权
-            return  Objects.equals(user.getId(), album.getOwnerId())
-                    || albumAccessMapper.existsByUserIdAndAlbumId(user.getId(), album.getId());
+            if(Album.AccessPolicy.PRIVATE == accessPolicy){
+                return Objects.equals(user.getId(), album.getOwnerId());
+            }else if(Album.AccessPolicy.ALL_FRIENDS == accessPolicy){
+                return friendshipMapper.checkFriendRelationship(user.getId(), album.getOwnerId());
+            }else if(Album.AccessPolicy.SPECIFIC_FRIEND_GROUPS == accessPolicy){
+                return albumAccessMapper.existsByUserIdAndAlbumId(user.getId(), album.getId());
+            }
         }
 
         return false;

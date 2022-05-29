@@ -1,12 +1,13 @@
 package com.qiao.picturedepot.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.AlbumAccessMapper;
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
-import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.exception.AuthorizationException;
 import com.qiao.picturedepot.exception.BusinessException;
+import com.qiao.picturedepot.exception.EntityNotFoundException;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.AlbumAccess;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
@@ -16,11 +17,10 @@ import com.qiao.picturedepot.security.ResourceSecurity;
 import com.qiao.picturedepot.service.AlbumService;
 import com.qiao.picturedepot.service.FriendService;
 import com.qiao.picturedepot.service.PictureService;
+import com.qiao.picturedepot.service.UserService;
 import com.qiao.picturedepot.util.SecurityUtil;
 import com.qiao.picturedepot.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +42,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Autowired
     private FriendService friendService;
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
     @Autowired
     private ResourceSecurity resourceSecurity;
 
@@ -53,9 +53,22 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<Album> getAlbumsByOwner(String ownerUsername) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
-        return albumMapper.listByOwnerUsername(ownerUsername, ownerUsername.equals(user.getUsername()));
+    public PageInfo<Album> getAlbums(int pageNo, int pageSize) {
+        Long userId = SecurityUtil.getNonAnonymousCurrentUser().getId();
+        PageHelper.startPage(pageNo, pageSize);
+        List<Album> albums = albumMapper.listByOwnerUserId(userId);
+        return new PageInfo<>(albums);
+    }
+
+    @Override
+    public PageInfo<Album> getAlbumsPermitted(String ownerUsername, int pageNo, int pageSize) {
+        Long visitorUserId = SecurityUtil.getNonAnonymousCurrentUser().getId();
+        Long ownerUserId = userService.getUserIdByUsername(ownerUsername);
+        if(ownerUserId == null) throw new EntityNotFoundException(User.class);
+
+        PageHelper.startPage(pageNo, pageSize);
+        List<Album> albums = albumMapper.listPermitted(ownerUserId, visitorUserId);
+        return new PageInfo<>(albums);
     }
 
     @Override
@@ -108,8 +121,16 @@ public class AlbumServiceImpl implements AlbumService {
     @Transactional
     public void grantAlbum(AlbumGrantRequest albumGrantRequest) {
         Long currentUserId = SecurityUtil.getNonAnonymousCurrentUser().getId();
-        if(! ownAlbum(currentUserId, albumGrantRequest.getAlbumId())){
+        Album album = albumMapper.getById(albumGrantRequest.getAlbumId());
+
+        if(album == null){
             throw new BusinessException("相册不存在");
+        }
+        if(!Objects.equals(album.getOwnerId(), currentUserId)){
+            throw new BusinessException("非属主");
+        }
+        if(album.getAccessPolicy() != Album.AccessPolicy.SPECIFIC_FRIEND_GROUPS.ordinal()){
+            throw new BusinessException("访问控制策略不是: 对部分分组好友可见");
         }
 
         //添加AlbumAccess

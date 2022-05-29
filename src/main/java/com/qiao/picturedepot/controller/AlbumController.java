@@ -1,20 +1,16 @@
 package com.qiao.picturedepot.controller;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.AddGroup;
 import com.qiao.picturedepot.pojo.UpdateGroup;
 import com.qiao.picturedepot.pojo.domain.Album;
-import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -25,12 +21,14 @@ public class AlbumController{
     @GetMapping("/albums")
     public PageInfo<Album> getAlbums(@RequestParam("pageNo") Integer pageNo,
                               @RequestParam("pageSize") Integer pageSize,
-                              @RequestParam(value = "user", required = false) String username,
-                              @AuthenticationPrincipal User user){
-        //TODO: 修改查看其他用户相册的功能
-        PageHelper.startPage(pageNo, pageSize);
-        List<Album> albums = albumService.getAlbumsByOwner(username == null ? user.getUsername() : username);
-        return new PageInfo<>(albums);
+                              @RequestParam(value = "user", required = false) String username){
+        if(username == null){
+            //获取当前用户的相册列表
+            return albumService.getAlbums(pageNo, pageSize);
+        }else{
+            //获取当前用户有访问权的目标用户的相册列表
+            return albumService.getAlbumsPermitted(username, pageNo, pageSize);
+        }
     }
 
     @GetMapping("/albums/{albumId}")

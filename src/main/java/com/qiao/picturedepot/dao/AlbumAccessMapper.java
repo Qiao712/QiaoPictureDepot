@@ -7,8 +7,6 @@ import java.util.List;
 
 @Mapper
 public interface AlbumAccessMapper {
-    AlbumAccess get(Long pictureGroupId, Long friendGroupId);
-
     Integer add(AlbumAccess albumAccess);
 
     Integer addBatch(List<AlbumAccess> albumAccesses);

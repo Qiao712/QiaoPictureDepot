@@ -9,7 +9,12 @@ import java.util.List;
 public interface AlbumMapper {
     Album getById(Long id);
 
-    List<Album> listByOwnerUsername(String ownerUsername, boolean showPrivate);
+    List<Album> listByOwnerUserId(Long ownerUserId);
+
+    /**
+     * owner的相册中，visitor可访问的
+     */
+    List<Album> listPermitted(Long ownerUserId, Long visitorUserId);
 
     Integer add(Album album);
 

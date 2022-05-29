@@ -5,26 +5,49 @@
 
 <mapper namespace="com.qiao.picturedepot.dao.AlbumMapper">
     <select id="getById" resultType="Album">
-        SELECT id, name, owner_id, is_public, description, create_time, update_time
+        SELECT id, name, owner_id, access_policy, description, create_time, update_time
         FROM album
         WHERE id = #{id}
     </select>
 
-    <select id="listByOwnerUsername" resultType="Album">
-        SELECT id, name, owner_id, is_public, description, create_time, update_time
+    <select id="listByOwnerUserId" resultType="Album">
+        SELECT id, name, owner_id, access_policy, description, create_time, update_time
         FROM album
-        <where>
-            owner_id = (SELECT id FROM user WHERE username = #{ownerUsername})
-            <if test="showPrivate == false">
-                AND is_public = true
-            </if>
-        </where>
+        WHERE owner_id = #{ownerId}
+    </select>
+    
+    <select id="listPermitted" resultType="Album">
+        SELECT id, name, owner_id, access_policy, description, create_time, update_time
+        FROM album
+        WHERE owner_id = #{ownerUserId} AND (
+            <!--私有-->
+            (access_policy = 0 AND owner_id = #{visitorUserId}) OR
+            <!--部分分组好友可见-->
+            (access_policy = 1 AND
+                EXISTS(
+                    SELECT * FROM album_access, friendship
+                    WHERE album_access.album_id = album.id
+                        AND album_access.friend_group_id = friendship.friend_group_id
+                        AND friendship.friend_user_id = #{visitorUserId}
+                )
+            ) OR
+            <!--所有好友可见-->
+            (access_policy = 2 AND
+                EXISTS (
+                    SELECT * FROM friendship, friend_group
+                    WHERE friend_group.id = friendship.friend_group_id
+                        AND friend_group.owner_id = #{ownerUserId}
+                        AND friendShip.friend_user_id = #{visitorUserId}
+                )
+            ) OR
+            <!--公开-->
+            (access_policy = 3)
+        )
     </select>
 
-
     <insert id="add" parameterType="Album" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO album(name, owner_id, is_public, description)
-        VALUES(#{name}, #{ownerId}, #{isPublic}, #{description})
+        INSERT INTO album(name, owner_id, access_policy, description)
+        VALUES(#{name}, #{ownerId}, #{accessPolicy}, #{description})
     </insert>
 
     <update id="updateByIdAndOwnerId" parameterType="Album">
@@ -33,8 +56,8 @@
             <if test="name != null">
                 name = #{name},
             </if>
-            <if test="isPublic != null">
-                is_public = #{isPublic},
+            <if test="accessPolicy != null">
+                access_policy = #{accessPolicy},
             </if>
             <if test="description != null">
                 description = #{description},
