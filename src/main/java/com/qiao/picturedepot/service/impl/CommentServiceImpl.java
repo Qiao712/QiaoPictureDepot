@@ -112,12 +112,7 @@ public class CommentServiceImpl implements CommentService {
 
         for(Comment comment : comments){
             CommentDto commentDto = new CommentDto();
-            //TODO: mergeBean无法处理基类
-            ObjectUtil.mergeBean(comment, commentDto);
-            commentDto.setId(comment.getId());
-            commentDto.setUpdateTime(comment.getUpdateTime());
-            commentDto.setCreateTime(comment.getCreateTime());
-
+            ObjectUtil.copyBean(comment, commentDto);
             commentDto.setAuthorUser(userDetailDtoCache.get(comment.getAuthorId()));
 
             Comment repliedComment = commentCache.get(comment.getRepliedId());

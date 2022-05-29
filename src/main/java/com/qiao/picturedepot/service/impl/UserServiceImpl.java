@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         User user = userMapper.getById(userId);
         if(user == null) return null;
         UserDetailDto userDetailDto = new UserDetailDto();
-        ObjectUtil.mergeBean(user, userDetailDto);
+        ObjectUtil.copyBean(user, userDetailDto);
         return userDetailDto;
     }
 

@@ -2,10 +2,14 @@ package com.qiao.picturedepot;
 
 import com.qiao.picturedepot.dao.FriendGroupMapper;
 import com.qiao.picturedepot.dao.FriendshipMapper;
+import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.service.FriendService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 @SpringBootTest
 public class DaoTest {
@@ -44,5 +48,13 @@ public class DaoTest {
     void testAddFriend(){
 //        friendService.addFriend(BigInteger.valueOf(7), "死党",BigInteger.valueOf(1), "水友");
 //        friendService.deleteFriend(BigInteger.valueOf(7), BigInteger.valueOf(555));
+    }
+
+    @Autowired
+    private UserMapper userMapper;
+    @Test
+    void testAvatar() throws IOException {
+        InputStream inputStream = userMapper.getAvatarByUserId(1L);
+        System.out.println(inputStream.available());
     }
 }

@@ -45,7 +45,7 @@ public class PictureServiceImpl implements PictureService {
 
         for (PictureGroup pictureGroup : pictureGroups) {
             PictureGroupPreviewDto dto = new PictureGroupPreviewDto();
-            ObjectUtil.mergeBean(pictureGroup, dto);
+            ObjectUtil.copyBean(pictureGroup, dto);
             dto.setFirstPictureRefId( pictureRefMapper.getFirstPictureRefIdOfGroup(pictureGroup.getId()) );
             dto.setPictureCount( pictureRefMapper.countByGroupId(pictureGroup.getId()) );
             pictureGroupPreviewDtos.add(dto);

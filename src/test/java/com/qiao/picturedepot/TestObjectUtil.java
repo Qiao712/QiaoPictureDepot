@@ -6,12 +6,13 @@ import com.qiao.picturedepot.util.ObjectUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 @SpringBootTest
 public class TestObjectUtil {
     @Test
-    public void test(){
+    public void test() {
         Comment comment = new Comment();
         comment.setAuthorId(123L);
         comment.setContent("test");
@@ -22,7 +23,7 @@ public class TestObjectUtil {
         comment.setPictureGroupId(1232333L);
 
         CommentDto commentDto = new CommentDto();
-        ObjectUtil.mergeBean(comment, commentDto);
+        ObjectUtil.copyBean(comment, commentDto);
         System.out.println(commentDto);
     }
 }

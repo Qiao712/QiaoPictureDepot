@@ -26,33 +26,46 @@ public class ObjectUtil {
      * @param src
      * @param dest
      */
-    public static void mergeBean(Object src, Object dest){
+    public static void copyBean(Object src, Object dest){
         Class<?> srcClass = src.getClass();
         Class<?> destClass = dest.getClass();
-        Field[] srcFields = srcClass.getDeclaredFields();
-        Field[] destFields = destClass.getDeclaredFields();
 
-        Map<String, Class<?>> destFieldTypeMap = new HashMap<>(destFields.length);
-        for (Field destField : destFields) {
-            destFieldTypeMap.put(destField.getName(), destField.getType());
-        }
-
-        try{
-            for (Field srcField : srcFields) {
-                String fieldName = srcField.getName();
-                Class<?> fieldType = destFieldTypeMap.get(fieldName);
-
-                if(fieldType != null){
-                    Method setter = destClass.getMethod("set" + Strings.capitalize(fieldName), fieldType);
-                    Method getter = srcClass.getMethod("get" + Strings.capitalize(fieldName));
-
-                    setter.invoke(dest, getter.invoke(src));
+        //收集src对象的get函数
+        Map<String, Method> getterMap = new HashMap<>();
+        while(srcClass != null){
+            Method[] methods = srcClass.getMethods();
+            for (Method method : methods) {
+                if(Strings.substringMatch(method.getName(), 0, "get") && method.getParameterCount() == 0){
+                    getterMap.put(method.getName().substring(3), method);
                 }
             }
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("字段无对应的Setter", e);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException("无法设置字段", e);
+
+            //获取父类
+            srcClass = srcClass.getSuperclass();
+        }
+
+        //收集dest对象的set函数, 并set
+        while(destClass != null){
+            Method[] methods = destClass.getMethods();
+            for(Method method : methods){
+                if(Strings.substringMatch(method.getName(), 0, "set") && method.getParameterCount() == 1){
+                    String setterName = method.getName().substring(3);
+                    Method getter = getterMap.get(setterName);
+                    if(getter != null){
+                        //getter和setter类型是否匹配
+                        Class<?> setterParameterType = method.getParameterTypes()[0];
+                        Class<?> getterReturnType = getter.getReturnType();
+                        if(setterParameterType.isAssignableFrom(getterReturnType)){
+                            try {
+                                method.invoke(dest, getter.invoke(src));
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                throw new RuntimeException("设置字段失败", e);
+                            }
+                        }
+                    }
+                }
+            }
+            destClass = destClass.getSuperclass();
         }
     }
 }
