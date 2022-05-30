@@ -1,7 +1,8 @@
 package com.qiao.picturedepot.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.MessageMapper;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.Message;
@@ -13,7 +14,9 @@ import com.qiao.picturedepot.util.ObjectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,16 +30,18 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<MessageDto> getMessageByReceiver(Long receiverUserId) {
+    public PageInfo<MessageDto> getMessageByReceiver(Long receiverUserId, int pageNo, int pageSize) {
+        PageHelper.startPage(pageNo, pageSize);
         List<Message> messages = messageMapper.listByReceiverId(receiverUserId);
-        //映射为SystemMessageDto
-        return messages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
+        //-->MessageDto
+        List<MessageDto> messageDtos = messages.stream().map(this::messageDtoMapper).collect(Collectors.toList());
+        return new PageInfo<>(messageDtos);
     }
 
     @Override
     public MessageDto getMessageByIdAndReceiver(Long messageId, Long receiverUserId) {
         Message message = messageMapper.getByIdAndReceiverId(messageId, receiverUserId);
-        return systemMessageMapper(message);
+        return messageDtoMapper(message);
     }
 
     @Override
@@ -45,7 +50,7 @@ public class MessageServiceImpl implements MessageService {
         String messageType = MessageSystemUtil.getMessageType(messageBodyClass);
 
         List<Message> messages = messageMapper.searchMessage(senderUserId, receiverUserId, messageType, acknowledged);
-        return messages.stream().map(this::systemMessageMapper).collect(Collectors.toList());
+        return messages.stream().map(this::messageDtoMapper).collect(Collectors.toList());
     }
 
     @Override
@@ -67,7 +72,7 @@ public class MessageServiceImpl implements MessageService {
                 throw new BusinessException("MessageBody类与消息的类型不匹配.", e);
             }
         }
-        return (T) messageBody;
+        return cls.cast(messageBody);
     }
 
     @Override
@@ -92,8 +97,13 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void acknowledgeMessage(Long receiverUserId, List<Long> messageIds) {
-        messageMapper.updateAcknowledged(messageIds, receiverUserId, true);
+    public void acknowledgeMessages(Long receiverUserId, List<Long> messageIds) {
+        messageMapper.setAcknowledged(receiverUserId, messageIds);
+    }
+
+    @Override
+    public void acknowledgeMessagesBefore(Long receiverUserId, LocalDateTime time) {
+        messageMapper.setAcknowledgedBefore(receiverUserId, time);
     }
 
     @Override
@@ -107,25 +117,19 @@ public class MessageServiceImpl implements MessageService {
     }
 
     //----------------------------------------------------------------
-
-    /**
-     * 将SystemMessage映射为SystemMessageDto
-     */
-    private MessageDto systemMessageMapper(Message message){
-        if(message == null){
-            return null;
-        }
+    @SuppressWarnings("unchecked")
+    private MessageDto messageDtoMapper(Message message){
+        if(message == null) return null;
 
         MessageDto messageDto = new MessageDto();
+        ObjectUtil.copyBean(message, messageDto);
 
-        messageDto.setId(message.getId());
-        messageDto.setSenderId(message.getSenderId());
-        messageDto.setReceiverId(message.getReceiverId());
-        messageDto.setMessageType(message.getMessageType());
-        messageDto.setAcknowledged(message.getAcknowledged());
-        messageDto.setCreateTime(message.getCreateTime());
-        messageDto.setExpirationTime(message.getExpirationTime());
-        messageDto.setMessageBodyFromJson(message.getMessageBody());
+        try {
+            Map<String, Object> messageBody = ObjectUtil.json2Object(message.getMessageBody(), Map.class);
+            messageDto.setMessageBody(messageBody);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         return messageDto;
     }

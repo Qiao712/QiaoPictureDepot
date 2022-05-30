@@ -1,12 +1,17 @@
 package com.qiao.picturedepot.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.MessageDto;
 import com.qiao.picturedepot.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -16,8 +21,10 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping("/messages")
-    public List<MessageDto> getMessages(@AuthenticationPrincipal User user){
-        return messageService.getMessageByReceiver(user.getId());
+    public PageInfo<MessageDto> getMessages(@RequestParam("pageNo") Integer pageNo,
+                                            @RequestParam("pageSize") Integer pageSize,
+                                            @AuthenticationPrincipal User user){
+        return messageService.getMessageByReceiver(user.getId(), pageNo, pageSize);
     }
 
     @GetMapping("/messages/unacknowledged-message-count")
@@ -26,9 +33,12 @@ public class MessageController {
     }
 
     @PostMapping("/messages/acknowledge")
-    public void acknowledgeMessage(@RequestBody List<Long> messageIds, @AuthenticationPrincipal User user) {
-        messageService.acknowledgeMessage(user.getId(), messageIds);
+    public void acknowledgeMessages(@RequestBody List<Long> messageIds, @AuthenticationPrincipal User user) {
+        messageService.acknowledgeMessages(user.getId(), messageIds);
     }
 
-    //TODO: 根据时间戳Ack
+    @PostMapping("/messages/acknowledge-before/{time}")
+    public void acknowledgeMessagesBefore(@PathVariable("time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time, @AuthenticationPrincipal User user){
+        messageService.acknowledgeMessagesBefore(user.getId(), time);
+    }
 }

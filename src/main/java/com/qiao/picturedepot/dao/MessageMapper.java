@@ -3,6 +3,7 @@ package com.qiao.picturedepot.dao;
 import com.qiao.picturedepot.pojo.domain.Message;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -24,5 +25,10 @@ public interface MessageMapper {
     /**
      * 通过id与接收者id更新消息的确认状态。传入接收者id以确保消息只能由接收者确认。
      */
-    Integer updateAcknowledged(List<Long> systemMessageIds, Long receiverId, Boolean acknowledged);
+    Integer setAcknowledged(Long receiverId, List<Long> systemMessageIds);
+
+    /**
+     * 确认某时刻之前的消息
+     */
+    Integer setAcknowledgedBefore(Long receiverId, LocalDateTime time);
 }

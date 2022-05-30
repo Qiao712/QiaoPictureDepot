@@ -20,14 +20,4 @@ public class MessageDto {
     private Date createTime;
 
     private Map<String, Object> messageBody;
-
-    private static ObjectMapper objectMapper = new ObjectMapper();
-    //Json格式的message body 转为 Map
-    public void setMessageBodyFromJson(String messageBodyJson){
-        try {
-            messageBody = (Map<String, Object>) objectMapper.readValue(messageBodyJson, Map.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
 }

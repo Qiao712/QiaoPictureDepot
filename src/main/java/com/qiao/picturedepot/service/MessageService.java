@@ -1,14 +1,16 @@
 package com.qiao.picturedepot.service;
 
+import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.dto.MessageDto;
 import com.qiao.picturedepot.pojo.dto.message.MessageBody;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MessageService {
     Integer getUnacknowledgedMessageCountByReceiver(Long receiverUserId);
 
-    List<MessageDto> getMessageByReceiver(Long receiverUserId);
+    PageInfo<MessageDto> getMessageByReceiver(Long receiverUserId, int pageNo, int pageSize);
 
     MessageDto getMessageByIdAndReceiver(Long messageId, Long receiverUserId);
 
@@ -21,7 +23,9 @@ public interface MessageService {
 
     void sendMessage(MessageBody messageBody, Long senderUserId, Long receiverUserId);
 
-    void acknowledgeMessage(Long receiverUserId, List<Long> messageIds);
+    void acknowledgeMessages(Long receiverUserId, List<Long> messageIds);
+
+    void acknowledgeMessagesBefore(Long receiverUserId, LocalDateTime time);
 
     void deleteMessageById(Long messageId);
 

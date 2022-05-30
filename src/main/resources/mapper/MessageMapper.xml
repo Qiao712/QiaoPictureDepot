@@ -61,16 +61,21 @@
         </where>
     </delete>
 
-    <update id="updateAcknowledged">
+    <update id="setAcknowledged">
         UPDATE message
-        SET is_acknowledged = #{acknowledged}
+        SET is_acknowledged = true
         <where>
             <foreach collection="systemMessageIds" item="item" index="index"
                      open="id in (" separator="," close=")" nullable="true">
                 #{item}
             </foreach>
-
             AND receiver_id = #{receiverId}
         </where>
+    </update>
+
+    <update id="setAcknowledgedBefore">
+        UPDATE message
+        SET is_acknowledged = true
+        WHERE create_time &lt;= #{time}
     </update>
 </mapper>
