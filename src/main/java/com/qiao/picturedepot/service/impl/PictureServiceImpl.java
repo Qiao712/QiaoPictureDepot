@@ -1,16 +1,18 @@
 package com.qiao.picturedepot.service.impl;
 
-import com.qiao.picturedepot.config.MyProperties;
+import com.qiao.picturedepot.config.Properties;
 import com.qiao.picturedepot.dao.*;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
+import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import com.qiao.picturedepot.service.PictureService;
 import com.qiao.picturedepot.service.PictureStoreService;
 import com.qiao.picturedepot.util.ObjectUtil;
+import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,7 @@ public class PictureServiceImpl implements PictureService {
     @Autowired
     AlbumMapper albumMapper;
     @Autowired
-    MyProperties myProperties;
+    Properties properties;
     @Autowired
     PictureStoreService pictureStoreService;
 
@@ -201,5 +203,36 @@ public class PictureServiceImpl implements PictureService {
         }
     }
 
+    @Override
+    @Transactional
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
+    public void likePictureGroup(Long pictureGroupId) {
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+
+        if(pictureGroupMapper.existsPictureGroupLikeDetail(pictureGroupId, user.getId())){
+            throw new BusinessException("不可重复点赞");
+        }
+
+        if(! pictureGroupMapper.increaseLikeCount(pictureGroupId, 1)){
+            throw new BusinessException("图组不存在");
+        }
+
+        pictureGroupMapper.addPictureGroupLikeDetail(pictureGroupId, user.getId());
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
+    public void undoLikePictureGroup(Long pictureGroupId) {
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+
+        if(! pictureGroupMapper.deletePictureGroupLikeDetail(pictureGroupId, user.getId())){
+            throw new BusinessException("无点赞记录");
+        }
+
+        pictureGroupMapper.increaseLikeCount(pictureGroupId, -1);
+    }
+
     //TODO: ***缩略图
+
 }

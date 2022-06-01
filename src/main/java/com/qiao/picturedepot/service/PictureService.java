@@ -41,4 +41,8 @@ public interface PictureService {
     void updatePictureGroup(PictureGroupUpdateRequest pictureGroupUpdateRequest, MultipartFile[] pictures);
 
     void deletePictureGroup(Long pictureGroupId);
+
+    void likePictureGroup(Long pictureGroupId);
+
+    void undoLikePictureGroup(Long pictureGroupId);
 }

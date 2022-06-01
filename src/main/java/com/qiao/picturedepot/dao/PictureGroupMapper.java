@@ -20,4 +20,12 @@ public interface PictureGroupMapper {
     Integer deleteById(Long id);
 
     Long getOwnerIdById(Long id);
+
+    Boolean increaseLikeCount(Long pictureGroupId, Integer increase);
+
+    Boolean addPictureGroupLikeDetail(Long pictureGroupId, Long userId);
+
+    Boolean deletePictureGroupLikeDetail(Long pictureGroupId, Long userId);
+
+    Boolean existsPictureGroupLikeDetail(Long pictureGroupId, Long userId);
 }

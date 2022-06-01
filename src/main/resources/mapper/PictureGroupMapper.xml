@@ -53,4 +53,27 @@
         FROM album, picture_group
         WHERE album.id = picture_group.album_id AND picture_group.id = #{id}
     </select>
+
+    <update id="increaseLikeCount">
+        UPDATE picture_group
+        SET like_count = like_count + #{increase}
+        WHERE id = #{pictureGroupId}
+    </update>
+
+    <insert id="addPictureGroupLikeDetail">
+        INSERT INTO picture_group_like_detail(picture_group_id, user_id)
+        VALUES(#{pictureGroupId}, #{userId})
+    </insert>
+
+    <select id="existsPictureGroupLikeDetail" resultType="boolean">
+        SELECT EXISTS(
+        SELECT * FROM picture_group_like_detail
+        WHERE picture_group_id = #{pictureGroupId} AND user_id = #{userId}
+        ) picture_group_like_detail_exists
+    </select>
+
+    <delete id="deletePictureGroupLikeDetail">
+        DELETE FROM picture_group_like_detail
+        WHERE picture_group_id = #{pictureGroupId} AND user_id = #{userId}
+    </delete>
 </mapper>

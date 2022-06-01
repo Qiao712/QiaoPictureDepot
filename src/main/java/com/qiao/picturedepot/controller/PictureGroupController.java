@@ -60,4 +60,14 @@ public class PictureGroupController {
             throw new BusinessException("PictureGroupUpdateRequest对象不合法", e);
         }
     }
+
+    @PostMapping("/picture-groups/{pictureGroupId}/like")
+    void likePictureGroup(@PathVariable("pictureGroupId") Long pictureGroupId){
+        pictureService.likePictureGroup(pictureGroupId);
+    }
+
+    @PostMapping("/picture-groups/{pictureGroupId}/undo-like")
+    void undoLikePictureGroup(@PathVariable("pictureGroupId") Long pictureGroupId){
+        pictureService.undoLikePictureGroup(pictureGroupId);
+    }
 }

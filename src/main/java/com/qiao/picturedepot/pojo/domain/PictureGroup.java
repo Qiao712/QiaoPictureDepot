@@ -9,4 +9,5 @@ public class PictureGroup extends BaseEntity {
     private Long albumId;
     private String title;
     private String description;
+    private Integer likeCount;
 }
