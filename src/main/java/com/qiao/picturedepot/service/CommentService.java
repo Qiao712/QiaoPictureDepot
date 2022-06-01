@@ -7,9 +7,11 @@ import com.qiao.picturedepot.pojo.dto.CommentDto;
 public interface CommentService {
     void addComment(CommentAddRequest commentAddRequest);
 
+    void deleteComment(Long commentId);
+
     /**
-     * 获取子评论（二级评论）
-     * @param parentId 上级评论Id
+     * 获取评论（一级评论/二级评论）
+     * @param parentId 上级评论Id，为空时获取该相册的一级评论
      */
     PageInfo<CommentDto> getComments(Long pictureGroupId, Long parentId, int pageNo, int pageSize);
 

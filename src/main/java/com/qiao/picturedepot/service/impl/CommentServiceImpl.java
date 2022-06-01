@@ -22,10 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -78,6 +75,23 @@ public class CommentServiceImpl implements CommentService {
         }
 
         commentMapper.add(comment);
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long commentId) {
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        Comment comment = commentMapper.getById(commentId);
+        if(comment == null){
+            throw new BusinessException("评论不存在");
+        }
+        if(! Objects.equals(comment.getAuthorId(), user.getId())){
+            throw new BusinessException("无权删除");
+        }
+
+        commentMapper.deleteByParentId(commentId);
+        commentMapper.deleteById(commentId);
+        //commentLikeDetail级联删除
     }
 
     @Override

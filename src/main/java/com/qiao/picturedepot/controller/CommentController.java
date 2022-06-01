@@ -35,6 +35,11 @@ public class CommentController {
         return commentService.getComments(pictureGroupId, commentId, pageNo, pageSize);
     }
 
+    @DeleteMapping("/picture-groups/comments/{commentId}")
+    void deleteComment(@PathVariable("commentId") Long commentId){
+        commentService.deleteComment(commentId);
+    }
+
     @PostMapping("/picture-groups/{pictureGroupId}/comments/{commentId}/like")
     void likeComment(@PathVariable("pictureGroupId") Long pictureGroupId,
                      @PathVariable("commentId") Long commentId){

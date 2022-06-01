@@ -1,6 +1,8 @@
 package com.qiao.picturedepot.dao;
 
 import com.qiao.picturedepot.pojo.domain.Comment;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -12,6 +14,10 @@ public interface CommentMapper {
     List<Comment> getByPictureGroupIdAndParentId(Long pictureGroupId, Long parentId);
 
     Integer add(Comment comment);
+
+    Boolean deleteById(Long id);
+
+    Integer deleteByParentId(Long parentId);
 
     Boolean increaseLikeCount(Long pictureGroupId, Long commentId, Integer increase);
 

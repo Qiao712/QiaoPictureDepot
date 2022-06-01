@@ -31,6 +31,14 @@
         VALUES(#{pictureGroupId}, #{authorId}, #{parentId}, #{repliedId}, #{content})
     </insert>
 
+    <delete id="deleteById">
+        DELETE FROM comment WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByParentId">
+        DELETE FROM comment WHERE parent_id = #{parentId}
+    </delete>
+
     <update id="increaseLikeCount">
         UPDATE comment
         SET like_count = like_count + #{increase}
