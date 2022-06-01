@@ -10,9 +10,20 @@ public interface CommentService {
     /**
      * 获取子评论（二级评论）
      * @param parentId 上级评论Id
-     * @param pageNo
-     * @param pageSize
-     * @return
      */
     PageInfo<CommentDto> getComments(Long pictureGroupId, Long parentId, int pageNo, int pageSize);
+
+    /**
+     * 点赞某条评论
+     * @param pictureGroupId 评论所属图组Id
+     * @param commentId 评论Id
+     */
+    void likeComment(Long pictureGroupId, Long commentId);
+
+    /**
+     * 取消点赞
+     * @param pictureGroupId 评论所属图组Id
+     * @param commentId 评论Id
+     */
+    void undoLikeComment(Long pictureGroupId, Long commentId);
 }

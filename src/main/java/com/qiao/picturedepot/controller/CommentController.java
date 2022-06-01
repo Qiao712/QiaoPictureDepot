@@ -34,4 +34,16 @@ public class CommentController {
                                         @RequestParam("pageSize") Integer pageSize){
         return commentService.getComments(pictureGroupId, commentId, pageNo, pageSize);
     }
+
+    @PostMapping("/picture-groups/{pictureGroupId}/comments/{commentId}/like")
+    void likeComment(@PathVariable("pictureGroupId") Long pictureGroupId,
+                     @PathVariable("commentId") Long commentId){
+        commentService.likeComment(pictureGroupId, commentId);
+    }
+
+    @PostMapping("/picture-groups/{pictureGroupId}/comments/{commentId}/undo-like")
+    void undoLikeComment(@PathVariable("pictureGroupId") Long pictureGroupId,
+                         @PathVariable("commentId") Long commentId){
+        commentService.undoLikeComment(pictureGroupId, commentId);
+    }
 }

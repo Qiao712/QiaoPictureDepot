@@ -5,13 +5,13 @@
 
 <mapper namespace="com.qiao.picturedepot.dao.CommentMapper">
     <select id="getById" resultType="Comment">
-        SELECT id, picture_group_id, author_id, parent_id, replied_id, content, create_time, update_time
+        SELECT id, picture_group_id, author_id, parent_id, replied_id, content, like_count, create_time, update_time
         FROM comment
         WHERE id = #{id}
     </select>
 
     <select id="getByPictureGroupIdAndParentId" resultType="Comment">
-        SELECT id, picture_group_id, author_id, parent_id, replied_id, content, create_time, update_time
+        SELECT id, picture_group_id, author_id, parent_id, replied_id, content, like_count, create_time, update_time
         FROM comment
         <where>
             <if test="pictureGroupId != null">
@@ -30,4 +30,27 @@
         INSERT INTO comment(picture_group_id, author_id, parent_id, replied_id, content)
         VALUES(#{pictureGroupId}, #{authorId}, #{parentId}, #{repliedId}, #{content})
     </insert>
+
+    <update id="increaseLikeCount">
+        UPDATE comment
+        SET like_count = like_count + #{increase}
+        WHERE id = #{commentId} AND picture_group_id = #{pictureGroupId}
+    </update>
+
+    <insert id="addCommentLikeDetail">
+        INSERT INTO comment_like_detail(comment_id, user_id)
+        VALUES(#{commentId}, #{userId})
+    </insert>
+
+    <select id="existsCommentLikeDetail" resultType="boolean">
+        SELECT EXISTS(
+            SELECT * FROM comment_like_detail
+            WHERE comment_id = #{commentId} AND user_id = #{userId}
+        ) comment_like_detail_exists
+    </select>
+
+    <delete id="deleteCommentLikeDetail">
+        DELETE FROM comment_like_detail
+        WHERE comment_id = #{commentId} AND user_id = #{userId}
+    </delete>
 </mapper>

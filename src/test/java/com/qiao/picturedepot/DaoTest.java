@@ -1,5 +1,6 @@
 package com.qiao.picturedepot;
 
+import com.qiao.picturedepot.dao.CommentMapper;
 import com.qiao.picturedepot.dao.FriendGroupMapper;
 import com.qiao.picturedepot.dao.FriendshipMapper;
 import com.qiao.picturedepot.dao.UserMapper;
@@ -56,5 +57,14 @@ public class DaoTest {
     void testAvatar() throws IOException {
         InputStream inputStream = userMapper.getAvatarByUserId(1L);
         System.out.println(inputStream.available());
+    }
+
+    @Autowired
+    private CommentMapper commentMapper;
+    @Test
+    void testCommentMapper(){
+        System.out.println(commentMapper.increaseLikeCount(1L, 2L, 1));
+        System.out.println(commentMapper.deleteCommentLikeDetail(1L, 2L));
+        System.out.println(commentMapper.addCommentLikeDetail(1L, 2222L));
     }
 }

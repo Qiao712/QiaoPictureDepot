@@ -126,10 +126,38 @@ public class CommentServiceImpl implements CommentService {
         return commentDtos;
     }
 
+    @Override
+    @Transactional
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
+    public void likeComment(Long pictureGroupId, Long commentId) {
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+
+        if(commentMapper.existsCommentLikeDetail(commentId, user.getId())){
+            throw new BusinessException("不可重复点赞");
+        }
+
+        if(! commentMapper.increaseLikeCount(pictureGroupId, commentId, 1)){
+            throw new BusinessException("评论不存在");
+        }
+
+        commentMapper.addCommentLikeDetail(commentId, user.getId());
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
+    public void undoLikeComment(Long pictureGroupId, Long commentId) {
+        User user = SecurityUtil.getNonAnonymousCurrentUser();
+
+        if(! commentMapper.deleteCommentLikeDetail(commentId, user.getId())){
+            throw new BusinessException("无点赞记录");
+        }
+
+        commentMapper.increaseLikeCount(pictureGroupId, commentId, -1);
+    }
+
     /**
      * 发送消息给被回复者
-     * @param comment
-     * @param repliedComment
      */
     private void sendReplyMessage(Comment comment, Comment repliedComment, PictureGroup pictureGroup){
         if(comment.getAuthorId().equals(repliedComment.getAuthorId())) return;
@@ -149,7 +177,6 @@ public class CommentServiceImpl implements CommentService {
 
     /**
      * 发送消息给图组属主
-     * @param comment
      */
     private void sendReplyMessageToOwner(Comment comment, PictureGroup pictureGroup){
         Long pictureGroupOwnerId = pictureGroupMapper.getOwnerIdById(comment.getPictureGroupId());

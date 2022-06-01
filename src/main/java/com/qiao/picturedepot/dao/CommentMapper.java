@@ -12,4 +12,12 @@ public interface CommentMapper {
     List<Comment> getByPictureGroupIdAndParentId(Long pictureGroupId, Long parentId);
 
     Integer add(Comment comment);
+
+    Boolean increaseLikeCount(Long pictureGroupId, Long commentId, Integer increase);
+
+    Boolean addCommentLikeDetail(Long commentId, Long userId);
+
+    Boolean deleteCommentLikeDetail(Long commentId, Long userId);
+
+    Boolean existsCommentLikeDetail(Long commentId, Long userId);
 }
