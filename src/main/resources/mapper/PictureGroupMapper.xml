@@ -9,13 +9,13 @@
     </select>
 
     <select id="listByAlbumId" resultType="PictureGroup">
-        SELECT id, album_id, title, description, create_time, update_time
+        SELECT id, album_id, title, description, like_count, create_time, update_time
         FROM picture_group
         WHERE album_id = #{albumId}
     </select>
 
     <select id="getById" resultType="PictureGroup">
-        SELECT id, album_id, title, description, create_time, update_time
+        SELECT id, album_id, title, description, like_count, create_time, update_time
         FROM picture_group
         WHERE id = #{id}
     </select>

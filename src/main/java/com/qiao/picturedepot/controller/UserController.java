@@ -1,6 +1,5 @@
 package com.qiao.picturedepot.controller;
 
-import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

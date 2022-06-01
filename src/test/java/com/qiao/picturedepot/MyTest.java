@@ -3,12 +3,17 @@ package com.qiao.picturedepot;
 import com.qiao.picturedepot.pojo.domain.Comment;
 import com.qiao.picturedepot.pojo.dto.CommentDto;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
+import com.qiao.picturedepot.service.PictureStoreService;
 import com.qiao.picturedepot.util.FileUtil;
 import com.qiao.picturedepot.util.ObjectUtil;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 @SpringBootTest
@@ -50,5 +55,22 @@ public class MyTest {
         ObjectUtil.copyBean(comment, comment1);
         System.out.println(comment1.getId());
         System.out.println(comment1);
+    }
+
+    @Test
+    public void testFileCompare() throws IOException {
+        File f1 = new File("D:\\Downloads\\01.mp4");
+        File f2 = new File("D:\\Downloads\\01.mp4");
+
+        System.out.println(FileUtil.compareFile(f1, f2));
+    }
+
+    @Autowired
+    PictureStoreService pictureStoreService;
+    @Test
+    public void testPictureRead(){
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(10240);
+        File f1 = new File("D:\\Downloads\\01.mp4");
+//        pictureStoreService.readPicture();
     }
 }

@@ -1,7 +1,5 @@
 package com.qiao.picturedepot.util;
 
-import io.lettuce.core.StrAlgoArgs;
-import jdk.internal.util.xml.impl.Input;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.util.DigestUtils;
@@ -9,9 +7,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
 import java.util.Optional;
 
 public class FileUtil {

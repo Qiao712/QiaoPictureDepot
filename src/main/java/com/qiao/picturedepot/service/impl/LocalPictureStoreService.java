@@ -1,17 +1,22 @@
 package com.qiao.picturedepot.service.impl;
 
-import com.qiao.picturedepot.config.MyProperties;
+import com.qiao.picturedepot.config.Properties;
 import com.qiao.picturedepot.dao.PictureIdentityMapper;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.service.PictureStoreService;
 import com.qiao.picturedepot.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,9 +25,11 @@ import java.util.UUID;
 @Component
 public class LocalPictureStoreService implements PictureStoreService {
     @Autowired
-    PictureIdentityMapper pictureIdentityMapper;
+    private PictureIdentityMapper pictureIdentityMapper;
     @Autowired
-    MyProperties properties;
+    private Properties properties;
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     @Transactional
@@ -89,8 +96,7 @@ public class LocalPictureStoreService implements PictureStoreService {
     public PictureIdentity readPicture(Long pictureId, OutputStream outputStream) {
         PictureIdentity pictureIdentity = pictureIdentityMapper.getById(pictureId);
         if(pictureIdentity == null){
-            //TODO: 异常处理
-            throw new RuntimeException("图片不存在");
+            throw new BusinessException("无法获取图片");
         }
 
         readPicture(pictureIdentity.getUri(), outputStream);
@@ -99,6 +105,60 @@ public class LocalPictureStoreService implements PictureStoreService {
 
     private File getFile(String uri){
         return new File(properties.getPictureDepotPath() + File.separator + uri);
+    }
+
+    /**
+     * 每个线程两个buffer，用于文件比较
+     */
+    private final static ThreadLocal<ByteBuffer> localBuffer1 = new ThreadLocal<>();
+    private final static ThreadLocal<ByteBuffer> localBuffer2 = new ThreadLocal<>();
+
+    public void clearPicture(Long pictureId){
+        PictureIdentity pictureIdentity = pictureIdentityMapper.getById(pictureId);
+        if(pictureIdentity == null){
+            log.error("图片(picture id:" + pictureId + ")不存在");
+            return;
+        }
+
+        //获取或创建2个可以将一张图片全部读入的缓冲区
+        ByteBuffer byteBuffer1 = localBuffer1.get();
+        if(byteBuffer1 == null){
+            byteBuffer1 = ByteBuffer.allocateDirect(properties.getMaxPictureSize() + 1024);
+            localBuffer1.set(byteBuffer1);
+        }
+        ByteBuffer byteBuffer2 = localBuffer2.get();
+        if(byteBuffer2 == null){
+            byteBuffer2 = ByteBuffer.allocateDirect(properties.getMaxPictureSize() + 1024);
+            localBuffer2.set(byteBuffer2);
+        }
+
+        //读入当前图片
+        if(! readPicture(pictureIdentity, byteBuffer1)) return;
+        byte[] md5 = FileUtil.md5Digest(byteBuffer1.array());
+
+
+        //MD5相同的图片
+        List<PictureIdentity> pictureIdentities = pictureIdentityMapper.getByMD5(pictureIdentity.getMd5());
+        for (PictureIdentity identity : pictureIdentities) {
+            File file1 = getFile(identity.getUri());
+        }
+    }
+
+    public boolean readPicture(PictureIdentity pictureIdentity, ByteBuffer byteBuffer){
+        try(FileInputStream inputStream1 = new FileInputStream(getFile(pictureIdentity.getUri()))){
+            try(FileChannel channel1 = inputStream1.getChannel()){
+                channel1.read(byteBuffer);
+                byteBuffer.flip();
+                if(byteBuffer.limit() != channel1.size()){
+                    log.error("无法图片" + pictureIdentity.getUri() + "大小(" + channel1.size() + " bytes)超出限制");
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            log.error("无法读取图片文件", e);
+        }
+
+        return true;
     }
 
     //TODO: 相同图片合并

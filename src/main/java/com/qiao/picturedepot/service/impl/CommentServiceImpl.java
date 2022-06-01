@@ -92,6 +92,8 @@ public class CommentServiceImpl implements CommentService {
         commentMapper.deleteByParentId(commentId);
         commentMapper.deleteById(commentId);
         //commentLikeDetail级联删除
+
+        //TODO: 删除评论，响应的删除发送出去的评论消息
     }
 
     @Override

@@ -3,11 +3,11 @@ package com.qiao.picturedepot.config;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MyProperties {
+public class Properties {
     private String pictureDepotPath = "D:\\workplace\\Picture Depot Test";
     private int maxPictureSize = 1024 * 1024 * 10;  //10Mib
 
-    public MyProperties() {
+    public Properties() {
     }
 
     public String getPictureDepotPath() {
