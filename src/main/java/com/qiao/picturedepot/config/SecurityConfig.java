@@ -22,8 +22,6 @@ import org.springframework.security.web.authentication.rememberme.InMemoryTokenR
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private UserDetailsService userServiceImpl;
-    @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
     @Autowired
     private AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -43,9 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-//                .mvcMatchers("/api/pictureRef-groups/{pictureGroupId}/**").access(pictureAccessAuthorizationManager)
-//                .mvcMatchers("/api/albums/{albumId}/**").access(albumAccessAuthorizationManager)
-                .mvcMatchers("/api/register").permitAll()
+                .mvcMatchers("/api/register", "/users/*/avatar").permitAll()
                 .anyRequest().authenticated()
         );
 
@@ -56,7 +52,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .failureHandler(authenticationFailureHandler)
         .and()
             .rememberMe()
-            .userDetailsService(userServiceImpl)
             .tokenRepository(new InMemoryTokenRepositoryImpl())     //token储存策略
             .rememberMeParameter("remember-me")
             .tokenValiditySeconds(60*60*24*7)                       //token有效期7天

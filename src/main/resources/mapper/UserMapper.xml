@@ -8,12 +8,12 @@
         <association property="role" javaType="Role" column="role_id" select="getRole"/>
     </resultMap>
     <select id="getRole" resultType="Role">
-        SELECT id, name, create_time, update_time
+        SELECT id, name, album_num_limit, picture_storage_limit, create_time, update_time
         FROM role WHERE id = #{id}
     </select>
 
     <select id="getByUsername" resultMap="userRole">
-        SELECT id, username, password, role_id, create_time, update_time
+        SELECT id, username, password, role_id, space_usage, create_time, update_time
         FROM user WHERE username = #{username}
     </select>
 
@@ -26,7 +26,7 @@
     </select>
 
     <select id="getById" resultMap="userRole">
-        SELECT id, username, password, role_id, create_time, update_time
+        SELECT id, username, password, role_id, space_usage, create_time, update_time
         FROM user WHERE id = #{id}
     </select>
 

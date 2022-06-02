@@ -9,6 +9,7 @@ import com.qiao.picturedepot.util.ObjectUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,5 +73,10 @@ public class MyTest {
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(10240);
         File f1 = new File("D:\\Downloads\\01.mp4");
 //        pictureStoreService.readPicture();
+    }
+
+    @Test
+    public void encodePassword(){
+        System.out.println(new BCryptPasswordEncoder().encode("123456"));
     }
 }

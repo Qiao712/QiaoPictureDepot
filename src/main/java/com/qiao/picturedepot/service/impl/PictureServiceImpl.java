@@ -7,6 +7,7 @@ import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import com.qiao.picturedepot.service.PictureService;
@@ -207,7 +208,7 @@ public class PictureServiceImpl implements PictureService {
     @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void likePictureGroup(Long pictureGroupId) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
 
         if(pictureGroupMapper.existsPictureGroupLikeDetail(pictureGroupId, user.getId())){
             throw new BusinessException("不可重复点赞");
@@ -224,7 +225,7 @@ public class PictureServiceImpl implements PictureService {
     @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void undoLikePictureGroup(Long pictureGroupId) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
 
         if(! pictureGroupMapper.deletePictureGroupLikeDetail(pictureGroupId, user.getId())){
             throw new BusinessException("无点赞记录");

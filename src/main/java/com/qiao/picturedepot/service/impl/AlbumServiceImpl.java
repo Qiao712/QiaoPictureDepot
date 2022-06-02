@@ -13,6 +13,7 @@ import com.qiao.picturedepot.pojo.domain.AlbumAccess;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
+import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.security.ResourceSecurity;
 import com.qiao.picturedepot.service.AlbumService;
 import com.qiao.picturedepot.service.FriendService;
@@ -22,6 +23,7 @@ import com.qiao.picturedepot.util.SecurityUtil;
 import com.qiao.picturedepot.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,7 +106,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public void addAlbum(Album album) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
         album.setOwnerId(user.getId());
 
         albumMapper.add(album);
@@ -112,7 +114,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public void updateAlbum(Album album) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
         album.setOwnerId(user.getId());
         albumMapper.updateByIdAndOwnerId(album);
     }

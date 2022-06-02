@@ -9,9 +9,10 @@ import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.Comment;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.pojo.dto.CommentAddRequest;
 import com.qiao.picturedepot.pojo.dto.CommentDto;
-import com.qiao.picturedepot.pojo.dto.UserDetailDto;
+import com.qiao.picturedepot.pojo.dto.UserSmallDto;
 import com.qiao.picturedepot.pojo.dto.message.ReplyMessageBody;
 import com.qiao.picturedepot.service.CommentService;
 import com.qiao.picturedepot.service.MessageService;
@@ -80,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Long commentId) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
         Comment comment = commentMapper.getById(commentId);
         if(comment == null){
             throw new BusinessException("评论不存在");
@@ -110,16 +111,16 @@ public class CommentServiceImpl implements CommentService {
 
         //评论者、被回复者信息
         //TODO: 升级缓存
-        Map<Long, UserDetailDto> userDetailDtoCache = new HashMap<>();
+        Map<Long, UserSmallDto> userCache = new HashMap<>();
         Map<Long, Comment> commentCache = new HashMap<>();
         for (Comment comment : comments) {
             Long authorId = comment.getAuthorId();
-            UserDetailDto userDetailDto = userDetailDtoCache.get(authorId);
-            if(userDetailDto == null){
+            UserSmallDto userSmallDto = userCache.get(authorId);
+            if(userSmallDto == null){
                 User user = userMapper.getById(authorId);
                 if(user != null){
-                    userDetailDto = new UserDetailDto(user);
-                    userDetailDtoCache.put(authorId, userDetailDto);
+                    userSmallDto = new UserSmallDto(user);
+                    userCache.put(authorId, userSmallDto);
                 }
             }
 
@@ -129,11 +130,11 @@ public class CommentServiceImpl implements CommentService {
         for(Comment comment : comments){
             CommentDto commentDto = new CommentDto();
             ObjectUtil.copyBean(comment, commentDto);
-            commentDto.setAuthorUser(userDetailDtoCache.get(comment.getAuthorId()));
+            commentDto.setAuthorUser(userCache.get(comment.getAuthorId()));
 
             Comment repliedComment = commentCache.get(comment.getRepliedId());
             if(repliedComment != null){
-                commentDto.setRepliedUser(userDetailDtoCache.get(repliedComment.getAuthorId()));
+                commentDto.setRepliedUser(userCache.get(repliedComment.getAuthorId()));
             }
 
             commentDtos.add(commentDto);
@@ -146,7 +147,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void likeComment(Long pictureGroupId, Long commentId) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
 
         if(commentMapper.existsCommentLikeDetail(commentId, user.getId())){
             throw new BusinessException("不可重复点赞");
@@ -163,7 +164,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
     public void undoLikeComment(Long pictureGroupId, Long commentId) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
 
         if(! commentMapper.deleteCommentLikeDetail(commentId, user.getId())){
             throw new BusinessException("无点赞记录");

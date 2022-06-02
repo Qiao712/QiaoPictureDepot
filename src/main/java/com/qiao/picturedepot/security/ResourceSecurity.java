@@ -8,6 +8,7 @@ import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.AlbumAccess;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class ResourceSecurity {
         if(Album.AccessPolicy.ALL_USERS == accessPolicy){
             return true;
         }else{
-            User user = SecurityUtil.getCurrentUser();
+            AuthUserDto user = SecurityUtil.getCurrentUser();
             if(user == null) return false;
 
             if(Album.AccessPolicy.PRIVATE == accessPolicy){
@@ -72,7 +73,7 @@ public class ResourceSecurity {
     * 判断当前用户对图组的访问权
     */
     public boolean canAccessPictureGroup(Long pictureGroupId){
-        User user = SecurityUtil.getCurrentUser();
+        AuthUserDto user = SecurityUtil.getCurrentUser();
         if(user == null){
             return false;
         }

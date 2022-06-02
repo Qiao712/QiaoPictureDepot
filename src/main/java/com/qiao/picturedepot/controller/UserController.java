@@ -1,7 +1,10 @@
 package com.qiao.picturedepot.controller;
 
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.UserDto;
+import com.qiao.picturedepot.pojo.dto.UserSmallDto;
 import com.qiao.picturedepot.service.UserService;
+import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +24,17 @@ public class UserController {
         userService.register(user);
     }
 
+    @GetMapping("/users/{userId}")
+    UserSmallDto getOtherUser(@PathVariable("userId") Long userId){
+        return userService.getUserBasicInfo(userId);
+    }
+
+    @GetMapping("/users/myself")
+    UserDto getCurrentUser(){
+        Long currentUserId = SecurityUtil.getNonAnonymousCurrentUser().getId();
+        return userService.getUserInfo(currentUserId);
+    }
+
     @GetMapping("/users/{userId}/avatar")
     void getAvatars(@PathVariable("userId") Long userId, HttpServletResponse response){
         try{
@@ -35,6 +49,4 @@ public class UserController {
     void setAvatars(@RequestBody byte[] image){
         userService.setAvatar(image);
     }
-
-    //TODO: 用户级别，与使限制（相册数量....）
 }

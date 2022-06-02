@@ -7,4 +7,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Role extends BaseEntity {
     private String name;
+    private Long albumNumLimit;
+    private Long pictureStorageLimit;
 }

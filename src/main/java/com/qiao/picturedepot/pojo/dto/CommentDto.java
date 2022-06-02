@@ -7,6 +7,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CommentDto extends Comment {
-    private UserDetailDto authorUser;
-    private UserDetailDto repliedUser;  //被回复用户
+    private UserSmallDto authorUser;
+    private UserSmallDto repliedUser;  //被回复用户
 }

@@ -81,7 +81,7 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void updateFriendGroup(FriendGroup friendGroup) {
-        User user = SecurityUtil.getNonAnonymousCurrentUser();
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
         friendGroup.setOwnerId(user.getId());
 
         friendGroupMapper.updateByIdAndOwnerId(friendGroup);
