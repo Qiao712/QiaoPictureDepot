@@ -49,8 +49,9 @@ public class ResourceSecurity {
             AuthUserDto user = SecurityUtil.getCurrentUser();
             if(user == null) return false;
 
-            if(Album.AccessPolicy.PRIVATE == accessPolicy){
-                return Objects.equals(user.getId(), album.getOwnerId());
+            if(Objects.equals(user.getId(), album.getOwnerId())){
+                //属主访问
+                return true;
             }else if(Album.AccessPolicy.ALL_FRIENDS == accessPolicy){
                 return friendshipMapper.checkFriendRelationship(user.getId(), album.getOwnerId());
             }else if(Album.AccessPolicy.SPECIFIC_FRIEND_GROUPS == accessPolicy){

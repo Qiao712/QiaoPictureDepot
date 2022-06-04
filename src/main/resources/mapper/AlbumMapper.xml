@@ -20,8 +20,8 @@
         SELECT id, name, owner_id, access_policy, description, create_time, update_time
         FROM album
         WHERE owner_id = #{ownerUserId} AND (
-            <!--私有-->
-            (access_policy = 0 AND owner_id = #{visitorUserId}) OR
+            <!--属主访问-->
+            (owner_id = #{visitorUserId}) OR
             <!--部分分组好友可见-->
             (access_policy = 1 AND
                 EXISTS(
