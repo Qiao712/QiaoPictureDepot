@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 
+//TODO: 重写安全控制
 @EnableWebSecurity
 @EnableMethodSecurity           //开启函数安全
 @Configuration
@@ -41,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-                .mvcMatchers("/api/register", "/users/*/avatar").permitAll()
+                .mvcMatchers("/api/users/register", "/login").permitAll()
                 .anyRequest().authenticated()
         );
 

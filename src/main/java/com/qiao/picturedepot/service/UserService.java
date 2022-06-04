@@ -20,4 +20,6 @@ public interface UserService {
     Long getUserIdByUsername(String username);
 
     String getUsernameById(Long userId);
+
+    //TODO: 动态(按时间线显示活动)
 }

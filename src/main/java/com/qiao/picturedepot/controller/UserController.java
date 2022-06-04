@@ -1,14 +1,17 @@
 package com.qiao.picturedepot.controller;
 
+import com.qiao.picturedepot.pojo.AddGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.UserDto;
 import com.qiao.picturedepot.pojo.dto.UserSmallDto;
 import com.qiao.picturedepot.service.UserService;
 import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -20,7 +23,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/users/register")
-    void register(@RequestBody User user){
+    void register(@Validated(AddGroup.class) @RequestBody User user){
         userService.register(user);
     }
 

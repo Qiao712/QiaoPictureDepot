@@ -2,6 +2,7 @@ package com.qiao.picturedepot.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.pojo.dto.MessageDto;
 import com.qiao.picturedepot.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +24,17 @@ public class MessageController {
     @GetMapping("/messages")
     public PageInfo<MessageDto> getMessages(@RequestParam("pageNo") Integer pageNo,
                                             @RequestParam("pageSize") Integer pageSize,
-                                            @AuthenticationPrincipal User user){
+                                            @AuthenticationPrincipal AuthUserDto user){
         return messageService.getMessageByReceiver(user.getId(), pageNo, pageSize);
     }
 
     @GetMapping("/messages/unacknowledged-message-count")
-    public Integer getUnacknowledgedMessageCount(@AuthenticationPrincipal User user){
+    public Integer getUnacknowledgedMessageCount(@AuthenticationPrincipal AuthUserDto user){
         return messageService.getUnacknowledgedMessageCountByReceiver(user.getId());
     }
 
     @PostMapping("/messages/acknowledge")
-    public void acknowledgeMessages(@RequestBody List<Long> messageIds, @AuthenticationPrincipal User user) {
+    public void acknowledgeMessages(@RequestBody List<Long> messageIds, @AuthenticationPrincipal AuthUserDto user) {
         messageService.acknowledgeMessages(user.getId(), messageIds);
     }
 

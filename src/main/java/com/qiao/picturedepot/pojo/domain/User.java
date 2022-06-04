@@ -22,11 +22,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity{
     @NotBlank(groups = AddGroup.class)
-    @Length(min = 5, max = 16)
+    @Length(min = 5, max = 16, groups = {AddGroup.class, UpdateGroup.class})
     private String username;
 
     @NotNull(groups = {AddGroup.class, UpdateGroup.class})
-    @Length(min = 8, max = 32)
+    @Length(min = 8, max = 32, groups = {AddGroup.class, UpdateGroup.class})
     private String password;
 
     @Null(groups = {AddGroup.class, UpdateGroup.class})

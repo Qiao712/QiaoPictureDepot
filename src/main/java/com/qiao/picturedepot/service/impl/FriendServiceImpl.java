@@ -115,7 +115,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public void applyNewFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest) {
+    public void applyNewFriend(AuthUserDto applicant, ApplyNewFriendRequest applyNewFriendRequest) {
         Long friendUserId = userService.getUserIdByUsername(applyNewFriendRequest.getFriendUsername());
         if(friendUserId == null) {
             throw new BusinessException("用户(username:" + applyNewFriendRequest.getFriendUsername() + ") 不存在");

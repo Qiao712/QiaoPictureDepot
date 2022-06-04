@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void setAvatar(byte[] image) {
+        //TODO: 改为流
         Long userId = SecurityUtil.getNonAnonymousCurrentUser().getId();
         userMapper.setAvatarByUserId(userId, image);
     }

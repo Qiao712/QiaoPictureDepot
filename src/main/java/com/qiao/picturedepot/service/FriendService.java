@@ -3,10 +3,7 @@ package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.pojo.domain.User;
-import com.qiao.picturedepot.pojo.dto.AcceptNewFriendRequest;
-import com.qiao.picturedepot.pojo.dto.ApplyNewFriendRequest;
-import com.qiao.picturedepot.pojo.dto.FriendGroupDto;
-import com.qiao.picturedepot.pojo.dto.FriendInfoUpdateRequest;
+import com.qiao.picturedepot.pojo.dto.*;
 
 import java.util.List;
 
@@ -44,7 +41,7 @@ public interface FriendService {
     /**
      * 申请加为好友。发送申请消息。
      */
-    void applyNewFriend(User applicant, ApplyNewFriendRequest applyNewFriendRequest);
+    void applyNewFriend(AuthUserDto applicant, ApplyNewFriendRequest applyNewFriendRequest);
 
     /**
      * 接收好友申请。接收申请消息。
