@@ -163,6 +163,16 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    public List<Long> getGrantedFriendGroupIds(Long albumId) {
+        Long currentUserId = SecurityUtil.getNonAnonymousCurrentUser().getId();
+        if(!ownAlbum(currentUserId, albumId)){
+            throw new BusinessException("非属主，无权查看");
+        }
+
+        return albumAccessMapper.getFriendGroupIdsByAlbumId(albumId);
+    }
+
+    @Override
     public boolean ownAlbum(Long userId, Long albumId) {
         Album album = albumMapper.getById(albumId);
         return album != null && Objects.equals(album.getOwnerId(), userId);

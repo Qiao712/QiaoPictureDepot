@@ -9,6 +9,10 @@
         VALUES(#{albumId}, #{friendGroupId})
     </insert>
 
+    <select id="getFriendGroupIdsByAlbumId" resultType="Long">
+        SELECT friend_group_id FROM album_access WHERE album_id = #{albumId}
+    </select>
+
     <insert id="addBatch" parameterType="AlbumAccess">
         INSERT IGNORE INTO album_access(album_id, friend_group_id)
         VALUES

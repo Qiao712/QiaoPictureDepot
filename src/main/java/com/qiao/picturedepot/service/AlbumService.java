@@ -31,9 +31,15 @@ public interface AlbumService {
     void updateAlbum(Album album);
 
     /**
+     * 访问控制策略为部分好友可见时
      * 授予/取消授权 好友分组内的用户 相册访问权
      */
     void grantAlbum(AlbumGrantRequest albumGrantRequest);
+
+    /**
+     * 获取被授予该相册访问权的好友分组的Id列表
+     */
+    List<Long> getGrantedFriendGroupIds(Long albumId);
 
     /**
      * 用户是否拥有该相册

@@ -9,6 +9,8 @@ import java.util.List;
 public interface AlbumAccessMapper {
     Integer add(AlbumAccess albumAccess);
 
+    List<Long> getFriendGroupIdsByAlbumId(Long albumId);
+
     Integer addBatch(List<AlbumAccess> albumAccesses);
 
     Integer delete(Long pictureGroupId, Long friendGroupId);

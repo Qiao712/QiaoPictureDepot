@@ -11,12 +11,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class AlbumController{
     @Autowired
-    AlbumService albumService;
+    private AlbumService albumService;
 
     @GetMapping("/albums")
     public PageInfo<Album> getAlbums(@RequestParam("pageNo") Integer pageNo,
@@ -52,7 +53,12 @@ public class AlbumController{
     }
 
     @PostMapping("/albums/grant")
-    public void grantFriendGroup(@Valid @RequestBody AlbumGrantRequest albumGrantRequest){
+    public void grantAlbum(@Valid @RequestBody AlbumGrantRequest albumGrantRequest){
         albumService.grantAlbum(albumGrantRequest);
+    }
+
+    @GetMapping("/albums/{albumId}/granted-friend-groups")
+    public List<Long> getGrantedFriendGroupIds(@PathVariable("albumId") Long albumId){
+        return albumService.getGrantedFriendGroupIds(albumId);
     }
 }
