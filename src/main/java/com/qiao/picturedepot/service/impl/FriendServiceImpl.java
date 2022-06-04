@@ -5,7 +5,6 @@ import com.qiao.picturedepot.dao.FriendshipMapper;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
 import com.qiao.picturedepot.pojo.domain.Friendship;
-import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.*;
 import com.qiao.picturedepot.pojo.dto.message.NewFriendMessageBody;
 import com.qiao.picturedepot.pojo.dto.message.NotificationMessageBody;
@@ -35,7 +34,7 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public List<FriendGroupDto> getGroupedFriendList(Long userId) {
-        List<FriendGroupDto> friendGroupDtos = new ArrayList<>();
+        List<FriendGroupDto> groupedFriendList = new ArrayList<>();
         List<FriendGroup> friendGroups = friendGroupMapper.listByUserId(userId);
 
         for (FriendGroup friendGroup : friendGroups) {
@@ -45,22 +44,15 @@ public class FriendServiceImpl implements FriendService {
             friendGroupDto.setName(friendGroup.getName());
             friendGroupDto.setFriendships(this.getFriendsByGroupId(friendGroupId));
 
-            friendGroupDtos.add(friendGroupDto);
+            groupedFriendList.add(friendGroupDto);
         }
 
-        return friendGroupDtos;
+        return groupedFriendList;
     }
 
     @Override
-    public List<String> getFriendGroupNames(Long userId) {
-        List<String> friendGroupNames = new ArrayList<>();
-        List<FriendGroup> friendGroups = friendGroupMapper.listByUserId(userId);
-
-        for (FriendGroup friendGroup : friendGroups) {
-            friendGroupNames.add(friendGroup.getName());
-        }
-
-        return friendGroupNames;
+    public List<FriendGroup> getFriendGroupNames(Long userId) {
+        return friendGroupMapper.listByUserId(userId);
     }
 
     @Override

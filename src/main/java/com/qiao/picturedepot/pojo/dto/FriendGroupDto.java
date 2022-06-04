@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * 一个好友分组内的好友信息
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

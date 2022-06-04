@@ -2,7 +2,6 @@ package com.qiao.picturedepot.service;
 
 
 import com.qiao.picturedepot.pojo.domain.FriendGroup;
-import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.*;
 
 import java.util.List;
@@ -15,8 +14,9 @@ public interface FriendService {
 
     /**
      * 获取所有分组的名称列表
+     * @return
      */
-    List<String> getFriendGroupNames(Long userId);
+    List<FriendGroup> getFriendGroupNames(Long userId);
 
     /**
      * 检查两个用户是否存在好友关系

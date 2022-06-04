@@ -24,7 +24,7 @@ public class FriendController {
     }
 
     @GetMapping("/friend-groups")
-    public List<String> getFriendGroupNames(@AuthenticationPrincipal AuthUserDto user){
+    public List<FriendGroup> getFriendGroupNames(@AuthenticationPrincipal AuthUserDto user){
         return friendService.getFriendGroupNames(user.getId());
     }
 
