@@ -12,6 +12,7 @@ import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.AlbumAccess;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.AlbumDto;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
 import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.security.ResourceSecurity;
@@ -105,25 +106,36 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public void addAlbum(Album album) {
+    @Transactional
+    public void addAlbum(AlbumDto albumDto) {
         AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
-        album.setOwnerId(user.getId());
+        albumDto.setOwnerId(user.getId());
+        albumMapper.add(albumDto);
 
-        albumMapper.add(album);
-    }
-
-    @Override
-    public void updateAlbum(Album album) {
-        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
-        album.setOwnerId(user.getId());
-        albumMapper.updateByIdAndOwnerId(album);
+        //处理对好友分组的授权
+        if(albumDto.getAccessPolicy() == Album.AccessPolicy.SPECIFIC_FRIEND_GROUPS.ordinal()){
+            grantAlbum(albumDto);
+        }
     }
 
     @Override
     @Transactional
-    public void grantAlbum(AlbumGrantRequest albumGrantRequest) {
+    public void updateAlbum(AlbumDto albumDto) {
+        AuthUserDto user = SecurityUtil.getNonAnonymousCurrentUser();
+        albumDto.setOwnerId(user.getId());
+        albumMapper.updateByIdAndOwnerId(albumDto);
+
+        //处理对好友分组的授权
+        if(albumDto.getAccessPolicy() == Album.AccessPolicy.SPECIFIC_FRIEND_GROUPS.ordinal()){
+            grantAlbum(albumDto);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void grantAlbum(AlbumDto albumDto) {
         Long currentUserId = SecurityUtil.getNonAnonymousCurrentUser().getId();
-        Album album = albumMapper.getById(albumGrantRequest.getAlbumId());
+        Album album = albumMapper.getById(albumDto.getId());
 
         if(album == null){
             throw new BusinessException("相册不存在");
@@ -136,7 +148,7 @@ public class AlbumServiceImpl implements AlbumService {
         }
 
         //添加AlbumAccess
-        List<Long> friendGroupIdsGranted = albumGrantRequest.getFriendGroupIdsGranted();
+        List<Long> friendGroupIdsGranted = albumDto.getFriendGroupIdsGranted();
         if(friendGroupIdsGranted != null){
             List<AlbumAccess> addedAlbumAccesses = new ArrayList<>(friendGroupIdsGranted.size());
             for (Long friendGroupId : friendGroupIdsGranted) {
@@ -145,7 +157,7 @@ public class AlbumServiceImpl implements AlbumService {
                 }
 
                 AlbumAccess albumAccess = new AlbumAccess();
-                albumAccess.setAlbumId(albumGrantRequest.getAlbumId());
+                albumAccess.setAlbumId(albumDto.getId());
                 albumAccess.setFriendGroupId(friendGroupId);
                 addedAlbumAccesses.add(albumAccess);
             }
@@ -156,9 +168,9 @@ public class AlbumServiceImpl implements AlbumService {
         }
 
         //移除AlbumAccess
-        List<Long> friendGroupIdsRevoked = albumGrantRequest.getFriendGroupIdsRevoked();
+        List<Long> friendGroupIdsRevoked = albumDto.getFriendGroupIdsRevoked();
         if(friendGroupIdsRevoked != null && !friendGroupIdsRevoked.isEmpty()){
-            albumAccessMapper.deleteBatch(albumGrantRequest.getAlbumId(), albumGrantRequest.getFriendGroupIdsRevoked());
+            albumAccessMapper.deleteBatch(albumDto.getId(), albumDto.getFriendGroupIdsRevoked());
         }
     }
 

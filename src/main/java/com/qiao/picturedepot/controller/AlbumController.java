@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.AddGroup;
 import com.qiao.picturedepot.pojo.UpdateGroup;
 import com.qiao.picturedepot.pojo.domain.Album;
+import com.qiao.picturedepot.pojo.dto.AlbumDto;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,23 +39,18 @@ public class AlbumController{
     }
 
     @PostMapping("/albums")
-    public void addAlbum(@Validated(AddGroup.class) @RequestBody Album album){
+    public void addAlbum(@Validated(AddGroup.class) @RequestBody AlbumDto album){
         albumService.addAlbum(album);
     }
 
     @PutMapping("/albums")
-    public void updateAlbum(@Validated(UpdateGroup.class) @RequestBody Album album){
+    public void updateAlbum(@Validated(UpdateGroup.class) @RequestBody AlbumDto album){
         albumService.updateAlbum(album);
     }
 
     @DeleteMapping("/albums/{albumId}")
     public void deleteAlbum(@PathVariable Long albumId){
         albumService.deleteAlbumById(albumId);
-    }
-
-    @PostMapping("/albums/grant")
-    public void grantAlbum(@Valid @RequestBody AlbumGrantRequest albumGrantRequest){
-        albumService.grantAlbum(albumGrantRequest);
     }
 
     @GetMapping("/albums/{albumId}/granted-friend-groups")
