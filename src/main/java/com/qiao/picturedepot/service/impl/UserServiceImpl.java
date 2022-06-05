@@ -63,7 +63,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void getAvatar(Long userId, OutputStream outputStream) {
         try(InputStream inputStream = userMapper.getAvatarByUserId(userId)){
-            FileUtil.copy(inputStream, outputStream);
+            if(inputStream != null){
+                FileUtil.copy(inputStream, outputStream);
+            }
         } catch (IOException e) {
             throw new BusinessException("无法读取头像文件", e);
         }
