@@ -38,7 +38,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("@rs.canAccessPictureGroup(#commentAdd.pictureGroupId)")
+    @PreAuthorize("@rs.canAccessPictureGroup(#commentAddRequest.pictureGroupId)")
     public void addComment(CommentAddRequest commentAddRequest) {
         Comment comment = new Comment();
         comment.setPictureGroupId(commentAddRequest.getPictureGroupId());
