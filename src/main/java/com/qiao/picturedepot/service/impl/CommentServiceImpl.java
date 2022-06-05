@@ -127,6 +127,8 @@ public class CommentServiceImpl implements CommentService {
             commentCache.put(comment.getId(), comment);
         }
 
+        Long userId = SecurityUtil.getNonAnonymousCurrentUser().getId();
+
         for(Comment comment : comments){
             CommentDto commentDto = new CommentDto();
             ObjectUtil.copyBean(comment, commentDto);
@@ -136,6 +138,9 @@ public class CommentServiceImpl implements CommentService {
             if(repliedComment != null){
                 commentDto.setRepliedUser(userCache.get(repliedComment.getAuthorId()));
             }
+
+            //当前用户是否点赞
+            commentDto.setLiked(commentMapper.existsCommentLikeDetail(comment.getId(), userId));
 
             commentDtos.add(commentDto);
         }
