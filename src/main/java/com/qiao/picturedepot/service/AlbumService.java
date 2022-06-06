@@ -3,8 +3,7 @@ package com.qiao.picturedepot.service;
 import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.dto.AlbumDto;
-import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
-import com.qiao.picturedepot.pojo.dto.AlbumQuery;
+import com.qiao.picturedepot.pojo.dto.query.AlbumQuery;
 
 import java.util.List;
 

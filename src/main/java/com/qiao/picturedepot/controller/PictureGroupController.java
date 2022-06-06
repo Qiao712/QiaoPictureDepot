@@ -1,20 +1,19 @@
 package com.qiao.picturedepot.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
+import com.qiao.picturedepot.pojo.dto.query.PictureGroupQuery;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import com.qiao.picturedepot.service.PictureService;
 import com.qiao.picturedepot.util.ObjectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -24,11 +23,9 @@ public class PictureGroupController {
     @Autowired
     private PictureGroupMapper pictureGroupMapper;
 
-    @GetMapping("/albums/{albumId}/picture-groups")
-    public PageInfo<PictureGroupPreviewDto> getPictureGroups(@PathVariable Long albumId, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize){
-        PageHelper.startPage(pageNo, pageSize);
-        List<PictureGroupPreviewDto> pictureGroupPreviewDtos = pictureService.getPictureGroupsByAlbum(albumId);
-        return new PageInfo<>(pictureGroupPreviewDtos);
+    @GetMapping("/picture-groups")
+    public PageInfo<PictureGroupPreviewDto> getPictureGroups(@Validated @RequestBody PictureGroupQuery pictureGroupQuery){
+        return pictureService.getPictureGroups(pictureGroupQuery);
     }
 
     @GetMapping("/picture-groups/{pictureGroupId}")

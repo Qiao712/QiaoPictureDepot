@@ -5,14 +5,12 @@ import com.qiao.picturedepot.pojo.AddGroup;
 import com.qiao.picturedepot.pojo.UpdateGroup;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.dto.AlbumDto;
-import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
-import com.qiao.picturedepot.pojo.dto.AlbumQuery;
+import com.qiao.picturedepot.pojo.dto.query.AlbumQuery;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

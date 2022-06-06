@@ -1,18 +1,20 @@
 package com.qiao.picturedepot.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.config.Properties;
 import com.qiao.picturedepot.dao.*;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
-import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
+import com.qiao.picturedepot.pojo.dto.query.PictureGroupQuery;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import com.qiao.picturedepot.service.PictureService;
 import com.qiao.picturedepot.service.PictureStoreService;
 import com.qiao.picturedepot.util.ObjectUtil;
+import com.qiao.picturedepot.util.QueryUtil;
 import com.qiao.picturedepot.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,8 +44,9 @@ public class PictureServiceImpl implements PictureService {
 
     @Override
     @PreAuthorize("@rs.canAccessAlbum(#albumId)")
-    public List<PictureGroupPreviewDto> getPictureGroupsByAlbum(Long albumId) {
-        List<PictureGroup> pictureGroups = pictureGroupMapper.listByAlbumId(albumId);
+    public PageInfo<PictureGroupPreviewDto> getPictureGroups(PictureGroupQuery pictureGroupQuery) {
+        QueryUtil.startPage(pictureGroupQuery);
+        List<PictureGroup> pictureGroups = pictureGroupMapper.listByAlbumId(pictureGroupQuery.getAlbumId());
         List<PictureGroupPreviewDto> pictureGroupPreviewDtos = new ArrayList<>(pictureGroups.size());
 
         for (PictureGroup pictureGroup : pictureGroups) {
@@ -54,7 +57,7 @@ public class PictureServiceImpl implements PictureService {
             pictureGroupPreviewDtos.add(dto);
         }
 
-        return pictureGroupPreviewDtos;
+        return new PageInfo<>(pictureGroupPreviewDtos);
     }
 
     @Override

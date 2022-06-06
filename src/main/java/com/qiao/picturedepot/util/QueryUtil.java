@@ -1,7 +1,8 @@
 package com.qiao.picturedepot.util;
 
 import com.github.pagehelper.PageHelper;
-import com.qiao.picturedepot.pojo.dto.Query;
+import com.qiao.picturedepot.exception.BusinessException;
+import com.qiao.picturedepot.pojo.dto.query.Query;
 
 public class QueryUtil {
     /**
@@ -9,6 +10,9 @@ public class QueryUtil {
      */
     public static void startPage(Query query){
         if(query.getOrderBy() != null){
+            if(! query.checkOrderBy()){
+                throw new BusinessException("非法的排序字段:" + query.getOrderBy());
+            }
             String order = query.getDesc() != null && query.getDesc() ? " desc" : " asc";
             String orderBy = mapCamelCaseToUnderscore(query.getOrderBy()) + order;
             PageHelper.startPage(query.getPageNo(), query.getPageSize(), orderBy);
