@@ -4,23 +4,14 @@ import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.dto.AlbumDto;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
+import com.qiao.picturedepot.pojo.dto.AlbumQuery;
 
 import java.util.List;
 
 public interface AlbumService {
     Album getAlbumById(Long albumId);
 
-    /**
-     * 获取当前用户的相册列表
-     */
-    PageInfo<Album> getAlbums(int pageNo, int pageSize);
-
-    /**
-     * 返回当前用户可查看的目标用户的相册列表
-     * @param ownerUsername 相册属主用户名
-     * @return 当前用户有权查看的相册列表
-     */
-    PageInfo<Album> getAlbumsPermitted(String ownerUsername, int pageNo, int pageSize);
+    PageInfo<Album> getAlbums(AlbumQuery albumQuery);
 
     void deleteAlbumById(Long albumId);
 

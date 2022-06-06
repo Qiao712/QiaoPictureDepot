@@ -14,15 +14,18 @@ import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AlbumDto;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
+import com.qiao.picturedepot.pojo.dto.AlbumQuery;
 import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.security.ResourceSecurity;
 import com.qiao.picturedepot.service.AlbumService;
 import com.qiao.picturedepot.service.FriendService;
 import com.qiao.picturedepot.service.PictureService;
 import com.qiao.picturedepot.service.UserService;
+import com.qiao.picturedepot.util.QueryUtil;
 import com.qiao.picturedepot.util.SecurityUtil;
 import com.qiao.picturedepot.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.query.QueryUtils;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -56,22 +59,24 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public PageInfo<Album> getAlbums(int pageNo, int pageSize) {
-        Long userId = SecurityUtil.getNonAnonymousCurrentUser().getId();
-        PageHelper.startPage(pageNo, pageSize);
-        List<Album> albums = albumMapper.listByOwnerUserId(userId);
-        return new PageInfo<>(albums);
-    }
-
-    @Override
-    public PageInfo<Album> getAlbumsPermitted(String ownerUsername, int pageNo, int pageSize) {
+    public PageInfo<Album> getAlbums(AlbumQuery albumQuery) {
         Long visitorUserId = SecurityUtil.getNonAnonymousCurrentUser().getId();
-        Long ownerUserId = userService.getUserIdByUsername(ownerUsername);
-        if(ownerUserId == null) throw new EntityNotFoundException(User.class);
 
-        PageHelper.startPage(pageNo, pageSize);
-        List<Album> albums = albumMapper.listPermitted(ownerUserId, visitorUserId);
-        return new PageInfo<>(albums);
+        if(albumQuery.getOwnerUsername() == null){
+            //获取当前用户的相册列表
+            QueryUtil.startPage(albumQuery);
+            List<Album> albums = albumMapper.listByOwnerUserId(visitorUserId);
+            return new PageInfo<>(albums);
+
+        }else{
+            //获取当前用户有访问权的目标用户的相册列表
+            Long ownerUserId = userService.getUserIdByUsername(albumQuery.getOwnerUsername());
+            if(ownerUserId == null) throw new EntityNotFoundException(User.class);
+
+            QueryUtil.startPage(albumQuery);
+            List<Album> albums = albumMapper.listPermitted(ownerUserId, visitorUserId);
+            return new PageInfo<>(albums);
+        }
     }
 
     @Override

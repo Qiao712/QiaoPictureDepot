@@ -6,6 +6,7 @@ import com.qiao.picturedepot.pojo.UpdateGroup;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.dto.AlbumDto;
 import com.qiao.picturedepot.pojo.dto.AlbumGrantRequest;
+import com.qiao.picturedepot.pojo.dto.AlbumQuery;
 import com.qiao.picturedepot.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -21,16 +22,8 @@ public class AlbumController{
     private AlbumService albumService;
 
     @GetMapping("/albums")
-    public PageInfo<Album> getAlbums(@RequestParam("pageNo") Integer pageNo,
-                              @RequestParam("pageSize") Integer pageSize,
-                              @RequestParam(value = "user", required = false) String username){
-        if(username == null){
-            //获取当前用户的相册列表
-            return albumService.getAlbums(pageNo, pageSize);
-        }else{
-            //获取当前用户有访问权的目标用户的相册列表
-            return albumService.getAlbumsPermitted(username, pageNo, pageSize);
-        }
+    public PageInfo<Album> getAlbums(@Validated @RequestBody AlbumQuery albumQuery){
+        return albumService.getAlbums(albumQuery);
     }
 
     @GetMapping("/albums/{albumId}")
