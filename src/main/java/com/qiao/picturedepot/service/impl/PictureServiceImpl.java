@@ -8,7 +8,7 @@ import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
 import com.qiao.picturedepot.pojo.dto.AuthUserDto;
-import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
+import com.qiao.picturedepot.pojo.dto.PictureGroupDto;
 import com.qiao.picturedepot.pojo.dto.query.PictureGroupQuery;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import com.qiao.picturedepot.service.PictureService;
@@ -24,46 +24,39 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PictureServiceImpl implements PictureService {
     @Autowired
-    PictureGroupMapper pictureGroupMapper;
+    private PictureGroupMapper pictureGroupMapper;
     @Autowired
-    PictureRefMapper pictureRefMapper;
+    private PictureRefMapper pictureRefMapper;
     @Autowired
-    PictureIdentityMapper pictureIdentityMapper;
+    private PictureIdentityMapper pictureIdentityMapper;
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
     @Autowired
-    AlbumMapper albumMapper;
+    private AlbumMapper albumMapper;
     @Autowired
-    Properties properties;
+    private Properties properties;
     @Autowired
-    PictureStoreService pictureStoreService;
+    private PictureStoreService pictureStoreService;
 
     @Override
     @PreAuthorize("@rs.canAccessAlbum(#albumId)")
-    public PageInfo<PictureGroupPreviewDto> getPictureGroups(PictureGroupQuery pictureGroupQuery) {
+    public PageInfo<PictureGroupDto> getPictureGroups(PictureGroupQuery pictureGroupQuery) {
         QueryUtil.startPage(pictureGroupQuery);
         List<PictureGroup> pictureGroups = pictureGroupMapper.listByAlbumId(pictureGroupQuery.getAlbumId());
-        List<PictureGroupPreviewDto> pictureGroupPreviewDtos = new ArrayList<>(pictureGroups.size());
+        List<PictureGroupDto> pictureGroupDtos = pictureGroups.stream().map(this::pictureGroupDtoMap).collect(Collectors.toList());
 
-        for (PictureGroup pictureGroup : pictureGroups) {
-            PictureGroupPreviewDto dto = new PictureGroupPreviewDto();
-            ObjectUtil.copyBean(pictureGroup, dto);
-            dto.setFirstPictureRefId( pictureRefMapper.getFirstPictureRefIdOfGroup(pictureGroup.getId()) );
-            dto.setPictureCount( pictureRefMapper.countByGroupId(pictureGroup.getId()) );
-            pictureGroupPreviewDtos.add(dto);
-        }
-
-        return new PageInfo<>(pictureGroupPreviewDtos);
+        return new PageInfo<>(pictureGroupDtos);
     }
 
     @Override
     @PreAuthorize("@rs.canAccessPictureGroup(#pictureGroupId)")
-    public PictureGroup getPictureGroupById(Long pictureGroupId) {
-        return pictureGroupMapper.getById(pictureGroupId);
+    public PictureGroupDto getPictureGroupById(Long pictureGroupId) {
+        return pictureGroupDtoMap(pictureGroupMapper.getById(pictureGroupId));
     }
 
     @Override
@@ -239,4 +232,15 @@ public class PictureServiceImpl implements PictureService {
 
     //TODO: ***缩略图
 
+    private PictureGroupDto pictureGroupDtoMap(PictureGroup pictureGroup){
+        Long currentUserId = SecurityUtil.getNonAnonymousCurrentUser().getId();
+        PictureGroupDto pictureGroupDto = new PictureGroupDto();
+        ObjectUtil.copyBean(pictureGroup, pictureGroupDto);
+
+        pictureGroupDto.setFirstPictureRefId( pictureRefMapper.getFirstPictureRefIdOfGroup(pictureGroup.getId()) );
+        pictureGroupDto.setPictureCount( pictureRefMapper.countByGroupId(pictureGroup.getId()) );
+        pictureGroupDto.setLiked( pictureGroupMapper.existsPictureGroupLikeDetail(pictureGroup.getId(), currentUserId) );
+
+        return pictureGroupDto;
+    }
 }

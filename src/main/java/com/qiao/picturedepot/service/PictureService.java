@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
-import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
+import com.qiao.picturedepot.pojo.dto.PictureGroupDto;
 import com.qiao.picturedepot.pojo.dto.query.PictureGroupQuery;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,9 +21,9 @@ public interface PictureService {
 
     List<PictureRef> getPictureListByGroup(Long pictureGroupId);
 
-    PageInfo<PictureGroupPreviewDto> getPictureGroups(PictureGroupQuery pictureGroupQuery);
+    PageInfo<PictureGroupDto> getPictureGroups(PictureGroupQuery pictureGroupQuery);
 
-    PictureGroup getPictureGroupById(Long pictureGroupId);
+    PictureGroupDto getPictureGroupById(Long pictureGroupId);
 
     /**
      * 上传图片添加图组

@@ -5,7 +5,8 @@ import lombok.*;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PictureGroupPreviewDto extends PictureGroup{
+public class PictureGroupDto extends PictureGroup{
     private Long firstPictureRefId;
     private Integer pictureCount;
+    private Boolean liked;
 }
