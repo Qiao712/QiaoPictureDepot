@@ -5,7 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
-import com.qiao.picturedepot.pojo.dto.PictureGroupPreviewDto;
+import com.qiao.picturedepot.pojo.dto.PictureGroupDto;
 import com.qiao.picturedepot.pojo.dto.query.PictureGroupQuery;
 import com.qiao.picturedepot.pojo.dto.PictureGroupUpdateRequest;
 import com.qiao.picturedepot.service.PictureService;
@@ -24,12 +24,12 @@ public class PictureGroupController {
     private PictureGroupMapper pictureGroupMapper;
 
     @GetMapping("/picture-groups")
-    public PageInfo<PictureGroupPreviewDto> getPictureGroups(@Validated @RequestBody PictureGroupQuery pictureGroupQuery){
+    public PageInfo<PictureGroupDto> getPictureGroups(@Validated PictureGroupQuery pictureGroupQuery){
         return pictureService.getPictureGroups(pictureGroupQuery);
     }
 
     @GetMapping("/picture-groups/{pictureGroupId}")
-    public PictureGroup getPictureGroup(@PathVariable Long pictureGroupId){
+    public PictureGroupDto getPictureGroup(@PathVariable Long pictureGroupId){
         return pictureService.getPictureGroupById(pictureGroupId);
     }
 
