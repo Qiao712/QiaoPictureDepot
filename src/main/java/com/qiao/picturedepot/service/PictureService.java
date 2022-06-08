@@ -43,4 +43,6 @@ public interface PictureService {
     void likePictureGroup(Long pictureGroupId);
 
     void undoLikePictureGroup(Long pictureGroupId);
+
+    //TODO: 回收站功能
 }

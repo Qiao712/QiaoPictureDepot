@@ -39,7 +39,7 @@ public class PictureGroupController {
     }
 
     @PostMapping("/picture-groups")
-    public void addPictureGroup(@RequestPart("picture-group") String pictureGroupJson, @RequestPart("pictures") MultipartFile[] multipartFiles){
+    public void addPictureGroup(@RequestPart("picture-group") String pictureGroupJson, @RequestPart(value = "pictures", required = false) MultipartFile[] multipartFiles){
         try {
             PictureGroup pictureGroup = ObjectUtil.json2Object(pictureGroupJson, PictureGroup.class);
             pictureService.addPictureGroup(pictureGroup, multipartFiles);

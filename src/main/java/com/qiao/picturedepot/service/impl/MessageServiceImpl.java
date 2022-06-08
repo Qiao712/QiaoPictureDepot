@@ -31,7 +31,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public PageInfo<MessageDto> getMessageByReceiver(Long receiverUserId, int pageNo, int pageSize) {
-        PageHelper.startPage(pageNo, pageSize);
+        PageHelper.startPage(pageNo, pageSize, "create_time desc");  //降序
         List<Message> messages = messageMapper.listByReceiverId(receiverUserId);
         //-->MessageDto
         List<MessageDto> messageDtos = messages.stream().map(this::messageDtoMapper).collect(Collectors.toList());

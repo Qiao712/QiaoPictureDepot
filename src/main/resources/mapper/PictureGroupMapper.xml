@@ -29,6 +29,9 @@
             <if test="title != null">
                 title = #{title},
             </if>
+            <if test="description != null">
+                description = #{description}
+            </if>
         </set>
         WHERE id = #{id}
     </update>

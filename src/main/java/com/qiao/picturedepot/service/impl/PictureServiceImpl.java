@@ -111,8 +111,15 @@ public class PictureServiceImpl implements PictureService {
         //TODO: 编程式事务
         Long pictureGroupId = pictureGroupUpdateRequest.getPictureGroupId();
 
+        //将null，替换为空集合
         if(pictureFiles == null){
             pictureFiles = new MultipartFile[0];
+        }
+        if(pictureGroupUpdateRequest.getPicturesToDelete() == null){
+            pictureGroupUpdateRequest.setPicturesToDelete(new ArrayList<>());
+        }
+        if(pictureGroupUpdateRequest.getIdSequence() == null){
+            pictureGroupUpdateRequest.setIdSequence(new ArrayList<>());
         }
 
         //删除PictureRef
@@ -156,8 +163,8 @@ public class PictureServiceImpl implements PictureService {
             }
         }
 
-        //判断是否原有图片都已经重新确定顺序
-        if(pictureCount != 0){
+        //若有图片上传，必须判断是否原有图片都已经重新确定顺序
+        if(!idSequences.isEmpty() && pictureCount != 0){
             throw new BusinessException("次序参数非法");
         }
 
@@ -168,12 +175,9 @@ public class PictureServiceImpl implements PictureService {
 
         //更新图组属性
         PictureGroup pictureGroup = new PictureGroup();
-        pictureGroup.setId(pictureGroupId);
-        pictureGroup.setTitle(pictureGroupUpdateRequest.getTitle());
-        pictureGroup.setAlbumId(pictureGroupUpdateRequest.getAlbumId());
-        if(pictureGroup.getTitle() != null || pictureGroup.getAlbumId() != null) {
-            pictureGroupMapper.update(pictureGroup);
-        }
+        ObjectUtil.copyBean(pictureGroupUpdateRequest, pictureGroup);
+        pictureGroup.setId(pictureGroupUpdateRequest.getPictureGroupId());
+        pictureGroupMapper.update(pictureGroup);
 
         //删除图片
         for (Long pictureId : deletingPictureIds) {
