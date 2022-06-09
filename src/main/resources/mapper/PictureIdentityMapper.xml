@@ -5,20 +5,20 @@
 
 <mapper namespace="com.qiao.picturedepot.dao.PictureIdentityMapper">
     <select id="getById" resultType="PictureIdentity">
-        SELECT uri, md5, format, ref_count, update_time, create_time
+        SELECT uri, md5, format, ref_count, file_size, update_time, create_time
         FROM picture_identity
         WHERE id = #{id}
     </select>
 
     <select id="getByMD5" resultType="PictureIdentity">
-        SELECT uri, md5, format, ref_count, update_time, create_time
+        SELECT uri, md5, format, ref_count, file_size, update_time, create_time
         FROM picture_identity
         WHERE md5 = #{md5}
     </select>
 
     <insert id="add" parameterType="PictureIdentity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO picture_identity(uri, md5, format, ref_count)
-        VALUES(#{uri}, #{md5}, #{format}, #{refCount})
+        INSERT INTO picture_identity(uri, md5, format, ref_count, file_size)
+        VALUES(#{uri}, #{md5}, #{format}, #{refCount}, #{fileSize})
     </insert>
 
     <delete id="delete">

@@ -35,6 +35,15 @@ public class User extends BaseEntity{
     @Null(groups = {AddGroup.class, UpdateGroup.class})
     private Long spaceUsage;
 
+    @Null(groups = {AddGroup.class, UpdateGroup.class})
+    private Long albumCount;
+
+    @Null(groups = {AddGroup.class, UpdateGroup.class})
+    private Long pictureGroupCount;
+
+    @Null(groups = {AddGroup.class, UpdateGroup.class})
+    private Long pictureCount;
+
     //-----------------------------------------------------
     @Null(groups = {AddGroup.class, UpdateGroup.class})
     private Role role;

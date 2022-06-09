@@ -21,6 +21,17 @@ public interface PictureGroupMapper {
 
     Long getOwnerIdById(Long id);
 
+    /**
+     * 统计图组大小
+     */
+    Boolean updateFileSize(Long id);
+
+    Long getFileSize(Long id);
+
+    /**
+     * 点赞功能相关:
+     */
+
     Boolean increaseLikeCount(Long pictureGroupId, Integer increase);
 
     Boolean addPictureGroupLikeDetail(Long pictureGroupId, Long userId);

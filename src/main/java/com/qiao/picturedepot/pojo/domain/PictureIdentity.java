@@ -10,4 +10,5 @@ public class PictureIdentity extends BaseEntity {
     private byte[] md5;
     private String format;
     private Long refCount;
+    private Integer fileSize;
 }

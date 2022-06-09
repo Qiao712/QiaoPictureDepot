@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.dao.AlbumAccessMapper;
 import com.qiao.picturedepot.dao.AlbumMapper;
 import com.qiao.picturedepot.dao.PictureGroupMapper;
+import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.exception.AuthorizationException;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.exception.EntityNotFoundException;
@@ -13,13 +14,13 @@ import com.qiao.picturedepot.pojo.domain.AlbumAccess;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.AlbumDto;
+import com.qiao.picturedepot.pojo.dto.ResourceUsageDto;
 import com.qiao.picturedepot.pojo.dto.query.AlbumQuery;
 import com.qiao.picturedepot.pojo.dto.AuthUserDto;
 import com.qiao.picturedepot.security.ResourceSecurity;
 import com.qiao.picturedepot.service.AlbumService;
 import com.qiao.picturedepot.service.FriendService;
 import com.qiao.picturedepot.service.PictureService;
-import com.qiao.picturedepot.service.UserService;
 import com.qiao.picturedepot.util.QueryUtil;
 import com.qiao.picturedepot.util.SecurityUtil;
 import com.qiao.picturedepot.util.ValidationUtil;
@@ -45,7 +46,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Autowired
     private FriendService friendService;
     @Autowired
-    private UserService userService;
+    private UserMapper userMapper;
     @Autowired
     private ResourceSecurity resourceSecurity;
 
@@ -67,7 +68,7 @@ public class AlbumServiceImpl implements AlbumService {
 
         }else{
             //获取当前用户有访问权的目标用户的相册列表
-            Long ownerUserId = userService.getUserIdByUsername(albumQuery.getOwnerUsername());
+            Long ownerUserId = userMapper.getUserIdByUsername(albumQuery.getOwnerUsername());
             if(ownerUserId == null) throw new EntityNotFoundException(User.class);
 
             QueryUtil.startPage(albumQuery);
@@ -105,6 +106,9 @@ public class AlbumServiceImpl implements AlbumService {
         }
 
         albumMapper.deleteById(albumId);
+
+        //相册数减一
+        increaseAlbumCount(-1);
     }
 
     @Override
@@ -118,6 +122,9 @@ public class AlbumServiceImpl implements AlbumService {
         if(albumDto.getAccessPolicy() == Album.AccessPolicy.SPECIFIC_FRIEND_GROUPS.ordinal()){
             grantAlbum(albumDto);
         }
+
+        //相册数加一
+        increaseAlbumCount(1);
     }
 
     @Override
@@ -190,5 +197,15 @@ public class AlbumServiceImpl implements AlbumService {
     public boolean ownAlbum(Long userId, Long albumId) {
         Album album = albumMapper.getById(albumId);
         return album != null && Objects.equals(album.getOwnerId(), userId);
+    }
+
+    /**
+     * 修改用户的相册数
+     */
+    private void increaseAlbumCount(int albumCountIncr){
+        //更新用户资源使用信息
+        ResourceUsageDto resourceUsageIncr = new ResourceUsageDto();
+        resourceUsageIncr.setAlbumCount(albumCountIncr);
+        userMapper.updateResourceUsage(SecurityUtil.getNonAnonymousCurrentUser().getId(), resourceUsageIncr);
     }
 }

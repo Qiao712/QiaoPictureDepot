@@ -9,13 +9,13 @@
     </select>
 
     <select id="listByAlbumId" resultType="PictureGroup">
-        SELECT id, album_id, title, description, like_count, create_time, update_time
+        SELECT id, album_id, title, description, file_size, like_count, create_time, update_time
         FROM picture_group
         WHERE album_id = #{albumId}
     </select>
 
     <select id="getById" resultType="PictureGroup">
-        SELECT id, album_id, title, description, like_count, create_time, update_time
+        SELECT id, album_id, title, description, file_size, like_count, create_time, update_time
         FROM picture_group
         WHERE id = #{id}
     </select>
@@ -32,13 +32,16 @@
             <if test="description != null">
                 description = #{description}
             </if>
+            <if test="fileSize != null">
+                file_size = #{fileSize}
+            </if>
         </set>
         WHERE id = #{id}
     </update>
 
     <insert id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-        INSERT INTO picture_group(album_id, title, description)
-        VALUES(#{albumId}, #{title}, #{description})
+        INSERT INTO picture_group(album_id, title, description, file_size)
+        VALUES(#{albumId}, #{title}, #{description}, #{fileSize})
     </insert>
 
     <select id="getMaxPictureSequenceInGroup" resultType="Integer">
@@ -57,6 +60,20 @@
         WHERE album.id = picture_group.album_id AND picture_group.id = #{id}
     </select>
 
+    <update id="updateFileSize">
+        UPDATE picture_group pg
+        SET file_size = (
+            SELECT sum(pi.file_size) FROM picture_ref pr, picture_identity pi
+            WHERE pr.picture_group_id = pg.id AND pr.picture_id = pi.id
+        )
+        WHERE pg.id = #{id}
+    </update>
+
+    <select id="getFileSize" resultType="Long">
+        SELECT file_size FROM picture_group WHERE id = #{id}
+    </select>
+
+    <!--点赞相关功能-->
     <update id="increaseLikeCount">
         UPDATE picture_group
         SET like_count = like_count + #{increase}
@@ -70,8 +87,8 @@
 
     <select id="existsPictureGroupLikeDetail" resultType="boolean">
         SELECT EXISTS(
-        SELECT * FROM picture_group_like_detail
-        WHERE picture_group_id = #{pictureGroupId} AND user_id = #{userId}
+            SELECT * FROM picture_group_like_detail
+            WHERE picture_group_id = #{pictureGroupId} AND user_id = #{userId}
         ) picture_group_like_detail_exists
     </select>
 

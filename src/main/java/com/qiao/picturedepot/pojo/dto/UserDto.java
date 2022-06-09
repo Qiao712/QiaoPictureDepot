@@ -1,17 +1,28 @@
 package com.qiao.picturedepot.pojo.dto;
 
+import com.qiao.picturedepot.pojo.AddGroup;
+import com.qiao.picturedepot.pojo.UpdateGroup;
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.util.ObjectUtil;
 import lombok.Data;
+
+import javax.validation.constraints.Null;
 
 @Data
 public class UserDto {
     private Long id;
     private String username;
-    private Long spaceUsage;
     private String rolename;
+
+    //资源使用限制
     private Long albumNumLimit;
     private Long pictureStorageLimit;
+
+    //资源使用统计
+    private Long spaceUsage;
+    private Long albumCount;
+    private Long pictureGroupCount;
+    private Long pictureCount;
 
     public UserDto(){
     }

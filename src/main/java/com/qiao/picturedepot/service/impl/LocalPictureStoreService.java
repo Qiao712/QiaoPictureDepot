@@ -55,6 +55,7 @@ public class LocalPictureStoreService implements PictureStoreService {
                 pictureIdentity.setFormat(filetype);
                 pictureIdentity.setRefCount(1L);
                 pictureIdentity.setMd5(md5);
+                pictureIdentity.setFileSize(picture.length);
                 pictureIdentityMapper.add(pictureIdentity);
             } catch (IOException e) {
                 throw new RuntimeException("图片保存失败", e);
@@ -68,7 +69,7 @@ public class LocalPictureStoreService implements PictureStoreService {
 
     @Override
     @Transactional
-    public void releasePicture(Long pictureId) {
+    public PictureIdentity releasePicture(Long pictureId) {
         //必须保证对PictureIdentity行的独占！
         PictureIdentity pictureIdentity = pictureIdentityMapper.getById(pictureId);
         long refCount = pictureIdentity.getRefCount() - 1;
@@ -81,6 +82,8 @@ public class LocalPictureStoreService implements PictureStoreService {
         }else{
             pictureIdentityMapper.updateRefCount(pictureId, refCount);
         }
+
+        return pictureIdentity;
     }
 
     @Override
@@ -96,7 +99,7 @@ public class LocalPictureStoreService implements PictureStoreService {
     public PictureIdentity readPicture(Long pictureId, OutputStream outputStream) {
         PictureIdentity pictureIdentity = pictureIdentityMapper.getById(pictureId);
         if(pictureIdentity == null){
-            throw new BusinessException("无法获取图片");
+            throw new BusinessException("图片不存在");
         }
 
         readPicture(pictureIdentity.getUri(), outputStream);

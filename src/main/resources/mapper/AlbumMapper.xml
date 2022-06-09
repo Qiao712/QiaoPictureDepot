@@ -5,19 +5,19 @@
 
 <mapper namespace="com.qiao.picturedepot.dao.AlbumMapper">
     <select id="getById" resultType="Album">
-        SELECT id, name, owner_id, access_policy, description, create_time, update_time
+        SELECT id, name, owner_id, access_policy, description, file_size, create_time, update_time
         FROM album
         WHERE id = #{id}
     </select>
 
     <select id="listByOwnerUserId" resultType="Album">
-        SELECT id, name, owner_id, access_policy, description, create_time, update_time
+        SELECT id, name, owner_id, access_policy, description, file_size, create_time, update_time
         FROM album
         WHERE owner_id = #{ownerId}
     </select>
     
     <select id="listPermitted" resultType="Album">
-        SELECT id, name, owner_id, access_policy, description, create_time, update_time
+        SELECT id, name, owner_id, access_policy, description, file_size, create_time, update_time
         FROM album
         WHERE owner_id = #{ownerUserId} AND (
             <!--属主访问-->
@@ -70,4 +70,10 @@
         DELETE FROM album
         WHERE id = #{id}
     </delete>
+
+    <update id="updateFileSize">
+        UPDATE album
+        SET file_size = IFNULL(file_size, 0) + #{fileSizeIncr}
+        WHERE id = #{id}
+    </update>
 </mapper>

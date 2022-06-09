@@ -10,4 +10,5 @@ public class PictureGroup extends BaseEntity {
     private String title;
     private String description;
     private Integer likeCount;
+    private Long fileSize;
 }

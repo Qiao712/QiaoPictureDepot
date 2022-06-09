@@ -8,9 +8,9 @@ import java.io.OutputStream;
 public interface PictureStoreService {
     PictureIdentity savePictureFile(MultipartFile pictureFile);
 
-    void releasePicture(Long pictureId);
-
-    void readPicture(String uri, OutputStream outputStream);
+    PictureIdentity releasePicture(Long pictureId);
 
     PictureIdentity readPicture(Long pictureId, OutputStream outputStream);
+
+    void readPicture(String uri, OutputStream outputStream);
 }

@@ -24,6 +24,9 @@ public class Album extends BaseEntity{
     @Max(value = 3, groups = {AddGroup.class, UpdateGroup.class})
     private Integer accessPolicy;
 
+    @Null(groups = {AddGroup.class, UpdateGroup.class})
+    private Long fileSize;
+
     public enum AccessPolicy{
         PRIVATE,
         SPECIFIC_FRIEND_GROUPS,

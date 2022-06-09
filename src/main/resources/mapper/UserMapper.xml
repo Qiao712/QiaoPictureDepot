@@ -13,7 +13,7 @@
     </select>
 
     <select id="getByUsername" resultMap="userRole">
-        SELECT id, username, password, role_id, space_usage, create_time, update_time
+        SELECT id, username, password, role_id, space_usage, album_count, picture_count, picture_group_count, create_time, update_time
         FROM user WHERE username = #{username}
     </select>
 
@@ -26,7 +26,7 @@
     </select>
 
     <select id="getById" resultMap="userRole">
-        SELECT id, username, password, role_id, space_usage, create_time, update_time
+        SELECT id, username, password, role_id, space_usage, album_count, picture_count, picture_group_count, create_time, update_time
         FROM user WHERE id = #{id}
     </select>
 
@@ -46,4 +46,36 @@
         SET avatar = #{image}
         WHERE id = #{userId}
     </insert>
+
+    <update id="updateResourceUsage">
+        UPDATE user
+        <set>
+            <if test="resourceUsageIncr.spaceUsage != null">
+                space_usage = space_usage + #{resourceUsageIncr.spaceUsage},
+            </if>
+            <if test="resourceUsageIncr.albumCount != null">
+                album_count = album_count + #{resourceUsageIncr.albumCount},
+            </if>
+            <if test="resourceUsageIncr.pictureGroupCount != null">
+                picture_group_count = picture_group_count + #{resourceUsageIncr.pictureGroupCount},
+            </if>
+            <if test="resourceUsageIncr.pictureCount != null">
+                picture_count = picture_count + #{resourceUsageIncr.pictureCount}
+            </if>
+        </set>
+        WHERE id = #{userId}
+    </update>
+
+    <!--重新统计信息，手动恢复一致性-->
+    <update id="countResourceUsage">
+        UPDATE user
+        SET album_count = (SELECT count(*) FROM album WHERE owner_id = #{userId}),
+            picture_group_count = (SELECT count(*) FROM album, picture_group
+                                   WHERE album.owner_id = #{userId} AND picture_group.album_id = album.id),
+            picture_count = (SELECT count(*) FROM album a, picture_group pg, picture_ref pr
+                             WHERE a.id = pg.album_id AND pr.picture_group_id = pg.id),
+            space_usage = IFNULL((SELECT sum(pi.file_size) FROM album a, picture_group pg, picture_ref pr, picture_identity pi
+                           WHERE a.id = pg.album_id AND pr.picture_group_id = pg.id AND pr.picture_id = pi.id), 0)
+        WHERE id = #{userId}
+    </update>
 </mapper>

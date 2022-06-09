@@ -76,4 +76,9 @@ public class DaoTest {
         System.out.println(commentMapper.deleteCommentLikeDetail(1L, 2L));
         System.out.println(commentMapper.addCommentLikeDetail(1L, 2222L));
     }
+
+    @Test
+    void testResourceUser(){
+        pictureGroupMapper.updateFileSize(99L);
+    }
 }

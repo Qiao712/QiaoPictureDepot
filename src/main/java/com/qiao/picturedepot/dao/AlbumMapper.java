@@ -21,4 +21,10 @@ public interface AlbumMapper {
     Integer updateByIdAndOwnerId(Album album);
 
     Integer deleteById(Long id);
+
+    /**
+     * 更新相册图片文件总大小
+     * @param fileSizeIncr 文件大小增量
+     */
+    Boolean updateFileSize(Long id, Long fileSizeIncr);
 }
