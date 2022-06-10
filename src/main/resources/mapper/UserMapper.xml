@@ -9,46 +9,46 @@
     </resultMap>
     <select id="getRole" resultType="Role">
         SELECT id, name, album_num_limit, picture_storage_limit, create_time, update_time
-        FROM role WHERE id = #{id}
+        FROM [role] WHERE id = #{id}
     </select>
 
     <select id="getByUsername" resultMap="userRole">
         SELECT id, username, password, role_id, space_usage, album_count, picture_count, picture_group_count, create_time, update_time
-        FROM user WHERE username = #{username}
+        FROM [user] WHERE username = #{username}
     </select>
 
     <select id="getUserIdByUsername" resultType="Long">
-        SELECT id FROM user WHERE username = #{username}
+        SELECT id FROM [user] WHERE username = #{username}
     </select>
 
     <select id="getUsernameById" resultType="String">
-        SELECT username FROM user WHERE id = #{id}
+        SELECT username FROM [user] WHERE id = #{id}
     </select>
 
     <select id="getById" resultMap="userRole">
         SELECT id, username, password, role_id, space_usage, album_count, picture_count, picture_group_count, create_time, update_time
-        FROM user WHERE id = #{id}
+        FROM [user] WHERE id = #{id}
     </select>
 
     <insert id="add">
-        INSERT INTO user(username, password, role_id)
+        INSERT INTO [user](username, password, role_id)
         VALUES(#{user.username}, #{user.password},
             (SELECT id FROM role WHERE role.name = #{rolename})
         )
     </insert>
 
     <select id="getAvatarByUserId" resultType="java.io.InputStream">
-        SELECT avatar FROM user WHERE id = #{userId}
+        SELECT avatar FROM [user] WHERE id = #{userId}
     </select>
 
     <insert id="setAvatarByUserId">
-        UPDATE user
+        UPDATE [user]
         SET avatar = #{image}
         WHERE id = #{userId}
     </insert>
 
     <update id="updateResourceUsage">
-        UPDATE user
+        UPDATE [user]
         <set>
             <if test="resourceUsageIncr.spaceUsage != null">
                 space_usage = space_usage + #{resourceUsageIncr.spaceUsage},
@@ -68,13 +68,13 @@
 
     <!--重新统计信息，手动恢复一致性-->
     <update id="countResourceUsage">
-        UPDATE user
+        UPDATE [user]
         SET album_count = (SELECT count(*) FROM album WHERE owner_id = #{userId}),
             picture_group_count = (SELECT count(*) FROM album, picture_group
                                    WHERE album.owner_id = #{userId} AND picture_group.album_id = album.id),
             picture_count = (SELECT count(*) FROM album a, picture_group pg, picture_ref pr
                              WHERE a.id = pg.album_id AND pr.picture_group_id = pg.id),
-            space_usage = IFNULL((SELECT sum(pi.file_size) FROM album a, picture_group pg, picture_ref pr, picture_identity pi
+            space_usage = ISNULL((SELECT sum(pi.file_size) FROM album a, picture_group pg, picture_ref pr, picture_identity pi
                            WHERE a.id = pg.album_id AND pr.picture_group_id = pg.id AND pr.picture_id = pi.id), 0)
         WHERE id = #{userId}
     </update>

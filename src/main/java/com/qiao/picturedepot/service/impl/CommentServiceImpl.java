@@ -90,9 +90,25 @@ public class CommentServiceImpl implements CommentService {
             throw new BusinessException("无权删除");
         }
 
-        commentMapper.deleteByParentId(commentId);
+        if(comment.getParentId() == null){
+            //删除一级评论的子评论
+            List<Comment> comments = commentMapper.getByPictureGroupIdAndParentId(comment.getPictureGroupId(), commentId);
+            for (Comment comment1 : comments) {
+                commentMapper.deleteCommentLikeDetail(comment1.getId(), user.getId());
+            }
+            commentMapper.deleteByParentId(commentId);
+        }else{
+            //删除恢复该二级评论的二级评论
+            List<Comment> comments = commentMapper.getByRepliedId(commentId);
+            for (Comment comment1 : comments) {
+                //递归删除
+                deleteComment(comment1.getId());
+            }
+        }
+
+        //删除该评论
+        commentMapper.deleteCommentLikeDetail(comment.getId(), user.getId());
         commentMapper.deleteById(commentId);
-        //commentLikeDetail级联删除
 
         //TODO: 删除评论，响应的删除发送出去的评论消息
     }

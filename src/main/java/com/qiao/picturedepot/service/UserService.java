@@ -2,9 +2,11 @@ package com.qiao.picturedepot.service;
 
 import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.pojo.dto.UserDto;
+import com.qiao.picturedepot.pojo.dto.UserActivityDto;
 import com.qiao.picturedepot.pojo.dto.UserSmallDto;
 
 import java.io.OutputStream;
+import java.util.List;
 
 public interface UserService {
     UserSmallDto getUserBasicInfo(Long userId);
@@ -22,4 +24,5 @@ public interface UserService {
     String getUsernameById(Long userId);
 
     //TODO: 动态(按时间线显示活动)
+    List<UserActivityDto> getUserActivities(Long userId, int pageNo, int pageSize);
 }

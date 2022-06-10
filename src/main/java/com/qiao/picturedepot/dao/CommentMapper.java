@@ -13,6 +13,8 @@ public interface CommentMapper {
 
     List<Comment> getByPictureGroupIdAndParentId(Long pictureGroupId, Long parentId);
 
+    List<Comment> getByRepliedId(Long repliedId);
+
     Integer add(Comment comment);
 
     Boolean deleteById(Long id);

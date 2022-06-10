@@ -6,7 +6,7 @@
 <mapper namespace="com.qiao.picturedepot.dao.MessageMapper">
     <select id="countUnacknowledgedByReceiverId" resultType="Integer">
         SELECT count(id)
-        FROM message
+        FROM [message]
         WHERE receiver_id = #{receiverId} AND is_acknowledged = false
     </select>
 
@@ -18,13 +18,13 @@
 
     <select id="getByIdAndReceiverId" resultType="Message">
         SELECT id, sender_id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
-        FROM message
+        FROM [message]
         WHERE id = #{systemMessageId} AND receiver_id = #{receiverId}
     </select>
 
     <select id="searchMessage" resultType="Message">
         SELECT id, sender_id, receiver_id, message_type, message_body, is_acknowledged as acknowledged, expiration_time, create_time, update_time
-        FROM message
+        FROM [message]
         <where>
             <if test="senderId != null">
                 sender_id = #{senderId}
@@ -42,17 +42,17 @@
     </select>
 
     <insert id="add">
-        INSERT INTO message(id, sender_id, receiver_id, message_type, message_body, is_acknowledged, expiration_time)
-        VALUES(#{id}, #{senderId}, #{receiverId}, #{messageType}, #{messageBody}, #{acknowledged}, #{expirationTime})
+        INSERT INTO [message](sender_id, receiver_id, message_type, message_body, is_acknowledged, expiration_time)
+        VALUES(#{senderId}, #{receiverId}, #{messageType}, #{messageBody}, #{acknowledged}, #{expirationTime})
     </insert>
 
     <delete id="deleteById">
-        DELETE FROM message
+        DELETE FROM [message]
         WHERE id = #{id}
     </delete>
 
     <delete id="deleteBatchById">
-        DELETE FROM message
+        DELETE FROM [message]
         <where>
             <foreach collection="ids" item="item" index="index"
                      open="id in (" separator="," close=")" nullable="true">
@@ -62,7 +62,7 @@
     </delete>
 
     <update id="setAcknowledged">
-        UPDATE message
+        UPDATE [message]
         SET is_acknowledged = true
         <where>
             <foreach collection="systemMessageIds" item="item" index="index"
@@ -74,7 +74,7 @@
     </update>
 
     <update id="setAcknowledgedBefore">
-        UPDATE message
+        UPDATE [message]
         SET is_acknowledged = true
         WHERE create_time &lt;= #{time}
     </update>

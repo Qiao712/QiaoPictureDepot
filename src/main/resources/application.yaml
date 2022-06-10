@@ -4,10 +4,10 @@ server:
 spring:
 #  配置数据源
   datasource:
-    username: root
-    password: lty0712
-    url: jdbc:mysql://localhost:3306/picture_depot_2?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: sa
+    password: 12345678
+    url: jdbc:sqlserver://127.0.0.1:1433;Database=picture_depot_2
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 #  配置redis
   redis:
     host: 8.141.151.176
@@ -29,7 +29,7 @@ mybatis:
 
 #pagehelper
 pagehelper:
-  helperDialect: mysql
+  helperDialect: sqlserver
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql

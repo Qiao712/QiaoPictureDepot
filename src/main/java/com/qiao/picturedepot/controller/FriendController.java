@@ -28,6 +28,16 @@ public class FriendController {
         return friendService.getFriendGroupNames(user.getId());
     }
 
+    @PutMapping("/friend-groups")
+    public void updateFriendGroup(@Validated(UpdateGroup.class) @RequestBody FriendGroup friendGroup){
+        friendService.updateFriendGroup(friendGroup);
+    }
+
+    @DeleteMapping("/friend-groups/{friendGroupId}")
+    public void deleteFriendGroup(){
+        //TODO: 删除好友分组逻辑
+    }
+
     @PostMapping("/friends/accept")
     public void acceptNewFriend(@AuthenticationPrincipal AuthUserDto user, @Valid @RequestBody AcceptNewFriendRequest acceptNewFriendRequest){
         friendService.acceptNewFriend(user.getId(), acceptNewFriendRequest);
@@ -54,8 +64,5 @@ public class FriendController {
         friendService.updateFriendInfo(user.getId(), friendInfoUpdateRequest);
     }
 
-    @PutMapping("/friend-groups")
-    public void updateFriendGroup(@Validated(UpdateGroup.class) @RequestBody FriendGroup friendGroup){
-        friendService.updateFriendGroup(friendGroup);
-    }
+
 }

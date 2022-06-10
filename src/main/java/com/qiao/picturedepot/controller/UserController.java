@@ -2,6 +2,7 @@ package com.qiao.picturedepot.controller;
 
 import com.qiao.picturedepot.pojo.AddGroup;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.dto.UserActivityDto;
 import com.qiao.picturedepot.pojo.dto.UserDto;
 import com.qiao.picturedepot.pojo.dto.UserSmallDto;
 import com.qiao.picturedepot.service.UserService;
@@ -11,9 +12,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 
 @RestController
@@ -51,5 +52,12 @@ public class UserController {
     @PostMapping("/users/avatar")
     void setAvatars(@RequestBody byte[] image){
         userService.setAvatar(image);
+    }
+
+    @GetMapping("/users/{userId}/activities")
+    List<UserActivityDto> getUserActivities(@PathVariable("userId") Long userId,
+                                            @RequestParam("pageNo") Integer pageNo,
+                                            @RequestParam("pageSize") Integer pageSize){
+        return null;
     }
 }

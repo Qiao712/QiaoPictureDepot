@@ -24,7 +24,7 @@ public interface PictureGroupMapper {
     /**
      * 统计图组大小
      */
-    Boolean updateFileSize(Long id);
+//    Boolean updateFileSize(Long id);
 
     Long getFileSize(Long id);
 

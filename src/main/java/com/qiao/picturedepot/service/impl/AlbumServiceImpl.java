@@ -108,7 +108,7 @@ public class AlbumServiceImpl implements AlbumService {
         albumMapper.deleteById(albumId);
 
         //相册数减一
-        increaseAlbumCount(-1);
+//        increaseAlbumCount(-1);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class AlbumServiceImpl implements AlbumService {
         }
 
         //相册数加一
-        increaseAlbumCount(1);
+//        increaseAlbumCount(1);
     }
 
     @Override

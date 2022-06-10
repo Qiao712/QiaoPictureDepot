@@ -112,13 +112,13 @@ public class PictureServiceImpl implements PictureService {
 
         //更新统计信息------------------------------------------------------------------------------------------------
         //更新相册文件总大小信息
-        albumMapper.updateFileSize(pictureGroup.getAlbumId(), fileSize);
+//        albumMapper.updateFileSize(pictureGroup.getAlbumId(), fileSize);
         //更新用户的资源占用信息
-        ResourceUsageDto resourceUsageIncrease = new ResourceUsageDto();
-        resourceUsageIncrease.setPictureCount(pictureRefs.size());
-        resourceUsageIncrease.setPictureGroupCount(1);
-        resourceUsageIncrease.setSpaceUsage(fileSize);
-        userMapper.updateResourceUsage(SecurityUtil.getNonAnonymousCurrentUser().getId(), resourceUsageIncrease);
+//        ResourceUsageDto resourceUsageIncrease = new ResourceUsageDto();
+//        resourceUsageIncrease.setPictureCount(pictureRefs.size());
+//        resourceUsageIncrease.setPictureGroupCount(1);
+//        resourceUsageIncrease.setSpaceUsage(fileSize);
+//        userMapper.updateResourceUsage(SecurityUtil.getNonAnonymousCurrentUser().getId(), resourceUsageIncrease);
         //---------------------------------------------------------------------------------------------------------
     }
 
@@ -207,20 +207,19 @@ public class PictureServiceImpl implements PictureService {
         pictureGroup.setId(pictureGroupId);
         if(pictureGroup.getAlbumId() != null || pictureGroup.getTitle() != null || pictureGroup.getDescription() != null)   //至少更新一个字段
             pictureGroupMapper.update(pictureGroup);
-        pictureGroupMapper.updateFileSize(pictureGroupId);  //重新统计图组文件总大小
 
         //更新统计信息------------------------------------------------------------------------------------------------
         //更新相册文件总大小信息
-        long fileSize = pictureGroupMapper.getFileSize(pictureGroupId);
-        long fileSizeIncrease = fileSize - oldPictureGroup.getFileSize();
-        albumMapper.updateFileSize(oldPictureGroup.getAlbumId(), fileSizeIncrease);
+//        long fileSize = pictureGroupMapper.getFileSize(pictureGroupId);
+//        long fileSizeIncrease = fileSize - oldPictureGroup.getFileSize();
+//        albumMapper.updateFileSize(oldPictureGroup.getAlbumId(), fileSizeIncrease);
         //更新用户的资源占用信息
-        int pictureCountIncrease = pictureFiles.length - pictureGroupUpdateRequest.getPicturesToDelete().size();
-        ResourceUsageDto resourceUsageIncrease = new ResourceUsageDto();
-        resourceUsageIncrease.setPictureCount(pictureCountIncrease);
-        resourceUsageIncrease.setPictureGroupCount(0);
-        resourceUsageIncrease.setSpaceUsage(fileSizeIncrease);
-        userMapper.updateResourceUsage(SecurityUtil.getNonAnonymousCurrentUser().getId(), resourceUsageIncrease);
+//        int pictureCountIncrease = pictureFiles.length - pictureGroupUpdateRequest.getPicturesToDelete().size();
+//        ResourceUsageDto resourceUsageIncrease = new ResourceUsageDto();
+//        resourceUsageIncrease.setPictureCount(pictureCountIncrease);
+//        resourceUsageIncrease.setPictureGroupCount(0);
+//        resourceUsageIncrease.setSpaceUsage(fileSizeIncrease);
+//        userMapper.updateResourceUsage(SecurityUtil.getNonAnonymousCurrentUser().getId(), resourceUsageIncrease);
         //---------------------------------------------------------------------------------------------------------
 
         //删除图片
@@ -246,13 +245,13 @@ public class PictureServiceImpl implements PictureService {
 
         //更新统计信息------------------------------------------------------------------------------------------------
         //更新相册文件总大小信息
-        albumMapper.updateFileSize(pictureGroup.getAlbumId(), - pictureGroup.getFileSize());
+//        albumMapper.updateFileSize(pictureGroup.getAlbumId(), - pictureGroup.getFileSize());
         //更新用户的资源占用信息
-        ResourceUsageDto resourceUsageIncrease = new ResourceUsageDto();
-        resourceUsageIncrease.setPictureCount( - pictureRefs.size());
-        resourceUsageIncrease.setPictureGroupCount(-1);
-        resourceUsageIncrease.setSpaceUsage( - pictureGroup.getFileSize());
-        userMapper.updateResourceUsage(SecurityUtil.getNonAnonymousCurrentUser().getId(), resourceUsageIncrease);
+//        ResourceUsageDto resourceUsageIncrease = new ResourceUsageDto();
+//        resourceUsageIncrease.setPictureCount( - pictureRefs.size());
+//        resourceUsageIncrease.setPictureGroupCount(-1);
+//        resourceUsageIncrease.setSpaceUsage( - pictureGroup.getFileSize());
+//        userMapper.updateResourceUsage(SecurityUtil.getNonAnonymousCurrentUser().getId(), resourceUsageIncrease);
         //---------------------------------------------------------------------------------------------------------
 
         //删除对象

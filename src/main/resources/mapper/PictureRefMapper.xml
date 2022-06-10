@@ -12,7 +12,7 @@
     </select>
 
     <select id="getFirstPictureRefIdOfGroup" parameterType="Long" resultType="Long">
-        SELECT id FROM picture_ref WHERE picture_group_id = #{pictureGroupId} ORDER BY sequence LIMIT 1
+        SELECT top 1 id FROM picture_ref WHERE picture_group_id = #{pictureGroupId} ORDER BY sequence
     </select>
 
     <select id="countByGroupId" parameterType="Long" resultType="Integer">
@@ -40,12 +40,12 @@
                 AND picture_ref.picture_id = picture_identity.id
     </select>
 
-    <insert id="add" parameterType="PictureRef" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="add">
         INSERT INTO picture_ref(picture_group_id, picture_id, sequence)
         VALUES(#{pictureGroupId}, #{pictureRefId}, #{sequence})
     </insert>
 
-    <insert id="addBatch" parameterType="PictureRef" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="addBatch" parameterType="PictureRef">
         INSERT INTO picture_ref(picture_group_id, picture_id, sequence)
         VALUES
         <foreach collection="pictureRefs" item="pictureRef" separator=",">

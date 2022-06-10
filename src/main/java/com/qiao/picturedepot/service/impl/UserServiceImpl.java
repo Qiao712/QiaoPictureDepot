@@ -3,9 +3,9 @@ package com.qiao.picturedepot.service.impl;
 import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.User;
-import com.qiao.picturedepot.pojo.dto.AuthUserDto;
-import com.qiao.picturedepot.pojo.dto.UserDto;
-import com.qiao.picturedepot.pojo.dto.UserSmallDto;
+import com.qiao.picturedepot.pojo.dto.*;
+import com.qiao.picturedepot.service.AlbumService;
+import com.qiao.picturedepot.service.PictureService;
 import com.qiao.picturedepot.service.UserService;
 import com.qiao.picturedepot.util.FileUtil;
 import com.qiao.picturedepot.util.ObjectUtil;
@@ -30,8 +30,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
+    private PictureService pictureService;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * 实现UserDetailsService的接口，为认证提供用户信息
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userMapper.getByUsername(username);
@@ -49,7 +54,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
     }
 
-    //----------------------------------------------
     @Override
     public void register(User user){
         final String DEFAULT_ROLE = "ROLE_NORMAL";
@@ -100,5 +104,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public String getUsernameById(Long userId) {
         return userMapper.getUsernameById(userId);
+    }
+
+    @Override
+    public List<UserActivityDto> getUserActivities(Long userId, int pageNo, int pageSize) {
+        return null;
     }
 }

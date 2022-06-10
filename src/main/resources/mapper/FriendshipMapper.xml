@@ -5,8 +5,8 @@
 <mapper namespace="com.qiao.picturedepot.dao.FriendshipMapper">
     <select id="getUsername" resultType="String">
         SELECT username
-        FROM user
-        WHERE user.id = #{id}
+        FROM [user]
+        WHERE [user].id = #{id}
     </select>
 
     <resultMap id="friendshipMap" type="Friendship">
@@ -27,14 +27,10 @@
     </select>
 
     <select id="checkFriendRelationship" resultType="Boolean">
-        SELECT
-            (EXISTS
-                (SELECT * FROM friendship, friend_group
-                WHERE friend_group.id = friendship.friend_group_id
-                    AND friend_group.owner_id = #{user1}
-                    AND friendship.friend_user_id = #{user2}
-                )
-        ) AS is_friend
+        SELECT count(*) is_friend FROM friendship, friend_group
+        WHERE friend_group.id = friendship.friend_group_id
+            AND friend_group.owner_id = #{user1}
+            AND friendship.friend_user_id = #{user2}
     </select>
 
     <insert id="add" parameterType="Friendship">

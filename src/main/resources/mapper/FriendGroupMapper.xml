@@ -22,9 +22,12 @@
         WHERE owner_id = #{userId}
     </select>
 
-    <insert id="add" parameterType="FriendGroup" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-        INSERT INTO friend_group(name, owner_id)
-        VALUES(#{name}, #{ownerId})
+    <insert id="add" parameterType="FriendGroup">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT ISNULL(max(id), 0) + 1 FROM friend_group
+        </selectKey>
+        INSERT INTO friend_group(id, name, owner_id)
+        VALUES(#{id}, #{name}, #{ownerId})
     </insert>
 
     <delete id="deleteById">

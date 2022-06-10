@@ -45,9 +45,12 @@
         )
     </select>
 
-    <insert id="add" parameterType="Album" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO album(name, owner_id, access_policy, description)
-        VALUES(#{name}, #{ownerId}, #{accessPolicy}, #{description})
+    <insert id="add" parameterType="Album">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT ISNULL(max(id), 0) + 1 FROM album
+        </selectKey>
+        INSERT INTO album(id, name, owner_id, access_policy, description)
+        VALUES(#{id}, #{name}, #{ownerId}, #{accessPolicy}, #{description})
     </insert>
 
     <update id="updateByIdAndOwnerId" parameterType="Album">
@@ -73,7 +76,7 @@
 
     <update id="updateFileSize">
         UPDATE album
-        SET file_size = IFNULL(file_size, 0) + #{fileSizeIncr}
+        SET file_size = ISNULL(file_size, 0) + #{fileSizeIncr}
         WHERE id = #{id}
     </update>
 </mapper>

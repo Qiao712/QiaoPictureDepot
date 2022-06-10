@@ -14,7 +14,7 @@
     </select>
 
     <insert id="addBatch" parameterType="AlbumAccess">
-        INSERT IGNORE INTO album_access(album_id, friend_group_id)
+        INSERT INTO album_access(album_id, friend_group_id)
         VALUES
         <foreach collection="albumAccesses" item="albumAccess" separator=",">
             (#{albumAccess.albumId}, #{albumAccess.friendGroupId})
@@ -36,11 +36,9 @@
     </delete>
 
     <select id="existsByUserIdAndAlbumId" resultType="Boolean">
-        SELECT EXISTS(
-            SELECT * FROM album_access, friendship
-            WHERE album_access.friend_group_id = friendship.friend_group_id
-            AND album_id = #{albumId}
-            AND friendship.friend_user_id = #{userId}
-        ) AS canAccess
+        SELECT count(*) AS canAccess FROM album_access, friendship
+        WHERE album_access.friend_group_id = friendship.friend_group_id
+        AND album_id = #{albumId}
+        AND friendship.friend_user_id = #{userId}
     </select>
 </mapper>

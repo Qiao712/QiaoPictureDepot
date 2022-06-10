@@ -16,9 +16,12 @@
         WHERE md5 = #{md5}
     </select>
 
-    <insert id="add" parameterType="PictureIdentity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO picture_identity(uri, md5, format, ref_count, file_size)
-        VALUES(#{uri}, #{md5}, #{format}, #{refCount}, #{fileSize})
+    <insert id="add" parameterType="PictureIdentity">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT ISNULL(max(id), 0)+1 FROM picture_identity
+        </selectKey>
+        INSERT INTO picture_identity(id, uri, md5, format, ref_count, file_size)
+        VALUES(#{id}, #{uri}, #{md5}, #{format}, #{refCount}, #{fileSize})
     </insert>
 
     <delete id="delete">

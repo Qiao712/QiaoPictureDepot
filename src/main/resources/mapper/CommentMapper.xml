@@ -26,7 +26,12 @@
         </where>
     </select>
 
-    <insert id="add" parameterType="Comment" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <select id="getByRepliedId" resultType="Comment">
+        SELECT id, picture_group_id, author_id, parent_id, replied_id, content, like_count, create_time, update_time
+        FROM comment where replied_id = #{repliedId}
+    </select>
+
+    <insert id="add" parameterType="Comment">
         INSERT INTO comment(picture_group_id, author_id, parent_id, replied_id, content)
         VALUES(#{pictureGroupId}, #{authorId}, #{parentId}, #{repliedId}, #{content})
     </insert>
@@ -51,10 +56,8 @@
     </insert>
 
     <select id="existsCommentLikeDetail" resultType="boolean">
-        SELECT EXISTS(
-            SELECT * FROM comment_like_detail
-            WHERE comment_id = #{commentId} AND user_id = #{userId}
-        ) comment_like_detail_exists
+        SELECT count(*) comment_like_detail_exists FROM comment_like_detail
+        WHERE comment_id = #{commentId} AND user_id = #{userId}
     </select>
 
     <delete id="deleteCommentLikeDetail">

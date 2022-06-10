@@ -1,7 +1,9 @@
 package com.qiao.picturedepot;
 
 import com.qiao.picturedepot.dao.*;
+import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
+import com.qiao.picturedepot.pojo.domain.User;
 import com.qiao.picturedepot.service.FriendService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +81,24 @@ public class DaoTest {
 
     @Test
     void testResourceUser(){
-        pictureGroupMapper.updateFileSize(99L);
+//        pictureGroupMapper.updateFileSize(99L);
+    }
+
+    @Test
+    void testUserDao(){
+        User user = userMapper.getById(44L);
+        System.out.println(user);
+    }
+
+    @Autowired
+    AlbumMapper albumMapper;
+    @Test
+    void testKeyGenerate(){
+        Album album = new Album();
+        album.setName("123");
+        album.setOwnerId(1L);
+        album.setAccessPolicy(0);
+        albumMapper.add(album);
+        System.out.println(album.getId());
     }
 }

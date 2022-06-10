@@ -39,9 +39,12 @@
         WHERE id = #{id}
     </update>
 
-    <insert id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-        INSERT INTO picture_group(album_id, title, description, file_size)
-        VALUES(#{albumId}, #{title}, #{description}, #{fileSize})
+    <insert id="add">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT ISNULL(max(id), 0) + 1 FROM picture_group
+        </selectKey>
+        INSERT INTO picture_group(id, album_id, title, description, file_size)
+        VALUES(#{id}, #{albumId}, #{title}, #{description}, #{fileSize})
     </insert>
 
     <select id="getMaxPictureSequenceInGroup" resultType="Integer">
@@ -60,14 +63,14 @@
         WHERE album.id = picture_group.album_id AND picture_group.id = #{id}
     </select>
 
-    <update id="updateFileSize">
-        UPDATE picture_group pg
-        SET file_size = (
-            SELECT sum(pi.file_size) FROM picture_ref pr, picture_identity pi
-            WHERE pr.picture_group_id = pg.id AND pr.picture_id = pi.id
-        )
-        WHERE pg.id = #{id}
-    </update>
+<!--    <update id="updateFileSize">-->
+<!--        UPDATE picture_group pg-->
+<!--        SET file_size = (-->
+<!--            SELECT sum(pi.file_size) FROM picture_ref pr, picture_identity pi-->
+<!--            WHERE pr.picture_group_id = pg.id AND pr.picture_id = pi.id-->
+<!--        )-->
+<!--        WHERE pg.id = #{id}-->
+<!--    </update>-->
 
     <select id="getFileSize" resultType="Long">
         SELECT file_size FROM picture_group WHERE id = #{id}
@@ -86,10 +89,8 @@
     </insert>
 
     <select id="existsPictureGroupLikeDetail" resultType="boolean">
-        SELECT EXISTS(
-            SELECT * FROM picture_group_like_detail
-            WHERE picture_group_id = #{pictureGroupId} AND user_id = #{userId}
-        ) picture_group_like_detail_exists
+        SELECT count(*) as picture_group_like_detail_exists FROM picture_group_like_detail
+        WHERE picture_group_id = #{pictureGroupId} AND user_id = #{userId}
     </select>
 
     <delete id="deletePictureGroupLikeDetail">
