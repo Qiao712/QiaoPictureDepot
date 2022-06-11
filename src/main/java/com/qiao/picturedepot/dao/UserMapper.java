@@ -1,6 +1,7 @@
 package com.qiao.picturedepot.dao;
 
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.domain.UserWithAvatar;
 import com.qiao.picturedepot.pojo.dto.ResourceUsageDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,7 +20,7 @@ public interface UserMapper {
 
     Integer add(@Param("user") User user, @Param("rolename") String rolename);
 
-    InputStream getAvatarByUserId(Long userId);
+    byte[] getAvatarByUserId(Long userId);
 
     Integer setAvatarByUserId(@Param("userId") Long userId, @Param("image") byte[] image);
 
@@ -33,4 +34,6 @@ public interface UserMapper {
      * 重新统计用户资源使用情况字段(album_count, picture_group_count, picture_count)，已恢复一致性
      */
     Integer countResourceUsage(Long userId);
+
+    UserWithAvatar getUserWithAvatar(Long id);
 }

@@ -3,6 +3,7 @@ package com.qiao.picturedepot.service.impl;
 import com.qiao.picturedepot.dao.UserMapper;
 import com.qiao.picturedepot.exception.BusinessException;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.domain.UserWithAvatar;
 import com.qiao.picturedepot.pojo.dto.*;
 import com.qiao.picturedepot.service.AlbumService;
 import com.qiao.picturedepot.service.PictureService;
@@ -66,12 +67,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void getAvatar(Long userId, OutputStream outputStream) {
-        try(InputStream inputStream = userMapper.getAvatarByUserId(userId)){
-            if(inputStream != null){
-                FileUtil.copy(inputStream, outputStream);
-            }
+        UserWithAvatar user = userMapper.getUserWithAvatar(userId);
+        try {
+            outputStream.write(user.getAvatar());
         } catch (IOException e) {
-            throw new BusinessException("无法读取头像文件", e);
+            throw new RuntimeException(e);
         }
     }
 

@@ -4,11 +4,13 @@ import com.qiao.picturedepot.dao.*;
 import com.qiao.picturedepot.pojo.domain.Album;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.User;
+import com.qiao.picturedepot.pojo.domain.UserWithAvatar;
 import com.qiao.picturedepot.service.FriendService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.parameters.P;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,9 +67,10 @@ public class DaoTest {
     @Autowired
     private UserMapper userMapper;
     @Test
-    void testAvatar() throws IOException {
-        InputStream inputStream = userMapper.getAvatarByUserId(1L);
-        System.out.println(inputStream.available());
+    @Transactional
+    void testAvatar() {
+        UserWithAvatar user = userMapper.getUserWithAvatar(1L);
+        System.out.println(user);
     }
 
     @Autowired
