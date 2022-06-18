@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.qiao.picturedepot.config.Properties;
 import com.qiao.picturedepot.dao.*;
 import com.qiao.picturedepot.exception.BusinessException;
+import com.qiao.picturedepot.pojo.domain.Comment;
 import com.qiao.picturedepot.pojo.domain.PictureGroup;
 import com.qiao.picturedepot.pojo.domain.PictureIdentity;
 import com.qiao.picturedepot.pojo.domain.PictureRef;
@@ -43,6 +44,8 @@ public class PictureServiceImpl implements PictureService {
     private Properties properties;
     @Autowired
     private PictureStoreService pictureStoreService;
+    @Autowired
+    private CommentMapper commentMapper;
 
     @Override
     @PreAuthorize("@rs.canAccessAlbum(#albumId)")
@@ -253,6 +256,9 @@ public class PictureServiceImpl implements PictureService {
 //        resourceUsageIncrease.setSpaceUsage( - pictureGroup.getFileSize());
 //        userMapper.updateResourceUsage(SecurityUtil.getNonAnonymousCurrentUser().getId(), resourceUsageIncrease);
         //---------------------------------------------------------------------------------------------------------
+
+        //删除相关评论
+        commentMapper.deleteByPictureGroupId(pictureGroupId);
 
         //删除对象
         pictureRefMapper.deleteByGroupId(pictureGroupId);

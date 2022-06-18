@@ -21,6 +21,8 @@ public interface CommentMapper {
 
     Integer deleteByParentId(Long parentId);
 
+    Integer deleteByPictureGroupId(Long pictureGroupId);
+
     Boolean increaseLikeCount(Long pictureGroupId, Long commentId, Integer increase);
 
     Boolean addCommentLikeDetail(Long commentId, Long userId);

@@ -44,6 +44,10 @@
         DELETE FROM comment WHERE parent_id = #{parentId}
     </delete>
 
+    <delete id="deleteByPictureGroupId">
+        DELETE FROM comment WHERE picture_group_id = #{pictureGroupId}
+    </delete>
+
     <update id="increaseLikeCount">
         UPDATE comment
         SET like_count = like_count + #{increase}
